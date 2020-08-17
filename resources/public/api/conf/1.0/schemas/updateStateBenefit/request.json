@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Update State Benefit Request",
+  "description": "Update State Benefit Request",
+  "type": "object",
+  "properties": {
+    "startDate": {
+      "description": "The date the benefit started in the format YYYY-MM-DD",
+      "type": "string",
+      "example": "2029-04-06"
+    },
+    "endDate": {
+      "description": "The date the benefit ended in the format YYYY-MM-DD",
+      "type": "string",
+      "example": "2020-01-01"
+    }
+  },
+  "required": [
+    "startDate"
+  ]
+}
