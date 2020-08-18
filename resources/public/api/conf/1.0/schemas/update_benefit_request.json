@@ -5,10 +5,10 @@
   "type": "object",
   "properties": {
     "startDate": {
-      "$ref": "../definitions.json#/definitions/startDate"
+      "$ref": "definitions.json#/definitions/startDate"
     },
     "endDate": {
-      "$ref": "../definitions.json#/definitions/endDate"
+      "$ref": "definitions.json#/definitions/endDate"
     }
   },
   "required": [

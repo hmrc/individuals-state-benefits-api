@@ -24,13 +24,13 @@ description: 'This endpoint allows a developer to update a previously created cu
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
 body:
   application/json:
-    type: !include ../schemas/updateStateBenefit/request.json
+    type: !include ../schemas/update_benefit_request.json
     example: !include ../examples/updateStateBenefit/request.json
 responses:
   200:
     body:
       application/json:
-        type: !include ../schemas/updateStateBenefit/response.json
+        type: !include ../schemas/update_benefit_response.json
         example: !include ../examples/updateStateBenefit/response.json
     headers:
       X-CorrelationId:
