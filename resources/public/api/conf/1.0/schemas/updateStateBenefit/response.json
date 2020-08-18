@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Update State Benefit Request",
-  "description": "Update State Benefit Request",
+  "title": "Update State Benefit Response",
+  "description": "Update State Benefit Response",
   "type": "object",
   "properties": {
     "links": {
