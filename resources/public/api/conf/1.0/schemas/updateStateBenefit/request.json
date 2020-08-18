@@ -5,14 +5,10 @@
   "type": "object",
   "properties": {
     "startDate": {
-      "description": "The date the benefit started in the format YYYY-MM-DD",
-      "type": "string",
-      "example": "2029-04-06"
+      "$ref": "../definitions.json#/definitions/startDate"
     },
     "endDate": {
-      "description": "The date the benefit ended in the format YYYY-MM-DD",
-      "type": "string",
-      "example": "2020-01-01"
+      "$ref": "../definitions.json#/definitions/endDate"
     }
   },
   "required": [

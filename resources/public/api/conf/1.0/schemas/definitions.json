@@ -41,6 +41,16 @@
       "type": "string",
       "pattern": "^[A-Za-z0-9]{15}$",
       "example": "123456879012345"
+    },
+    "startDate": {
+      "description": "The date the benefit started in the format YYYY-MM-DD",
+      "type": "string",
+      "example": "2029-04-06"
+    },
+    "endDate": {
+      "description": "The date the benefit ended in the format YYYY-MM-DD",
+      "type": "string",
+      "example": "2020-01-01"
     }
   }
 }
