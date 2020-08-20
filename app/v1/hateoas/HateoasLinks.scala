@@ -111,9 +111,9 @@ trait HateoasLinks {
       rel = DELETE_STATE_BENEFIT_AMOUNTS
     )
 
-  def ignoreStateBenefits(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def ignoreStateBenefit(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): Link =
     Link(
-      href = s"${baseUri(appConfig, nino, taxYear)}/ignore",
+      href = s"${uriWithId(appConfig, nino, taxYear, benefitId)}/ignore",
       method = PUT,
       rel = IGORNE_STATE_BENEFIT
     )
