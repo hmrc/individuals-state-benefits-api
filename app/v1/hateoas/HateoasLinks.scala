@@ -24,8 +24,14 @@ import v1.models.hateoas.RelType.{AMEND_SAMPLE_REL, DELETE_SAMPLE_REL, _}
 trait HateoasLinks {
 
   //Domain URIs
-  private def sampleUri(appConfig: AppConfig, nino: String, taxYear: String) =
-    s"/${appConfig.apiGatewayContext}/sample/$nino/$taxYear"
+  private def stateBenefitUri(appConfig: AppConfig, nino: String, taxYear: String) =
+    s"/${appConfig.apiGatewayContext}/$nino/$taxYear"
+
+  private def stateBenefitWithIDUri(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String) =
+    s"/${appConfig.apiGatewayContext}/$nino/$taxYear/$benefitId"
+
+  private def stateBenefitAmountsUri(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String) =
+    s"/${appConfig.apiGatewayContext}/$nino/$taxYear/$benefitId/amounts"
 
   // URI with ID
   private def uriWithId(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String) =
@@ -35,34 +41,55 @@ trait HateoasLinks {
     s"/${appConfig.apiGatewayContext}/state-benefits/$nino/$taxYear"
 
   //Sample links
-  def amendSample(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def addStateBenefit(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(
-      href = sampleUri(appConfig, nino, taxYear),
-      method = PUT,
-      rel = AMEND_SAMPLE_REL
+      href = stateBenefitUri(appConfig, nino, taxYear),
+      method = POST,
+      rel = ADD_STATE_BENEFIT
     )
 
-  def retrieveSample(appConfig: AppConfig, nino: String, taxYear: String, isSelf: Boolean): Link =
+  def listStateBenefit(appConfig: AppConfig, nino: String, taxYear: String, isSelf: Boolean): Link =
     if (isSelf) {
       Link(
-        href = sampleUri(appConfig, nino, taxYear),
+        href = stateBenefitUri(appConfig, nino, taxYear),
         method = GET,
         rel = SELF
       )
     }
-  else {
+    else {
       Link(
-        href = sampleUri(appConfig, nino, taxYear),
+        href = stateBenefitUri(appConfig, nino, taxYear),
         method = GET,
-        rel = RETRIEVE_SAMPLE_REL
+        rel = LIST_STATE_BENEFITS
       )
     }
 
-  def deleteSample(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def updateStateBenefit(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): Link =
     Link(
-      href = sampleUri(appConfig, nino, taxYear),
+      href = stateBenefitWithIDUri(appConfig, nino, taxYear, benefitId),
+      method = PUT,
+      rel = UPDATE_STATE_BENEFIT
+    )
+
+  def deleteStateBenefit(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): Link =
+    Link(
+      href = stateBenefitWithIDUri(appConfig, nino, taxYear, benefitId),
       method = DELETE,
-      rel = DELETE_SAMPLE_REL
+      rel = DELETE_STATE_BENEFIT
+    )
+
+  def updateStateBenefitAmounts(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): Link =
+    Link(
+      href = stateBenefitAmountsUri(appConfig, nino, taxYear, benefitId),
+      method = PUT,
+      rel = UPDATE_STATE_BENEFIT_AMOUNTS
+    )
+
+  def deleteStateBenefitAmounts(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): Link =
+    Link(
+      href = stateBenefitAmountsUri(appConfig, nino, taxYear, benefitId),
+      method = PUT,
+      rel = DELETE_STATE_BENEFIT_AMOUNTS
     )
 
   // State benefits Hateoas
