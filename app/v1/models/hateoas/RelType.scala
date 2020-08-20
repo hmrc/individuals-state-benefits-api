@@ -21,5 +21,13 @@ object RelType {
   val RETRIEVE_SAMPLE_REL = "retrieve-sample-rel"
   val DELETE_SAMPLE_REL = "delete-sample-rel"
 
+  val ADD_STATE_BENEFIT = "add-state-benefit"
+  val LIST_STATE_BENEFITS = "list-state-benefits"
+  val UPDATE_STATE_BENEFIT = "update-state-benefit"
+  val DELETE_STATE_BENEFIT = "delete-state-benefit"
+  val UPDATE_STATE_BENEFIT_AMOUNTS = "update-state-benefit-amounts"
+  val DELETE_STATE_BENEFIT_AMOUNTS = "delete-state-benefit-amounts"
+  val IGORNE_STATE_BENEFIT = "ignore-state-benefit"
+
   val SELF = "self"
 }

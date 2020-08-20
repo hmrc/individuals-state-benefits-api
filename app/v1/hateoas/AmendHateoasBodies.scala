@@ -21,11 +21,22 @@ import play.api.libs.json.{JsValue, Json}
 
 trait AmendHateoasBodies extends HateoasLinks {
 
+  def amendSampleHateoasBody(appConfig: AppConfig, nino: String, taxYear: String): JsValue = {
+
+    val links = Seq(
+      amendSample(appConfig, nino, taxYear),
+      retrieveSample(appConfig, nino, taxYear, isSelf = true),
+      deleteSample(appConfig, nino, taxYear)
+    )
+
+    Json.obj("links" -> links)
+  }
+
   def updateStateBenefitHateoasBody(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): JsValue = {
 
     val links = Seq(
       updateStateBenefit(appConfig, nino, taxYear, benefitId),
-      listStateBenefit(appConfig, nino, taxYear, isSelf = true),
+      listStateBenefits(appConfig, nino, taxYear),
       deleteStateBenefit(appConfig, nino, taxYear, benefitId),
       updateStateBenefitAmounts(appConfig, nino, taxYear, benefitId)
     )
