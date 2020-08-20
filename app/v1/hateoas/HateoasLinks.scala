@@ -113,7 +113,7 @@ trait HateoasLinks {
 
   def ignoreStateBenefits(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(
-      href = baseUri(appConfig, nino, taxYear),
+      href = s"${baseUri(appConfig, nino, taxYear)}/ignore",
       method = PUT,
       rel = IGORNE_STATE_BENEFIT
     )
