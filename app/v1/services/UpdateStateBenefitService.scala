@@ -40,7 +40,7 @@ class UpdateStateBenefitService @Inject()(connector: UpdateStateBenefitConnector
 
     val result = for {
       desResponseWrapper <- EitherT(connector.updateStateBenefit(request)).leftMap(mapDesErrors(desErrorMap))
-    } yield desResponseWrapper.map(des => des) // For any additional mapping
+    } yield desResponseWrapper
 
     result.value
   }
@@ -53,7 +53,7 @@ class UpdateStateBenefitService @Inject()(connector: UpdateStateBenefitConnector
       "INVALID_PAYLOAD" -> DownstreamError,
       "UPDATE_FORBIDDEN" -> RuleUpdateForbiddenError,
       "NO_DATA_FOUND" -> NotFoundError,
-      "INVALID_REQUEST_TAX_YEAR" -> RuleTaxYearNotSupportedError,
+      "INVALID_REQUEST_TAX_YEAR" -> RuleTaxYearNotEndedError,
       "INVALID_START_DATE" -> RuleStartDateAfterTaxYearEndError,
       "INVALID_CESSATION_DATE" -> RuleEndDateBeforeTaxYearStartError,
       "SERVER_ERROR" -> DownstreamError,

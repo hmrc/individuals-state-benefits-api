@@ -38,7 +38,7 @@ class UpdateStateBenefitConnector @Inject()(val http: HttpClient,
     val benefitId = request.benefitId
 
     put(request.body,
-      DesUri[Unit](s"income-tax/income/state-benefits/$nino/$taxYear/$benefitId")
+      DesUri[Unit](s"income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId")
     )
   }
 }

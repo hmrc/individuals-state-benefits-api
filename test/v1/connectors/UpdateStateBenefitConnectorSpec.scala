@@ -27,12 +27,12 @@ import scala.concurrent.Future
 class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
-  val taxYear: String = "2018-19"
+  val taxYear: String = "2021-22"
   val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
 
   val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
-    startDate = "2019-04-06",
-    endDate = Some("2020-01-01")
+    startDate = "2020-08-03",
+    endDate = Some("2020-12-03")
   )
 
   val request: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
@@ -61,12 +61,12 @@ class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
 
   "UpdateStateBenefitConnector" when {
     "updateStateBenefit" must {
-      "return a 200 status for a success scenario" in new Test {
+      "return a 201 status for a success scenario" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
         MockedHttpClient
           .put(
-            url = s"$baseUrl/income-tax/income/state-benefits/$nino/$taxYear/$benefitId",
+            url = s"$baseUrl/income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId",
             body = request.body,
             requiredHeaders = desRequestHeaders: _*
           ).returns(Future.successful(outcome))

@@ -33,7 +33,7 @@ trait MockUpdateStateBenefitService extends MockFactory {
 
   object MockUpdateStateBenefitService{
 
-    def amendSample(requestData: UpdateStateBenefitsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def updateStateBenefit(requestData: UpdateStateBenefitsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockUpdateStateBenefitService
         .updateStateBenefit(_: UpdateStateBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(requestData, *, *, *)

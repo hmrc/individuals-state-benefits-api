@@ -28,13 +28,13 @@ import scala.concurrent.Future
 class UpdateStateBenefitServiceSpec extends ServiceSpec {
 
   private val nino = "AA123456A"
-  private val taxYear = "2017-18"
+  private val taxYear = "2021-22"
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
   private val correlationId = "X-123"
 
   val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
-    startDate = "2019-04-06",
-    endDate = Some("2020-01-01")
+    startDate = "2020-08-03",
+    endDate = Some("2020-12-03")
   )
 
   val requestData: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
@@ -52,8 +52,8 @@ class UpdateStateBenefitServiceSpec extends ServiceSpec {
     )
   }
 
-  "AmendSampleService" when {
-    "amendSample" must {
+  "UpdateStateBenefitService" when {
+    "updateStateBenefit" must {
       "return correct result for a success" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
@@ -83,7 +83,7 @@ class UpdateStateBenefitServiceSpec extends ServiceSpec {
         ("INVALID_PAYLOAD", DownstreamError),
         ("UPDATE_FORBIDDEN", RuleUpdateForbiddenError),
         ("NO_DATA_FOUND", NotFoundError),
-        ("INVALID_REQUEST_TAX_YEAR", RuleTaxYearNotSupportedError),
+        ("INVALID_REQUEST_TAX_YEAR", RuleTaxYearNotEndedError),
         ("INVALID_START_DATE", RuleStartDateAfterTaxYearEndError),
         ("INVALID_CESSATION_DATE", RuleEndDateBeforeTaxYearStartError),
         ("SERVER_ERROR", DownstreamError),
