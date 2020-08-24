@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package v1.hateoas
+package v1.models.request.addBenefit
 
-import config.AppConfig
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, Reads, Writes}
+import v1.models.domain.BenefitType
 
-trait UpdateHateoasResponses extends HateoasLinks {
+case class AddBenefitBody(benefitType: BenefitType, startDate: String, endDate: Option[String])
 
-  def updateBenefitHateoasBody(appConfig: AppConfig, nino: String, taxYear: String, benefitId: String): JsValue = {
+object AddBenefitBody {
 
-    val links = Seq(
-      updateBenefit(appConfig, nino, taxYear, benefitId),
-      listBenefits(appConfig, nino, taxYear),
-      deleteBenefit(appConfig, nino, taxYear, benefitId),
-      updateBenefitAmounts(appConfig, nino, taxYear, benefitId)
-    )
+  implicit val reads: Reads[AddBenefitBody] = (
+    (JsPath \ "benefitType").read[BenefitType] and
+      (JsPath \ "startDate").read[String] and
+      (JsPath \ "endDate").readNullable[String]
+    ) (AddBenefitBody.apply _)
 
-    Json.obj("links" -> links)
-  }
+
+  implicit val writes: Writes[AddBenefitBody] = Json.writes[AddBenefitBody]
 }
