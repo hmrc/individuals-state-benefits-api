@@ -19,15 +19,15 @@ package v1.connectors
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.models.request.updateBenefit.UpdateBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateStateBenefitConnector @Inject()(val http: HttpClient,
-                                            val appConfig: AppConfig) extends BaseDesConnector {
+class UpdateBenefitConnector @Inject()(val http: HttpClient,
+                                       val appConfig: AppConfig) extends BaseDesConnector {
 
-  def updateStateBenefit(request: UpdateStateBenefitsRequest)(
+  def updateBenefit(request: UpdateBenefitRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[DesOutcome[Unit]] = {
 

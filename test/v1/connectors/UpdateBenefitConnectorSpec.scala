@@ -20,31 +20,31 @@ import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.{UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.updateBenefit.{UpdateBenefitRequest, UpdateBenefitRequestBody}
 
 import scala.concurrent.Future
 
-class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
+class UpdateBenefitConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
   val taxYear: String = "2021-22"
   val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
 
-  val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
+  val updateBenefitRequestBody: UpdateBenefitRequestBody = UpdateBenefitRequestBody(
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
   )
 
-  val request: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
+  val request: UpdateBenefitRequest = UpdateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,
-    body = updateStateBenefitsRequestBody
+    body = updateBenefitRequestBody
   )
 
   class Test extends MockHttpClient with MockAppConfig {
 
-    val connector: UpdateStateBenefitConnector = new UpdateStateBenefitConnector(
+    val connector: UpdateBenefitConnector = new UpdateBenefitConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
@@ -59,8 +59,8 @@ class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
     MockedAppConfig.desEnvironment returns "des-environment"
   }
 
-  "UpdateStateBenefitConnector" when {
-    "updateStateBenefit" must {
+  "UpdateBenefitConnector" when {
+    "updateBenefit" must {
       "return a 201 status for a success scenario" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
@@ -71,7 +71,7 @@ class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
             requiredHeaders = desRequestHeaders: _*
           ).returns(Future.successful(outcome))
 
-        await(connector.updateStateBenefit(request)) shouldBe outcome
+        await(connector.updateBenefit(request)) shouldBe outcome
       }
     }
   }

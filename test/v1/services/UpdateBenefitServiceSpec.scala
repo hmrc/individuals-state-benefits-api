@@ -18,49 +18,49 @@ package v1.services
 
 import uk.gov.hmrc.domain.Nino
 import v1.controllers.EndpointLogContext
-import v1.mocks.connectors.MockUpdateStateBenefitConnector
+import v1.mocks.connectors.MockUpdateBenefitConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.{UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.updateBenefit.{UpdateBenefitRequest, UpdateBenefitRequestBody}
 
 import scala.concurrent.Future
 
-class UpdateStateBenefitServiceSpec extends ServiceSpec {
+class UpdateBenefitServiceSpec extends ServiceSpec {
 
   private val nino = "AA123456A"
   private val taxYear = "2021-22"
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
   private val correlationId = "X-123"
 
-  val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
+  val updateBenefitRequestBody: UpdateBenefitRequestBody = UpdateBenefitRequestBody(
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
   )
 
-  val requestData: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
+  val requestData: UpdateBenefitRequest = UpdateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,
-    body = updateStateBenefitsRequestBody
+    body = updateBenefitRequestBody
   )
 
-  trait Test extends MockUpdateStateBenefitConnector {
+  trait Test extends MockUpdateBenefitConnector {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
-    val service: UpdateStateBenefitService = new UpdateStateBenefitService(
-      connector = mockUpdateStateBenefitConnector
+    val service: UpdateBenefitService = new UpdateBenefitService(
+      connector = mockUpdateBenefitConnector
     )
   }
 
-  "UpdateStateBenefitService" when {
-    "updateStateBenefit" must {
+  "UpdateBenefitService" when {
+    "updateBenefit" must {
       "return correct result for a success" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockUpdateStateBenefitConnector.updateStateBenefit(requestData)
+        MockUpdateBenefitConnector.updateBenefit(requestData)
           .returns(Future.successful(outcome))
 
-        await(service.updateStateBenefit(requestData)) shouldBe outcome
+        await(service.updateBenefit(requestData)) shouldBe outcome
       }
     }
 
@@ -69,10 +69,10 @@ class UpdateStateBenefitServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockUpdateStateBenefitConnector.updateStateBenefit(requestData)
+          MockUpdateBenefitConnector.updateBenefit(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.updateStateBenefit(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.updateBenefit(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
         }
 
       val input = Seq(

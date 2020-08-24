@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.mocks.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DesOutcome, UpdateStateBenefitConnector}
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.controllers.EndpointLogContext
+import v1.models.errors.ErrorWrapper
+import v1.models.outcomes.ResponseWrapper
+import v1.models.request.updateBenefit.UpdateBenefitRequest
+import v1.services.UpdateBenefitService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdateStateBenefitConnector extends MockFactory {
+trait MockUpdateBenefitService extends MockFactory {
 
-  val mockUpdateStateBenefitConnector: UpdateStateBenefitConnector = mock[UpdateStateBenefitConnector]
+  val mockUpdateBenefitService: UpdateBenefitService = mock[UpdateBenefitService]
 
-  object MockUpdateStateBenefitConnector {
+  object MockUpdateBenefitService{
 
-    def updateStateBenefit(requestData: UpdateStateBenefitsRequest): CallHandler[Future[DesOutcome[Unit]]] = {
-      (mockUpdateStateBenefitConnector
-        .updateStateBenefit(_: UpdateStateBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+    def updateBenefit(requestData: UpdateBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (mockUpdateBenefitService
+        .updateBenefit(_: UpdateBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
+        .expects(requestData, *, *, *)
     }
   }
 

@@ -21,25 +21,25 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
-import v1.connectors.UpdateStateBenefitConnector
+import v1.connectors.UpdateBenefitConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.models.request.updateBenefit.UpdateBenefitRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateStateBenefitService @Inject()(connector: UpdateStateBenefitConnector) extends DesResponseMappingSupport with Logging {
+class UpdateBenefitService @Inject()(connector: UpdateBenefitConnector) extends DesResponseMappingSupport with Logging {
 
-  def updateStateBenefit(request: UpdateStateBenefitsRequest)(
+  def updateBenefit(request: UpdateBenefitRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[Either[ErrorWrapper, ResponseWrapper[Unit]]] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(connector.updateStateBenefit(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(connector.updateBenefit(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
 
     result.value
