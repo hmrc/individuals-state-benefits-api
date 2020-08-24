@@ -21,17 +21,17 @@ import javax.inject.Inject
 import utils.CurrentDateTime
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.MtdError
-import v1.models.request.update.{UpdateStateBenefitsRawData, UpdateStateBenefitsRequestBody}
+import v1.models.request.update.{UpdateStateBenefitRawData, UpdateStateBenefitRequestBody}
 
-class UpdateStateBenefitsValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig) extends Validator[UpdateStateBenefitsRawData] {
+class UpdateStateBenefitsValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig) extends Validator[UpdateStateBenefitRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation, bodyFormatValidator, bodyValueValidator)
 
-  override def validate(data: UpdateStateBenefitsRawData): List[MtdError] = {
+  override def validate(data: UpdateStateBenefitRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 
-  private def parameterFormatValidation: UpdateStateBenefitsRawData => List[List[MtdError]] = (data: UpdateStateBenefitsRawData) => {
+  private def parameterFormatValidation: UpdateStateBenefitRawData => List[List[MtdError]] = (data: UpdateStateBenefitRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear),
@@ -39,21 +39,21 @@ class UpdateStateBenefitsValidator @Inject()(implicit currentDateTime: CurrentDa
     )
   }
 
-  private def parameterRuleValidation: UpdateStateBenefitsRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: UpdateStateBenefitRawData => List[List[MtdError]] = { data =>
     List(
       TaxYearNotSupportedValidation.validate(data.taxYear),
       TaxYearNotEndedValidation.validate(data.taxYear)
     )
   }
 
-  private def bodyFormatValidator: UpdateStateBenefitsRawData => List[List[MtdError]] = { data =>
+  private def bodyFormatValidator: UpdateStateBenefitRawData => List[List[MtdError]] = { data =>
     List(
-      JsonFormatValidation.validate[UpdateStateBenefitsRequestBody](data.body.json)
+      JsonFormatValidation.validate[UpdateStateBenefitRequestBody](data.body.json)
     )
   }
 
-  private def bodyValueValidator: UpdateStateBenefitsRawData => List[List[MtdError]] = (data: UpdateStateBenefitsRawData) => {
-    val requestBodyData: UpdateStateBenefitsRequestBody = data.body.json.as[UpdateStateBenefitsRequestBody]
+  private def bodyValueValidator: UpdateStateBenefitRawData => List[List[MtdError]] = (data: UpdateStateBenefitRawData) => {
+    val requestBodyData: UpdateStateBenefitRequestBody = data.body.json.as[UpdateStateBenefitRequestBody]
 
     List(
       StateBenefitsDateValidation.validate(requestBodyData.startDate, requestBodyData.endDate, data.taxYear)

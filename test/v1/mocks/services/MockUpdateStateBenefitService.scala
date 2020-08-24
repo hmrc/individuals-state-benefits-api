@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.models.request.update.UpdateStateBenefitRequest
 import v1.services.UpdateStateBenefitService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,9 +33,9 @@ trait MockUpdateStateBenefitService extends MockFactory {
 
   object MockUpdateStateBenefitService{
 
-    def updateStateBenefit(requestData: UpdateStateBenefitsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def updateStateBenefit(requestData: UpdateStateBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockUpdateStateBenefitService
-        .updateStateBenefit(_: UpdateStateBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
+        .updateStateBenefit(_: UpdateStateBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(requestData, *, *, *)
     }
   }

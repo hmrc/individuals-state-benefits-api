@@ -18,8 +18,8 @@ package v1.models.request.update
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UpdateStateBenefitsRequestBody(startDate: String, endDate: Option[String])
+case class UpdateStateBenefitRequestBody(startDate: String, endDate: Option[String])
 
-object UpdateStateBenefitsRequestBody {
-  implicit val format: OFormat[UpdateStateBenefitsRequestBody] = Json.format[UpdateStateBenefitsRequestBody]
+object UpdateStateBenefitRequestBody {
+  implicit val format: OFormat[UpdateStateBenefitRequestBody] = Json.format[UpdateStateBenefitRequestBody]
 }

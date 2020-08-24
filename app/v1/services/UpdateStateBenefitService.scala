@@ -25,7 +25,7 @@ import v1.connectors.UpdateStateBenefitConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.models.request.update.UpdateStateBenefitRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateStateBenefitService @Inject()(connector: UpdateStateBenefitConnector) extends DesResponseMappingSupport with Logging {
 
-  def updateStateBenefit(request: UpdateStateBenefitsRequest)(
+  def updateStateBenefit(request: UpdateStateBenefitRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[Either[ErrorWrapper, ResponseWrapper[Unit]]] = {

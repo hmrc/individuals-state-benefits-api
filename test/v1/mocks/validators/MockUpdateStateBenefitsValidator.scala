@@ -20,16 +20,16 @@ import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.validators.UpdateStateBenefitsValidator
 import v1.models.errors.MtdError
-import v1.models.request.update.UpdateStateBenefitsRawData
+import v1.models.request.update.UpdateStateBenefitRawData
 
 trait MockUpdateStateBenefitsValidator extends MockFactory {
 
   val mockUpdateStateBenefitsValidator: UpdateStateBenefitsValidator = mock[UpdateStateBenefitsValidator]
 
   object MockUpdateStateBenefitsValidator {
-    def validate(data: UpdateStateBenefitsRawData): CallHandler1[UpdateStateBenefitsRawData, List[MtdError]] = {
+    def validate(data: UpdateStateBenefitRawData): CallHandler1[UpdateStateBenefitRawData, List[MtdError]] = {
       (mockUpdateStateBenefitsValidator
-        .validate(_: UpdateStateBenefitsRawData))
+        .validate(_: UpdateStateBenefitRawData))
         .expects(data)
     }
   }

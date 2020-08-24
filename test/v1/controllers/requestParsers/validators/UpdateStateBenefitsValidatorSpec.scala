@@ -26,7 +26,7 @@ import support.UnitSpec
 import utils.CurrentDateTime
 import v1.mocks.MockCurrentDateTime
 import v1.models.errors._
-import v1.models.request.update.UpdateStateBenefitsRawData
+import v1.models.request.update.UpdateStateBenefitRawData
 
 class UpdateStateBenefitsValidatorSpec extends UnitSpec {
 
@@ -108,67 +108,67 @@ class UpdateStateBenefitsValidatorSpec extends UnitSpec {
   "UpdateStateBenefitsValidator" when {
     "running a validation" should {
       "return no errors for a valid request" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, validRawBody)) shouldBe Nil
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, validRawBody)) shouldBe Nil
       }
 
       // parameter format error scenarios
       "return NinoFormatError error when the supplied NINO is invalid" in new Test {
-        validator.validate(UpdateStateBenefitsRawData("A12344A", validTaxYear, benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData("A12344A", validTaxYear, benefitId, validRawBody)) shouldBe
           List(NinoFormatError)
       }
 
       "return TaxYearFormatError error for an invalid tax year format" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, "20178", benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, "20178", benefitId, validRawBody)) shouldBe
           List(TaxYearFormatError)
       }
 
       "return RuleTaxYearRangeInvalidError error for an invalid tax year range" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, "2018-20", benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, "2018-20", benefitId, validRawBody)) shouldBe
           List(RuleTaxYearRangeInvalidError)
       }
 
       "return multiple errors for multiple invalid request parameters" in new Test {
-        validator.validate(UpdateStateBenefitsRawData("notValid", "2018-20", benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData("notValid", "2018-20", benefitId, validRawBody)) shouldBe
           List(NinoFormatError, RuleTaxYearRangeInvalidError)
       }
 
       // parameter rule error scenarios
       "return RuleTaxYearNotSupportedError error for an unsupported tax year" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, "2018-19", benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, "2018-19", benefitId, validRawBody)) shouldBe
           List(RuleTaxYearNotSupportedError)
       }
 
       "return RuleTaxYearNotEndedError error for a tax year which hasn't ended" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, "2022-23", benefitId, validRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, "2022-23", benefitId, validRawBody)) shouldBe
           List(RuleTaxYearNotEndedError)
       }
 
       // body format error scenarios
       "return RuleIncorrectOrEmptyBodyError error for an empty request body" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, emptyRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, emptyRawBody)) shouldBe
           List(RuleIncorrectOrEmptyBodyError)
       }
 
       "return RuleIncorrectOrEmptyBodyError error for an incorrect request body" in new Test {
         val paths: Seq[String] = List("/startDate")
 
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, noMandatoryFieldsRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, noMandatoryFieldsRawBody)) shouldBe
           List(RuleIncorrectOrEmptyBodyError.copy(paths = Some(paths)))
       }
 
       // body value error scenarios
       "return multiple errors for incorrect field formats" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, invalidDateTypeRawBody)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, invalidDateTypeRawBody)) shouldBe
           List(StartDateFormatError, EndDateFormatError)
       }
 
       "return multiple errors for dates which precede the current tax year and are incorrectly ordered" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, startDateBeforeEndDateRawBody1)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, startDateBeforeEndDateRawBody1)) shouldBe
           List(RuleStartDateAfterTaxYearEndError, RuleEndDateBeforeTaxYearStartError, RuleEndDateBeforeStartDateError)
       }
 
       "return multiple errors for dates which exceed the current tax year and are incorrectly ordered" in new Test {
-        validator.validate(UpdateStateBenefitsRawData(validNino, validTaxYear, benefitId, incorrectDatesRawBody2)) shouldBe
+        validator.validate(UpdateStateBenefitRawData(validNino, validTaxYear, benefitId, incorrectDatesRawBody2)) shouldBe
           List(RuleStartDateAfterTaxYearEndError, RuleEndDateBeforeStartDateError)
       }
     }

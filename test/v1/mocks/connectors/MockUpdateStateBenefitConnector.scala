@@ -20,7 +20,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.{DesOutcome, UpdateStateBenefitConnector}
-import v1.models.request.update.UpdateStateBenefitsRequest
+import v1.models.request.update.UpdateStateBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,9 +30,9 @@ trait MockUpdateStateBenefitConnector extends MockFactory {
 
   object MockUpdateStateBenefitConnector {
 
-    def updateStateBenefit(requestData: UpdateStateBenefitsRequest): CallHandler[Future[DesOutcome[Unit]]] = {
+    def updateStateBenefit(requestData: UpdateStateBenefitRequest): CallHandler[Future[DesOutcome[Unit]]] = {
       (mockUpdateStateBenefitConnector
-        .updateStateBenefit(_: UpdateStateBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext))
+        .updateStateBenefit(_: UpdateStateBenefitRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(requestData, *, *)
     }
   }

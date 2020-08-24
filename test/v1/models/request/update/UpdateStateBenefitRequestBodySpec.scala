@@ -20,7 +20,7 @@ import play.api.libs.json._
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
-class UpdateStateBenefitsRequestBodySpec extends UnitSpec with JsonErrorValidators {
+class UpdateStateBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
   val inputJson = Json.parse(
     """
@@ -34,18 +34,18 @@ class UpdateStateBenefitsRequestBodySpec extends UnitSpec with JsonErrorValidato
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        inputJson.as[UpdateStateBenefitsRequestBody] shouldBe UpdateStateBenefitsRequestBody("2019-04-06", Some("2020-01-01"))
+        inputJson.as[UpdateStateBenefitRequestBody] shouldBe UpdateStateBenefitRequestBody("2019-04-06", Some("2020-01-01"))
       }
 
-      testMandatoryProperty[UpdateStateBenefitsRequestBody](inputJson)("/startDate")
+      testMandatoryProperty[UpdateStateBenefitRequestBody](inputJson)("/startDate")
 
-      testPropertyType[UpdateStateBenefitsRequestBody](inputJson)(
+      testPropertyType[UpdateStateBenefitRequestBody](inputJson)(
         path = "/startDate",
         replacement = 12344.toJson,
         expectedError = JsonError.STRING_FORMAT_EXCEPTION
       )
 
-      testPropertyType[UpdateStateBenefitsRequestBody](inputJson)(
+      testPropertyType[UpdateStateBenefitRequestBody](inputJson)(
         path = "/endDate",
         replacement = 12344.toJson,
         expectedError = JsonError.STRING_FORMAT_EXCEPTION
@@ -56,7 +56,7 @@ class UpdateStateBenefitsRequestBodySpec extends UnitSpec with JsonErrorValidato
   "writes" should {
     "return a json" when {
       "a valid object is supplied" in {
-        Json.toJson(UpdateStateBenefitsRequestBody("2019-04-06", Some("2020-01-01"))) shouldBe inputJson
+        Json.toJson(UpdateStateBenefitRequestBody("2019-04-06", Some("2020-01-01"))) shouldBe inputJson
       }
     }
   }

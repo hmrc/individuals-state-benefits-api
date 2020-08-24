@@ -22,9 +22,9 @@ import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.validators.MockUpdateStateBenefitsValidator
 import v1.models.errors._
-import v1.models.request.update.{UpdateStateBenefitsRawData, UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.update.{UpdateStateBenefitRawData, UpdateStateBenefitRequest, UpdateStateBenefitRequestBody}
 
-class UpdateStateBenefitsRequestParserSpec extends UnitSpec {
+class UpdateStateBenefitRequestParserSpec extends UnitSpec {
 
   private val nino: String = "AA123456B"
   private val taxYear: String = "2020-21"
@@ -41,19 +41,19 @@ class UpdateStateBenefitsRequestParserSpec extends UnitSpec {
 
   private val validRawBody = AnyContentAsJson(validRequestJson)
 
-  private val updateStateBenefitsRawData = UpdateStateBenefitsRawData(
+  private val updateStateBenefitsRawData = UpdateStateBenefitRawData(
     nino = nino,
     taxYear = taxYear,
     benefitId = benefitId,
     body = validRawBody
   )
 
-  private val updateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
+  private val updateStateBenefitsRequestBody = UpdateStateBenefitRequestBody(
     startDate = "2020-04-06",
     endDate = Some("2021-01-01")
   )
 
-  private val updateStateBenefitsRequest = UpdateStateBenefitsRequest(
+  private val updateStateBenefitsRequest = UpdateStateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,
@@ -61,7 +61,7 @@ class UpdateStateBenefitsRequestParserSpec extends UnitSpec {
   )
 
   trait Test extends MockUpdateStateBenefitsValidator {
-    lazy val parser: UpdateStateBenefitsRequestParser = new UpdateStateBenefitsRequestParser(
+    lazy val parser: UpdateStateBenefitRequestParser = new UpdateStateBenefitRequestParser(
       validator = mockUpdateStateBenefitsValidator
     )
   }

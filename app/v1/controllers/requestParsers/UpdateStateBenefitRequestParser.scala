@@ -19,11 +19,11 @@ package v1.controllers.requestParsers
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import v1.controllers.requestParsers.validators.UpdateStateBenefitsValidator
-import v1.models.request.update.{UpdateStateBenefitsRawData, UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.update.{UpdateStateBenefitRawData, UpdateStateBenefitRequest, UpdateStateBenefitRequestBody}
 
-class UpdateStateBenefitsRequestParser @Inject()(val validator: UpdateStateBenefitsValidator)
-  extends RequestParser[UpdateStateBenefitsRawData, UpdateStateBenefitsRequest] {
+class UpdateStateBenefitRequestParser @Inject()(val validator: UpdateStateBenefitsValidator)
+  extends RequestParser[UpdateStateBenefitRawData, UpdateStateBenefitRequest] {
 
-  override protected def requestFor(data: UpdateStateBenefitsRawData): UpdateStateBenefitsRequest =
-    UpdateStateBenefitsRequest(Nino(data.nino), data.taxYear, data.benefitId, data.body.json.as[UpdateStateBenefitsRequestBody])
+  override protected def requestFor(data: UpdateStateBenefitRawData): UpdateStateBenefitRequest =
+    UpdateStateBenefitRequest(Nino(data.nino), data.taxYear, data.benefitId, data.body.json.as[UpdateStateBenefitRequestBody])
 }

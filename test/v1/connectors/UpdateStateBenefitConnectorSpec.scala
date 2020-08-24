@@ -20,7 +20,7 @@ import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.{UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.update.{UpdateStateBenefitRequest, UpdateStateBenefitRequestBody}
 
 import scala.concurrent.Future
 
@@ -30,12 +30,12 @@ class UpdateStateBenefitConnectorSpec extends ConnectorSpec {
   val taxYear: String = "2021-22"
   val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
 
-  val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
+  val updateStateBenefitsRequestBody: UpdateStateBenefitRequestBody = UpdateStateBenefitRequestBody(
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
   )
 
-  val request: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
+  val request: UpdateStateBenefitRequest = UpdateStateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,

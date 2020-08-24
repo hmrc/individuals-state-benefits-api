@@ -19,4 +19,4 @@ package v1.models.request.update
 import play.api.mvc.AnyContentAsJson
 import v1.models.request.RawData
 
-case class UpdateStateBenefitsRawData(nino: String, taxYear: String, benefitId: String, body: AnyContentAsJson) extends RawData
+case class UpdateStateBenefitRawData(nino: String, taxYear: String, benefitId: String, body: AnyContentAsJson) extends RawData

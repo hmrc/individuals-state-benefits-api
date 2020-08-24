@@ -21,7 +21,7 @@ import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockUpdateStateBenefitConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.update.{UpdateStateBenefitsRequest, UpdateStateBenefitsRequestBody}
+import v1.models.request.update.{UpdateStateBenefitRequest, UpdateStateBenefitRequestBody}
 
 import scala.concurrent.Future
 
@@ -32,12 +32,12 @@ class UpdateStateBenefitServiceSpec extends ServiceSpec {
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
   private val correlationId = "X-123"
 
-  val updateStateBenefitsRequestBody: UpdateStateBenefitsRequestBody = UpdateStateBenefitsRequestBody(
+  val updateStateBenefitsRequestBody: UpdateStateBenefitRequestBody = UpdateStateBenefitRequestBody(
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
   )
 
-  val requestData: UpdateStateBenefitsRequest = UpdateStateBenefitsRequest(
+  val requestData: UpdateStateBenefitRequest = UpdateStateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,
