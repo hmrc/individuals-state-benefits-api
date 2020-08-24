@@ -21,9 +21,9 @@ import support.UnitSpec
 import v1.models.request.updateBenefit.UpdateBenefitRequestBody
 import v1.models.utils.JsonErrorValidators
 
-class UpdateStateBenefitsRequestBodySpec extends UnitSpec with JsonErrorValidators {
+class UpdateBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val inputJson = Json.parse(
+  val inputJson: JsValue = Json.parse(
     """
       |{
       |   "startDate": "2019-04-06",
