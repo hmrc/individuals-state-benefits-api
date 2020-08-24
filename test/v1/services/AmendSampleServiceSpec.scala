@@ -38,7 +38,7 @@ class AmendSampleServiceSpec extends ServiceSpec {
 
   private val requestData = AmendSampleRequest(
     nino = Nino(nino),
-    desTaxYear = DesTaxYear.fromMtd(taxYear),
+    taxYear = DesTaxYear.fromMtd(taxYear),
     body = requestBody
   )
 

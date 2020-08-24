@@ -18,4 +18,4 @@ package v1.models.request.addBenefit
 
 import uk.gov.hmrc.domain.Nino
 
-case class AddBenefitRequest(nino: Nino, taxYear: String, body: AddBenefitBody)
+case class AddBenefitRequest(nino: Nino, taxYear: String, body: AddBenefitRequestBody)

@@ -20,16 +20,16 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 import v1.models.domain.BenefitType
 
-case class AddBenefitBody(benefitType: BenefitType, startDate: String, endDate: Option[String])
+case class AddBenefitRequestBody(benefitType: BenefitType, startDate: String, endDate: Option[String])
 
-object AddBenefitBody {
+object AddBenefitRequestBody {
 
-  implicit val reads: Reads[AddBenefitBody] = (
+  implicit val reads: Reads[AddBenefitRequestBody] = (
     (JsPath \ "benefitType").read[BenefitType] and
       (JsPath \ "startDate").read[String] and
       (JsPath \ "endDate").readNullable[String]
-    ) (AddBenefitBody.apply _)
+    ) (AddBenefitRequestBody.apply _)
 
 
-  implicit val writes: Writes[AddBenefitBody] = Json.writes[AddBenefitBody]
+  implicit val writes: Writes[AddBenefitRequestBody] = Json.writes[AddBenefitRequestBody]
 }

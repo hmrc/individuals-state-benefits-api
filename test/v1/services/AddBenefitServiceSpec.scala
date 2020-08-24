@@ -22,7 +22,7 @@ import v1.mocks.connectors.MockAddBenefitConnector
 import v1.models.domain.BenefitType
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.addBenefit.{AddBenefitBody, AddBenefitRequest}
+import v1.models.request.addBenefit.{AddBenefitRequest, AddBenefitRequestBody}
 import v1.models.response.AddBenefitResponse
 
 import scala.concurrent.Future
@@ -33,7 +33,7 @@ class AddBenefitServiceSpec extends ServiceSpec {
   private val taxYear = "2021-22"
   private val correlationId = "X-corr"
 
-  val addBenefitRequestBody: AddBenefitBody = AddBenefitBody(
+  val addBenefitRequestBody: AddBenefitRequestBody = AddBenefitRequestBody(
     benefitType = BenefitType.incapacityBenefit,
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")

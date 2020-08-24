@@ -21,7 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.domain.BenefitType
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.addBenefit.{AddBenefitBody, AddBenefitRequest}
+import v1.models.request.addBenefit.{AddBenefitRequest, AddBenefitRequestBody}
 import v1.models.response.AddBenefitResponse
 
 import scala.concurrent.Future
@@ -31,7 +31,7 @@ class AddBenefitConnectorSpec extends ConnectorSpec {
   val nino: String = "AA111111A"
   val taxYear: String = "2021-22"
 
-  val addBenefitRequestBody: AddBenefitBody = AddBenefitBody(
+  val addBenefitRequestBody: AddBenefitRequestBody = AddBenefitRequestBody(
     benefitType = BenefitType.incapacityBenefit,
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")

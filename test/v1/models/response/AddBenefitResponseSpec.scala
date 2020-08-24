@@ -23,9 +23,9 @@ class AddBenefitResponseSpec extends UnitSpec {
 
   val model: AddBenefitResponse = AddBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 
-  "AddStateBenefitsResponse" when {
+  "AddBenefitResponse" when {
     "read from valid JSON" should {
-      "produce the expected AddStateBenefitsResponse object" in {
+      "produce the expected AddBenefitResponse object" in {
         val json: JsValue = Json.parse(
           """
             |{

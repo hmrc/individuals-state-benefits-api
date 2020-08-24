@@ -18,7 +18,6 @@ package v1.models.request.updateBenefit
 
 import play.api.libs.json._
 import support.UnitSpec
-import v1.models.request.updateBenefit.UpdateBenefitRequestBody
 import v1.models.utils.JsonErrorValidators
 
 class UpdateBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {

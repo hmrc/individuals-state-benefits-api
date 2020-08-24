@@ -19,10 +19,9 @@ package v1.models.request.addBenefit
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.domain.BenefitType._
-import v1.models.request.addBenefit.AddBenefitBody
 import v1.models.utils.JsonErrorValidators
 
-class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
+class AddBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
   val startDate = "2020-08-03"
   val endDate = "2020-12-03"
@@ -40,7 +39,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(incapacityBenefit, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(incapacityBenefit, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with statePension" in {
@@ -54,7 +53,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(statePension, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(statePension, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with statePensionLumpSum" in {
@@ -68,7 +67,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(statePensionLumpSum, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(statePensionLumpSum, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with employmentSupportAllowance" in {
@@ -82,7 +81,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(employmentSupportAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(employmentSupportAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with jobSeekersAllowance" in {
@@ -96,7 +95,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(jobSeekersAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(jobSeekersAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with bereavementAllowance" in {
@@ -110,7 +109,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(bereavementAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(bereavementAllowance, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "valid Benefit with otherStateBenefits" in {
@@ -124,7 +123,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(otherStateBenefits, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(otherStateBenefits, startDate, Some(endDate)) shouldBe inputJson.as[AddBenefitRequestBody]
       }
 
       "a valid body with optional fields missing" in {
@@ -137,7 +136,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
         """.stripMargin
         )
 
-        AddBenefitBody(otherStateBenefits, startDate, None) shouldBe inputJson.as[AddBenefitBody]
+        AddBenefitRequestBody(otherStateBenefits, startDate, None) shouldBe inputJson.as[AddBenefitRequestBody]
       }
     }
     "write" when {
@@ -151,7 +150,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
              |}
         """.stripMargin
         )
-        Json.toJson(AddBenefitBody(otherStateBenefits, startDate, Some(endDate))) shouldBe jsResult
+        Json.toJson(AddBenefitRequestBody(otherStateBenefits, startDate, Some(endDate))) shouldBe jsResult
       }
 
       "a valid model with optional fields missing is provided" in {
@@ -163,7 +162,7 @@ class AddBenefitBodySpec extends UnitSpec with JsonErrorValidators {
              |}
         """.stripMargin
         )
-        Json.toJson(AddBenefitBody(otherStateBenefits, startDate, None)) shouldBe jsResult
+        Json.toJson(AddBenefitRequestBody(otherStateBenefits, startDate, None)) shouldBe jsResult
       }
     }
   }

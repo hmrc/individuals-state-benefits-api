@@ -41,53 +41,53 @@ class UpdateBenefitRequestParserSpec extends UnitSpec {
 
   private val validRawBody = AnyContentAsJson(validRequestJson)
 
-  private val updateStateBenefitsRawData = UpdateBenefitRawData(
+  private val updateBenefitRawData = UpdateBenefitRawData(
     nino = nino,
     taxYear = taxYear,
     benefitId = benefitId,
     body = validRawBody
   )
 
-  private val updateStateBenefitsRequestBody = UpdateBenefitRequestBody(
+  private val updateBenefitRequestBody = UpdateBenefitRequestBody(
     startDate = "2020-04-06",
     endDate = Some("2021-01-01")
   )
 
-  private val updateStateBenefitsRequest = UpdateBenefitRequest(
+  private val updateBenefitRequest = UpdateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
     benefitId = benefitId,
-    body = updateStateBenefitsRequestBody
+    body = updateBenefitRequestBody
   )
 
   trait Test extends MockUpdateBenefitValidator {
     lazy val parser: UpdateBenefitRequestParser = new UpdateBenefitRequestParser(
-      validator = mockUpdateStateBenefitsValidator
+      validator = mockUpdateBenefitValidator
     )
   }
 
   "parse" should {
     "return a request object" when {
       "valid request data is supplied" in new Test {
-        MockUpdateStateBenefitsValidator.validate(updateStateBenefitsRawData).returns(Nil)
-        parser.parseRequest(updateStateBenefitsRawData) shouldBe Right(updateStateBenefitsRequest)
+        MockUpdateBenefitValidator.validate(updateBenefitRawData).returns(Nil)
+        parser.parseRequest(updateBenefitRawData) shouldBe Right(updateBenefitRequest)
       }
     }
 
     "return an ErrorWrapper" when {
       "a single validation error occurs" in new Test {
-        MockUpdateStateBenefitsValidator.validate(updateStateBenefitsRawData.copy(nino = "notANino"))
+        MockUpdateBenefitValidator.validate(updateBenefitRawData.copy(nino = "notANino"))
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(updateStateBenefitsRawData.copy(nino = "notANino")) shouldBe
+        parser.parseRequest(updateBenefitRawData.copy(nino = "notANino")) shouldBe
           Left(ErrorWrapper(None, NinoFormatError, None))
       }
 
       "multiple path parameter validation errors occur" in new Test {
-        MockUpdateStateBenefitsValidator.validate(updateStateBenefitsRawData.copy(nino = "notANino", taxYear = "notATaxYear"))
+        MockUpdateBenefitValidator.validate(updateBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear"))
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(updateStateBenefitsRawData.copy(nino = "notANino", taxYear = "notATaxYear")) shouldBe
+        parser.parseRequest(updateBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear")) shouldBe
           Left(ErrorWrapper(None, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
 
@@ -109,10 +109,10 @@ class UpdateBenefitRequestParserSpec extends UnitSpec {
           EndDateFormatError
         )
 
-        MockUpdateStateBenefitsValidator.validate(updateStateBenefitsRawData.copy(body = invalidValueRawBody))
+        MockUpdateBenefitValidator.validate(updateBenefitRawData.copy(body = invalidValueRawBody))
           .returns(errors)
 
-        parser.parseRequest(updateStateBenefitsRawData.copy(body = invalidValueRawBody)) shouldBe
+        parser.parseRequest(updateBenefitRawData.copy(body = invalidValueRawBody)) shouldBe
           Left(ErrorWrapper(None, BadRequestError, Some(errors)))
       }
     }
