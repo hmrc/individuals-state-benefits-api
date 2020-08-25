@@ -95,7 +95,7 @@ class UpdateBenefitControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT)
+          DesStub.onSuccess(DesStub.PUT, desUri, CREATED)
         }
 
         val response: WSResponse = await(request().put(requestJson))
