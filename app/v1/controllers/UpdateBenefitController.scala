@@ -83,7 +83,7 @@ class UpdateBenefitController @Inject()(val authService: EnrolmentsAuthService,
     (errorWrapper.error: @unchecked) match {
       case BadRequestError | NinoFormatError | TaxYearFormatError | BenefitIdFormatError |
            RuleTaxYearNotSupportedError | RuleTaxYearRangeInvalidError | RuleTaxYearNotEndedError |
-           RuleIncorrectOrEmptyBodyError | StartDateFormatError | EndDateFormatError |
+           CustomMtdError(RuleIncorrectOrEmptyBodyError.code) | StartDateFormatError | EndDateFormatError |
            RuleEndDateBeforeStartDateError | RuleStartDateAfterTaxYearEndError |
            RuleEndDateBeforeTaxYearStartError => BadRequest(Json.toJson(errorWrapper))
       case RuleUpdateForbiddenError => Forbidden(Json.toJson(errorWrapper))
