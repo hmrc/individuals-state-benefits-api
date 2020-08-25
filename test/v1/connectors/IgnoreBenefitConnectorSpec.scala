@@ -46,7 +46,7 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
 
   "IgnoreBenefitConnector" when {
     "happy path" should {
-      "return a 204 No Content" in new Test {
+      "return a 201 No Content" in new Test {
         private val outcome = Right(ResponseWrapper(correlationId, ()))
 
         MockedHttpClient.put(
