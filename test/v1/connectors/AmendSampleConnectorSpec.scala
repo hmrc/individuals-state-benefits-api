@@ -32,7 +32,7 @@ class AmendSampleConnectorSpec extends ConnectorSpec {
 
   val request: AmendSampleRequest = AmendSampleRequest(
     nino = Nino(nino),
-    desTaxYear = desTaxYear,
+    taxYear = desTaxYear,
     body = AmendSampleRequestBody("someData")
   )
 

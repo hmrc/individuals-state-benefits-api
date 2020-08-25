@@ -34,4 +34,5 @@ trait MockAmendSampleValidator extends MockFactory {
         .expects(data)
     }
   }
+
 }

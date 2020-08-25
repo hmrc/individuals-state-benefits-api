@@ -34,7 +34,7 @@ class AmendSampleConnector @Inject()(val http: HttpClient,
     import v1.connectors.httpparsers.StandardDesHttpParser._
 
     val nino = request.nino.nino
-    val taxYear = request.desTaxYear
+    val taxYear = request.taxYear
 
     put(
       body = request.body,
