@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.response
+package v1.models.response.listBenefits
+
 import config.AppConfig
 import play.api.libs.json._
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
-import v1.models.response.listBenefits.{CustomerAddedStateBenefits, StateBenefits}
 
 case class ListBenefitResponse(stateBenefits: StateBenefits, customerAddedStateBenefits: CustomerAddedStateBenefits)
 

@@ -18,7 +18,7 @@ package v1.models.response
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, StateBenefits}
+import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitResponse, StateBenefits}
 
 class ListBenefitResponseSpec extends UnitSpec {
 
