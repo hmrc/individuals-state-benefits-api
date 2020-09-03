@@ -20,25 +20,25 @@ import config.AppConfig
 import javax.inject.Inject
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.MtdError
-import v1.models.request.listBenefits.ListBenefitsRawData
+import v1.models.request.listBenefit.ListBenefitRawData
 
 class ListBenefitsValidator @Inject()(implicit appConfig: AppConfig)
-  extends Validator[ListBenefitsRawData] {
+  extends Validator[ListBenefitRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
-  override def validate(data: ListBenefitsRawData): List[MtdError] = {
+  override def validate(data: ListBenefitRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 
-  private def parameterFormatValidation: ListBenefitsRawData => List[List[MtdError]] = (data: ListBenefitsRawData) => {
+  private def parameterFormatValidation: ListBenefitRawData => List[List[MtdError]] = (data: ListBenefitRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear)
     )
   }
 
-  private def parameterRuleValidation: ListBenefitsRawData => List[List[MtdError]] = (data: ListBenefitsRawData) => {
+  private def parameterRuleValidation: ListBenefitRawData => List[List[MtdError]] = (data: ListBenefitRawData) => {
     List(
       TaxYearNotSupportedValidation.validate(data.taxYear)
     )

@@ -20,14 +20,14 @@ import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.validators.MockListBenefitsValidator
 import v1.models.errors._
-import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
+import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
 
-class ListBenefitsRequestParserSpec extends UnitSpec {
+class ListBenefitRequestParserSpec extends UnitSpec {
 
   val nino: String = "AA123456B"
   val taxYear: String = "2020-21"
 
-  val listBenefitsRawData: ListBenefitsRawData = ListBenefitsRawData(
+  val listBenefitsRawData: ListBenefitRawData = ListBenefitRawData(
     nino = nino,
     taxYear = taxYear
   )
@@ -44,7 +44,7 @@ class ListBenefitsRequestParserSpec extends UnitSpec {
         MockListBenefitsValidator.validate(listBenefitsRawData).returns(Nil)
 
         parser.parseRequest(listBenefitsRawData) shouldBe
-          Right(ListBenefitsRequest(Nino(nino), taxYear))
+          Right(ListBenefitRequest(Nino(nino), taxYear))
       }
     }
 

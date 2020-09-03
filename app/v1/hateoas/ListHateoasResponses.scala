@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package v1.models.request.listBenefits
+package v1.hateoas
 
-import uk.gov.hmrc.domain.Nino
+import config.AppConfig
+import play.api.libs.json.{JsValue, Json}
 
-case class ListBenefitsRequest(nino: Nino, taxYear: String)
+trait ListHateoasResponses extends HateoasLinks {
+
+  def listBenefitHateoasBody(appConfig: AppConfig, nino: String, taxYear: String): JsValue = {
+
+    val links = Seq(
+      listBenefits(appConfig, nino, taxYear),
+      addBenefit(appConfig, nino, taxYear)
+    )
+
+    Json.obj("links" -> links)
+  }
+}

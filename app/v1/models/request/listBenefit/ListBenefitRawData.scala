@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.listBenefits
+package v1.models.request.listBenefit
 
 import v1.models.request.RawData
 
-case class ListBenefitsRawData(nino: String, taxYear: String) extends RawData
+case class ListBenefitRawData(nino: String, taxYear: String) extends RawData
