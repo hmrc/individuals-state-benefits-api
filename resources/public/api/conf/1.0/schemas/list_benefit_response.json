@@ -5,6 +5,7 @@
   "type": "object",
   "required": ["links"],
   "properties": {
+
     "stateBenefits": {
       "description": "Object containing details of state benefits held by HMRC.",
       "$ref": "#/definitions/stateBenefits"
@@ -49,6 +50,7 @@
       }
     }
   },
+
   "definitions": {
     "benefitId": {
       "description": "Unique identifier of the benefit.",
@@ -105,7 +107,6 @@
       "example": "1999.99"
     },
 
-
     "stateBenefit": {
       "type": "object",
       "additionalProperties": false,
@@ -134,10 +135,49 @@
         },
         "taxPaid": {
           "$ref": "#/definitions/taxPaidZeroPositive"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A list of endpoint links that indicate possible actions related to the current resource.",
+            "properties": {
+              "href": {
+                "description": "The relative url of the endpoint",
+                "type": "string",
+                "example": "/individuals/state-benefits/{nino}/{taxYear}/{benefitId}"
+              },
+              "rel": {
+                "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.",
+                "type": "string",
+                "enum": [
+                  "self",
+                  "update-state-benefit",
+                  "delete-state-benefit",
+                  "ignore-state-benefit",
+                  "update-state-benefit-amounts",
+                  "delete-state-benefit-amounts"
+                ]
+              },
+              "method": {
+                "description": "The HTTP method type for the endpoint.",
+                "type": "string",
+                "enum": [
+                  "GET",
+                  "PUT",
+                  "DELETE"
+                ]
+              }
+            },
+            "required": [
+              "href",
+              "rel",
+              "method"
+            ]
+          }
         }
       }
     },
-
     "stateBenefitNegativeTaxPaid": {
       "type": "object",
       "additionalProperties": false,
@@ -166,10 +206,49 @@
         },
         "taxPaid": {
           "$ref": "#/definitions/taxPaidNegPositive"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A list of endpoint links that indicate possible actions related to the current resource.",
+            "properties": {
+              "href": {
+                "description": "The relative url of the endpoint",
+                "type": "string",
+                "example": "/individuals/state-benefits/{nino}/{taxYear}/{benefitId}"
+              },
+              "rel": {
+                "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.",
+                "type": "string",
+                "enum": [
+                  "self",
+                  "update-state-benefit",
+                  "delete-state-benefit",
+                  "ignore-state-benefit",
+                  "update-state-benefit-amounts",
+                  "delete-state-benefit-amounts"
+                ]
+              },
+              "method": {
+                "description": "The HTTP method type for the endpoint.",
+                "type": "string",
+                "enum": [
+                  "GET",
+                  "PUT",
+                  "DELETE"
+                ]
+              }
+            },
+            "required": [
+              "href",
+              "rel",
+              "method"
+            ]
+          }
         }
       }
     },
-
     "customerAddedStateBenefit": {
       "type": "object",
       "additionalProperties": false,
@@ -195,10 +274,49 @@
         },
         "taxPaid": {
           "$ref": "#/definitions/taxPaidZeroPositive"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A list of endpoint links that indicate possible actions related to the current resource.",
+            "properties": {
+              "href": {
+                "description": "The relative url of the endpoint",
+                "type": "string",
+                "example": "/individuals/state-benefits/{nino}/{taxYear}/{benefitId}"
+              },
+              "rel": {
+                "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.",
+                "type": "string",
+                "enum": [
+                  "self",
+                  "update-state-benefit",
+                  "delete-state-benefit",
+                  "ignore-state-benefit",
+                  "update-state-benefit-amounts",
+                  "delete-state-benefit-amounts"
+                ]
+              },
+              "method": {
+                "description": "The HTTP method type for the endpoint.",
+                "type": "string",
+                "enum": [
+                  "GET",
+                  "PUT",
+                  "DELETE"
+                ]
+              }
+            },
+            "required": [
+              "href",
+              "rel",
+              "method"
+            ]
+          }
         }
       }
     },
-
     "customerAddedNegativeTaxPaid": {
       "type": "object",
       "additionalProperties": false,
@@ -224,11 +342,49 @@
         },
         "taxPaid": {
           "$ref": "#/definitions/taxPaidNegPositive"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A list of endpoint links that indicate possible actions related to the current resource.",
+            "properties": {
+              "href": {
+                "description": "The relative url of the endpoint",
+                "type": "string",
+                "example": "/individuals/state-benefits/{nino}/{taxYear}/{benefitId}"
+              },
+              "rel": {
+                "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.",
+                "type": "string",
+                "enum": [
+                  "self",
+                  "update-state-benefit",
+                  "delete-state-benefit",
+                  "ignore-state-benefit",
+                  "update-state-benefit-amounts",
+                  "delete-state-benefit-amounts"
+                ]
+              },
+              "method": {
+                "description": "The HTTP method type for the endpoint.",
+                "type": "string",
+                "enum": [
+                  "GET",
+                  "PUT",
+                  "DELETE"
+                ]
+              }
+            },
+            "required": [
+              "href",
+              "rel",
+              "method"
+            ]
+          }
         }
       }
     },
-
-
 
     "stateBenefits": {
       "type": "object",
