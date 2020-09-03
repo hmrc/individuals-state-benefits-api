@@ -18,50 +18,50 @@ package v1.controllers.requestParsers
 
 import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import v1.mocks.validators.MockListBenefitValidator
+import v1.mocks.validators.MockListBenefitsValidator
 import v1.models.errors._
-import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
+import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 
-class ListBenefitRequestParserSpec extends UnitSpec {
+class ListBenefitsRequestParserSpec extends UnitSpec {
 
   val nino: String = "AA123456B"
   val taxYear: String = "2020-21"
 
-  val listBenefitRawData: ListBenefitRawData = ListBenefitRawData(
+  val listBenefitsRawData: ListBenefitsRawData = ListBenefitsRawData(
     nino = nino,
     taxYear = taxYear
   )
 
-  trait Test extends MockListBenefitValidator {
-    lazy val parser: ListBenefitRequestParser = new ListBenefitRequestParser(
-      validator = mockListBenefitValidator
+  trait Test extends MockListBenefitsValidator {
+    lazy val parser: ListBenefitsRequestParser = new ListBenefitsRequestParser(
+      validator = mockListBenefitsValidator
     )
   }
 
   "parse" should {
     "return a request object" when {
       "valid request data is supplied" in new Test {
-        MockListBenefitValidator.validate(listBenefitRawData).returns(Nil)
+        MockListBenefitsValidator.validate(listBenefitsRawData).returns(Nil)
 
-        parser.parseRequest(listBenefitRawData) shouldBe
-          Right(ListBenefitRequest(Nino(nino), taxYear))
+        parser.parseRequest(listBenefitsRawData) shouldBe
+          Right(ListBenefitsRequest(Nino(nino), taxYear))
       }
     }
 
     "return an ErrorWrapper" when {
       "a single validation error occurs" in new Test {
-        MockListBenefitValidator.validate(listBenefitRawData)
+        MockListBenefitsValidator.validate(listBenefitsRawData)
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(listBenefitRawData) shouldBe
+        parser.parseRequest(listBenefitsRawData) shouldBe
           Left(ErrorWrapper(None, NinoFormatError, None))
       }
 
       "multiple validation errors occur (NinoFormatError and TaxYearFormatError errors)" in new Test {
-        MockListBenefitValidator.validate(listBenefitRawData)
+        MockListBenefitsValidator.validate(listBenefitsRawData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(listBenefitRawData) shouldBe
+        parser.parseRequest(listBenefitsRawData) shouldBe
           Left(ErrorWrapper(None, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
     }

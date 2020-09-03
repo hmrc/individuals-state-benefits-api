@@ -22,7 +22,7 @@ import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
 import v1.models.hateoas.{HateoasData, HateoasWrapper, Link}
-import v1.models.response.listBenefit.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitHateoasData, ListBenefitResponse, StateBenefits}
+import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitsHateoasData, ListBenefitsResponse, StateBenefits}
 import v1.models.response.{AddBenefitHateoasData, AddBenefitResponse}
 
 class HateoasFactorySpec extends UnitSpec with MockAppConfig {
@@ -44,8 +44,8 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
   val addStateBenefitResponse: AddBenefitResponse = AddBenefitResponse(benefitId)
   val addStateBenefitsHateoasData: AddBenefitHateoasData = AddBenefitHateoasData(nino, taxYear, benefitId)
 
-  val listBenefitHateoasData: ListBenefitHateoasData = ListBenefitHateoasData(nino, taxYear, benefitId)
-  val listBenefitResponse: ListBenefitResponse = ListBenefitResponse(
+  val listBenefitsHateoasData: ListBenefitsHateoasData = ListBenefitsHateoasData(nino, taxYear, benefitId)
+  val listBenefitsResponse: ListBenefitsResponse = ListBenefitsResponse(
     stateBenefits = StateBenefits(
       incapacityBenefit = Seq(
         IncapacityBenefit(
@@ -218,9 +218,9 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
     }
 
     "use the list state benefits HateoasData specific links" in new Test {
-      hateoasFactory.wrap(listBenefitResponse, listBenefitHateoasData) shouldBe
+      hateoasFactory.wrap(listBenefitsResponse, listBenefitsHateoasData) shouldBe
         HateoasWrapper(
-          listBenefitResponse,
+          listBenefitsResponse,
           List(
             Link("/context/AA123456A/2020-21",POST,"add-state-benefit"),
             Link("/context/AA123456A/2020-21",GET,"self")

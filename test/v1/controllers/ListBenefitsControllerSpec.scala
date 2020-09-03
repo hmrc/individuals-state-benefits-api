@@ -14,26 +14,47 @@
  * limitations under the License.
  */
 
-package v1.services
+package v1.controllers
 
+import mocks.MockAppConfig
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
-import v1.controllers.EndpointLogContext
-import v1.mocks.connectors.MockListBenefitConnector
-import v1.models.errors._
+import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.requestParsers.MockListBenefitsRequestParser
+import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitsService, MockMtdIdLookupService}
+import v1.models.errors.{BadRequestError, NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, _}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefit.ListBenefitRequest
-import v1.models.response.listBenefit.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitResponse, StateBenefits}
+import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
+import v1.models.response.listBenefits._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ListBenefitServiceSpec extends ServiceSpec {
+class ListBenefitsControllerSpec
+  extends ControllerBaseSpec
+    with MockEnrolmentsAuthService
+    with MockMtdIdLookupService
+    with MockAppConfig
+    with MockListBenefitsService
+    with MockListBenefitsRequestParser
+    with MockAuditService {
 
-  private val nino = "AA112233A"
-  private val taxYear = "2019"
+  private val nino: String = "AA123456B"
+  private val taxYear: String = "2020-21"
+  val correlationId: String = "X-123"
 
-  private val requestData = ListBenefitRequest(Nino(nino), taxYear)
+  val rawData: ListBenefitsRawData = ListBenefitsRawData(
+    nino = nino,
+    taxYear = taxYear
+  )
 
-  private val validResponse = ListBenefitResponse(
+  val requestData: ListBenefitsRequest = ListBenefitsRequest(
+    nino = Nino(nino),
+    taxYear = taxYear
+  )
+
+  val responseData: ListBenefitsResponse = ListBenefitsResponse(
     stateBenefits = StateBenefits(
       incapacityBenefit = Seq(
         IncapacityBenefit(
@@ -171,49 +192,121 @@ class ListBenefitServiceSpec extends ServiceSpec {
     )
   )
 
+  trait Test {
+    val hc: HeaderCarrier = HeaderCarrier()
 
-  trait Test extends MockListBenefitConnector {
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+    val controller = new ListBenefitsController(
+      authService = mockEnrolmentsAuthService,
+      lookupService = mockMtdIdLookupService,
+      appConfig = mockAppConfig,
+      requestParser = mockListBenefitsRequestParser,
+      service = mockListBenefitsService,
+      cc = cc
+    )
 
-    val service: ListBenefitService = new ListBenefitService(connector = mockListBenefitConnector)
+    MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
+    MockedEnrolmentsAuthService.authoriseUser()
+    MockedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
   }
 
-  "ListBenefitService" when {
-    "listBenefit" must {
-      "return correct result for a success" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, validResponse))
+  val responseBody: JsValue = Json.parse(
+    s"""
+      |{
+      |  "links": [
+      |    {
+      |      "href": "/individuals/state-benefits/$nino/$taxYear",
+      |      "method": "GET",
+      |      "rel": "self"
+      |    },
+      |    {
+      |      "href": "/individuals/state-benefits/$nino/$taxYear",
+      |      "method": "POST",
+      |      "rel": "add-state-benefit"
+      |    }
+      |  ]
+      |}
+    """.stripMargin
+  )
 
+  "ListBenefitsController" should {
+    "return OK" when {
+      "happy path" in new Test {
 
-        MockListBenefitConnector.listBenefit(requestData)
-          .returns(Future.successful(outcome))
+        MockListBenefitsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
 
-        await(service.listBenefit(requestData)) shouldBe outcome
+        MockListBenefitsService
+          .listBenefits(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
+
+        val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
+
+        status(result) shouldBe OK
+        contentAsJson(result) shouldBe responseBody
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
+    }
 
-      "map errors according to spec" when {
+    "return the error as per spec" when {
+      "parser errors occur" must {
+        def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
+          s"a ${error.code} error is returned from the parser" in new Test {
 
-        def serviceError(desErrorCode: String, error: MtdError): Unit =
-          s"a $desErrorCode error is returned from the service" in new Test {
+            MockListBenefitsRequestParser
+              .parse(rawData)
+              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            MockListBenefitConnector.listBenefit(requestData)
-              .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
 
-            await(service.listBenefit(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+            status(result) shouldBe expectedStatus
+            contentAsJson(result) shouldBe Json.toJson(error)
+            header("X-CorrelationId", result) shouldBe Some(correlationId)
+
           }
+        }
 
         val input = Seq(
-          ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
-          ("INVALID_TAX_YEAR", TaxYearFormatError),
-          ("INVALID_BENEFIT_ID", DownstreamError),
-          ("INVALID_CORRELATIONID", DownstreamError),
-          ("NO_DATA_FOUND", NotFoundError),
-          ("INVALID_DATE_RANGE", RuleTaxYearNotSupportedError),
-          ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
-          ("SERVER_ERROR", DownstreamError),
-          ("SERVICE_UNAVAILABLE", DownstreamError)
+          (BadRequestError, BAD_REQUEST),
+          (NinoFormatError, BAD_REQUEST),
+          (TaxYearFormatError, BAD_REQUEST),
+          (RuleTaxYearNotSupportedError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
+          (NotFoundError, NOT_FOUND),
+          (DownstreamError, INTERNAL_SERVER_ERROR)
         )
 
-        input.foreach(args => (serviceError _).tupled(args))
+        input.foreach(args => (errorsFromParserTester _).tupled(args))
+      }
+
+      "service errors occur" must {
+        def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
+          s"a $mtdError error is returned from the service" in new Test {
+
+            MockListBenefitsRequestParser
+              .parse(rawData)
+              .returns(Right(requestData))
+
+            MockListBenefitsService
+              .listBenefits(requestData)
+              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+
+            val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
+
+            status(result) shouldBe expectedStatus
+            contentAsJson(result) shouldBe Json.toJson(mtdError)
+            header("X-CorrelationId", result) shouldBe Some(correlationId)
+          }
+        }
+
+        val input = Seq(
+          (NinoFormatError, BAD_REQUEST),
+          (TaxYearFormatError, BAD_REQUEST),
+          (NotFoundError, NOT_FOUND),
+          (DownstreamError, INTERNAL_SERVER_ERROR),
+        )
+
+        input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }

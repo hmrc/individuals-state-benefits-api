@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package v1.models.request.listBenefit
+package v1.controllers.requestParsers
 
-import v1.models.request.RawData
+import javax.inject.Inject
+import uk.gov.hmrc.domain.Nino
+import v1.controllers.requestParsers.validators.ListBenefitsValidator
+import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 
-case class ListBenefitRawData(nino: String, taxYear: String) extends RawData
+class ListBenefitsRequestParser @Inject()(val validator: ListBenefitsValidator)
+  extends RequestParser[ListBenefitsRawData, ListBenefitsRequest] {
+
+  override protected def requestFor(data: ListBenefitsRawData): ListBenefitsRequest =
+    ListBenefitsRequest(Nino(data.nino), data.taxYear)
+}

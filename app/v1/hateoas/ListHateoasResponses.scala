@@ -21,10 +21,10 @@ import play.api.libs.json.{JsValue, Json}
 
 trait ListHateoasResponses extends HateoasLinks {
 
-  def listBenefitHateoasBody(appConfig: AppConfig, nino: String, taxYear: String): JsValue = {
+  def listBenefitsHateoasBody(appConfig: AppConfig, nino: String, taxYear: String): JsValue = {
 
     val links = Seq(
-      listBenefit(appConfig, nino, taxYear),
+      listBenefits(appConfig, nino, taxYear),
       addBenefit(appConfig, nino, taxYear)
     )
 

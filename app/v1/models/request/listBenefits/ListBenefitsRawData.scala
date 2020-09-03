@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.listBenefit
+package v1.models.request.listBenefits
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.request.RawData
 
-case class ListBenefitRequest(nino: Nino, taxYear: String)
+case class ListBenefitsRawData(nino: String, taxYear: String) extends RawData

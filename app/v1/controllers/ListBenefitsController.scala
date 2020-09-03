@@ -24,33 +24,33 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.mvc.Http.MimeTypes
 import utils.Logging
-import v1.controllers.requestParsers.ListBenefitRequestParser
+import v1.controllers.requestParsers.ListBenefitsRequestParser
 import v1.hateoas.ListHateoasResponses
 import v1.models.errors._
-import v1.models.request.listBenefit.ListBenefitRawData
-import v1.services.{EnrolmentsAuthService, ListBenefitService, MtdIdLookupService}
+import v1.models.request.listBenefits.ListBenefitsRawData
+import v1.services.{EnrolmentsAuthService, ListBenefitsService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListBenefitController @Inject()(val authService: EnrolmentsAuthService,
+class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
                                        val lookupService: MtdIdLookupService,
                                        appConfig: AppConfig,
-                                       requestParser: ListBenefitRequestParser,
-                                       service: ListBenefitService,
+                                       requestParser: ListBenefitsRequestParser,
+                                       service: ListBenefitsService,
                                        cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging with ListHateoasResponses {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
-      controllerName = "ListBenefitController",
-      endpointName = "ListBenefitAmounts"
+      controllerName = "ListBenefitsController",
+      endpointName = "ListBenefitsAmounts"
     )
 
-  def listBenefit(nino: String, taxYear: String): Action[AnyContent] =
+  def listBenefits(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
 
-      val rawData = ListBenefitRawData(
+      val rawData = ListBenefitsRawData(
         nino = nino,
         taxYear = taxYear
       )
@@ -58,13 +58,13 @@ class ListBenefitController @Inject()(val authService: EnrolmentsAuthService,
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.listBenefit(parsedRequest))
+          serviceResponse <- EitherT(service.listBenefits(parsedRequest))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
-          Ok(listBenefitHateoasBody(appConfig, nino, taxYear))
+          Ok(listBenefitsHateoasBody(appConfig, nino, taxYear))
             .withApiHeaders(serviceResponse.correlationId)
             .as(MimeTypes.JSON)
         }

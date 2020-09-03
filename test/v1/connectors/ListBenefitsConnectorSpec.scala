@@ -20,19 +20,19 @@ import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefit.ListBenefitRequest
-import v1.models.response.listBenefit.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitResponse, StateBenefits}
+import v1.models.request.listBenefits.ListBenefitsRequest
+import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitsResponse, StateBenefits}
 
 import scala.concurrent.Future
 
-class ListBenefitConnectorSpec extends ConnectorSpec {
+class ListBenefitsConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA111111A"
   val taxYear: String = "2019"
 
-  val request: ListBenefitRequest = ListBenefitRequest(Nino(nino), taxYear)
+  val request: ListBenefitsRequest = ListBenefitsRequest(Nino(nino), taxYear)
 
-  private val validResponse = ListBenefitResponse(
+  private val validResponse = ListBenefitsResponse(
     stateBenefits = StateBenefits(
       incapacityBenefit = Seq(
         IncapacityBenefit(
@@ -172,7 +172,7 @@ class ListBenefitConnectorSpec extends ConnectorSpec {
 
   class Test extends MockHttpClient with MockAppConfig {
 
-    val connector: ListBenefitConnector = new ListBenefitConnector(
+    val connector: ListBenefitsConnector = new ListBenefitsConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
@@ -187,8 +187,8 @@ class ListBenefitConnectorSpec extends ConnectorSpec {
     MockedAppConfig.desEnvironment returns "des-environment"
   }
 
-  "ListBenefitConnector" when {
-    "listBenefit" must {
+  "ListBenefitsConnector" when {
+    "listBenefits" must {
       "return a 200 status for a success scenario" in new Test {
 
         val outcome = Right(ResponseWrapper(correlationId, validResponse))
@@ -200,7 +200,7 @@ class ListBenefitConnectorSpec extends ConnectorSpec {
           )
           .returns(Future.successful(outcome))
 
-        await(connector.listBenefit(request)) shouldBe outcome
+        await(connector.listBenefits(request)) shouldBe outcome
       }
     }
   }

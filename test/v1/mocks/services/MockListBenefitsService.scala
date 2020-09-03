@@ -22,21 +22,21 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefit.ListBenefitRequest
-import v1.models.response.listBenefit.ListBenefitResponse
-import v1.services.ListBenefitService
+import v1.models.request.listBenefits.ListBenefitsRequest
+import v1.models.response.listBenefits.ListBenefitsResponse
+import v1.services.ListBenefitsService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListBenefitService extends MockFactory {
+trait MockListBenefitsService extends MockFactory {
 
-  val mockListBenefitService: ListBenefitService = mock[ListBenefitService]
+  val mockListBenefitsService: ListBenefitsService = mock[ListBenefitsService]
 
-  object MockListBenefitService{
+  object MockListBenefitsService{
 
-    def listBenefit(requestData: ListBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListBenefitResponse]]]] = {
-      (mockListBenefitService
-        .listBenefit(_: ListBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
+    def listBenefits(requestData: ListBenefitsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListBenefitsResponse]]]] = {
+      (mockListBenefitsService
+        .listBenefits(_: ListBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(requestData, *, *, *)
     }
   }

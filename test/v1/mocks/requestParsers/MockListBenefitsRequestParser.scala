@@ -18,17 +18,17 @@ package v1.mocks.requestParsers
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.ListBenefitRequestParser
+import v1.controllers.requestParsers.ListBenefitsRequestParser
 import v1.models.errors.ErrorWrapper
-import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
+import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 
-trait MockListBenefitRequestParser extends MockFactory {
+trait MockListBenefitsRequestParser extends MockFactory {
 
-  val mockListBenefitRequestParser: ListBenefitRequestParser = mock[ListBenefitRequestParser]
+  val mockListBenefitsRequestParser: ListBenefitsRequestParser = mock[ListBenefitsRequestParser]
 
-  object MockListBenefitRequestParser {
-    def parse(data: ListBenefitRawData): CallHandler[Either[ErrorWrapper, ListBenefitRequest]] = {
-      (mockListBenefitRequestParser.parseRequest(_: ListBenefitRawData)).expects(data)
+  object MockListBenefitsRequestParser {
+    def parse(data: ListBenefitsRawData): CallHandler[Either[ErrorWrapper, ListBenefitsRequest]] = {
+      (mockListBenefitsRequestParser.parseRequest(_: ListBenefitsRawData)).expects(data)
     }
   }
 

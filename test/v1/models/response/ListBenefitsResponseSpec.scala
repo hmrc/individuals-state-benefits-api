@@ -14,47 +14,136 @@
  * limitations under the License.
  */
 
-package v1.controllers
+package v1.models.response
 
-import mocks.MockAppConfig
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Result
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.requestParsers.MockListBenefitRequestParser
-import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitService, MockMtdIdLookupService}
-import v1.models.errors.{BadRequestError, NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, _}
-import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
-import v1.models.response.listBenefit._
+import play.api.libs.json.Json
+import support.UnitSpec
+import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitsResponse, StateBenefits}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+class ListBenefitsResponseSpec extends UnitSpec {
 
-class ListBenefitControllerSpec
-  extends ControllerBaseSpec
-    with MockEnrolmentsAuthService
-    with MockMtdIdLookupService
-    with MockAppConfig
-    with MockListBenefitService
-    with MockListBenefitRequestParser
-    with MockAuditService {
-
-  private val nino: String = "AA123456B"
-  private val taxYear: String = "2020-21"
-  val correlationId: String = "X-123"
-
-  val rawData: ListBenefitRawData = ListBenefitRawData(
-    nino = nino,
-    taxYear = taxYear
+  val json = Json.parse(
+    """
+      |{
+      |  "stateBenefits": {
+      |    "incapacityBenefit": [
+      |    {
+      |      "dateIgnored": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |     }
+      |    ],
+      |    "statePension": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "amount": 2000.00
+      |    },
+      |    "statePensionLumpSum": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "endDate"  : "2019-01-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |    },
+      |    "employmentSupportAllowance": [
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "jobSeekersAllowance": [
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "bereavementAllowance": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    },
+      |    "otherStateBenefits": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    }
+      |  },
+      |  "customerAddedStateBenefits": {
+      |    "incapacityBenefit": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "statePension": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "amount": 2000.00
+      |    },
+      |    "statePensionLumpSum": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "endDate" : "2019-01-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |    },
+      |    "employmentSupportAllowance": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "jobSeekersAllowance": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "bereavementAllowance": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    },
+      |    "otherStateBenefits": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    }
+      |  }
+      |}
+      |""".stripMargin
   )
 
-  val requestData: ListBenefitRequest = ListBenefitRequest(
-    nino = Nino(nino),
-    taxYear = taxYear
-  )
-
-  val responseData: ListBenefitResponse = ListBenefitResponse(
+  val model: ListBenefitsResponse = ListBenefitsResponse(
     stateBenefits = StateBenefits(
       incapacityBenefit = Seq(
         IncapacityBenefit(
@@ -192,121 +281,18 @@ class ListBenefitControllerSpec
     )
   )
 
-  trait Test {
-    val hc: HeaderCarrier = HeaderCarrier()
+  "ListBenefitsResponse" when {
+    "read from valid JSON" should {
+      "produce the expected ListBenefitsResponse object" in {
 
-    val controller = new ListBenefitController(
-      authService = mockEnrolmentsAuthService,
-      lookupService = mockMtdIdLookupService,
-      appConfig = mockAppConfig,
-      requestParser = mockListBenefitRequestParser,
-      service = mockListBenefitService,
-      cc = cc
-    )
-
-    MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
-    MockedEnrolmentsAuthService.authoriseUser()
-    MockedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
-  }
-
-  val responseBody: JsValue = Json.parse(
-    s"""
-      |{
-      |  "links": [
-      |    {
-      |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "GET",
-      |      "rel": "self"
-      |    },
-      |    {
-      |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "POST",
-      |      "rel": "add-state-benefit"
-      |    }
-      |  ]
-      |}
-    """.stripMargin
-  )
-
-  "ListBenefitController" should {
-    "return OK" when {
-      "happy path" in new Test {
-
-        MockListBenefitRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
-
-        MockListBenefitService
-          .listBenefit(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
-
-        val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
-
-        status(result) shouldBe OK
-        contentAsJson(result) shouldBe responseBody
-        header("X-CorrelationId", result) shouldBe Some(correlationId)
+        json.as[ListBenefitsResponse] shouldBe model
       }
     }
 
-    "return the error as per spec" when {
-      "parser errors occur" must {
-        def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
-          s"a ${error.code} error is returned from the parser" in new Test {
+    "written to JSON" should {
+      "produce the expected JsObject" in {
 
-            MockListBenefitRequestParser
-              .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
-
-            val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
-
-            status(result) shouldBe expectedStatus
-            contentAsJson(result) shouldBe Json.toJson(error)
-            header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-          }
-        }
-
-        val input = Seq(
-          (BadRequestError, BAD_REQUEST),
-          (NinoFormatError, BAD_REQUEST),
-          (TaxYearFormatError, BAD_REQUEST),
-          (RuleTaxYearNotSupportedError, BAD_REQUEST),
-          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
-          (NotFoundError, NOT_FOUND),
-          (DownstreamError, INTERNAL_SERVER_ERROR)
-        )
-
-        input.foreach(args => (errorsFromParserTester _).tupled(args))
-      }
-
-      "service errors occur" must {
-        def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
-          s"a $mtdError error is returned from the service" in new Test {
-
-            MockListBenefitRequestParser
-              .parse(rawData)
-              .returns(Right(requestData))
-
-            MockListBenefitService
-              .listBenefit(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
-
-            val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
-
-            status(result) shouldBe expectedStatus
-            contentAsJson(result) shouldBe Json.toJson(mtdError)
-            header("X-CorrelationId", result) shouldBe Some(correlationId)
-          }
-        }
-
-        val input = Seq(
-          (NinoFormatError, BAD_REQUEST),
-          (TaxYearFormatError, BAD_REQUEST),
-          (NotFoundError, NOT_FOUND),
-          (DownstreamError, INTERNAL_SERVER_ERROR),
-        )
-
-        input.foreach(args => (serviceErrors _).tupled(args))
+        Json.toJson(model) shouldBe json
       }
     }
   }

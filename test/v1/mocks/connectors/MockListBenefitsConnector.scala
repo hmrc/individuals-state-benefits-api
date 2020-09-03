@@ -19,21 +19,21 @@ package v1.mocks.connectors
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DesOutcome, ListBenefitConnector}
-import v1.models.request.listBenefit.ListBenefitRequest
-import v1.models.response.listBenefit.ListBenefitResponse
+import v1.connectors.{DesOutcome, ListBenefitsConnector}
+import v1.models.request.listBenefits.ListBenefitsRequest
+import v1.models.response.listBenefits.ListBenefitsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListBenefitConnector extends MockFactory {
+trait MockListBenefitsConnector extends MockFactory {
 
-  val mockListBenefitConnector: ListBenefitConnector = mock[ListBenefitConnector]
+  val mockListBenefitsConnector: ListBenefitsConnector = mock[ListBenefitsConnector]
 
-  object MockListBenefitConnector {
+  object MockListBenefitsConnector {
 
-    def listBenefit(requestData: ListBenefitRequest): CallHandler[Future[DesOutcome[ListBenefitResponse]]] = {
-      (mockListBenefitConnector
-        .listBenefit(_: ListBenefitRequest)(_: HeaderCarrier, _: ExecutionContext))
+    def listBenefits(requestData: ListBenefitsRequest): CallHandler[Future[DesOutcome[ListBenefitsResponse]]] = {
+      (mockListBenefitsConnector
+        .listBenefits(_: ListBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(requestData, *, *)
     }
   }
