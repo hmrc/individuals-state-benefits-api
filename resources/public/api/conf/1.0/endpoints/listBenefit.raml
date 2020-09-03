@@ -17,7 +17,13 @@ responses:
     body:
       application/json:
         type: !include ../schemas/list_benefit_response.json
-        example: !include ../examples/listStateBenefit/response.json
+        examples:
+          fullList:
+            description: Full list
+            value: !include ../examples/listStateBenefit/list_response.json
+          individualBenefit:
+            description: Single benefit returned by using query paremeter
+            value: !include ../examples/listStateBenefit/single_response.json
     headers:
       X-CorrelationId:
         example: c75f40a6-a3df-4429-a697-471eeec46435
