@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package v1.models.response.listBenefits
+package v1.models.response.listBenefit
 
 import config.AppConfig
 import play.api.libs.json._
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-case class ListBenefitsResponse(stateBenefits: StateBenefits, customerAddedStateBenefits: CustomerAddedStateBenefits)
+case class ListBenefitResponse(stateBenefits: StateBenefits, customerAddedStateBenefits: CustomerAddedStateBenefits)
 
-object ListBenefitsResponse extends HateoasLinks {
+object ListBenefitResponse extends HateoasLinks {
 
-  implicit val formatListBenefitResponse: OFormat[ListBenefitsResponse] = Json.format[ListBenefitsResponse]
+  implicit val formatListBenefitResponse: OFormat[ListBenefitResponse] = Json.format[ListBenefitResponse]
 
-  implicit object ListBenefitLinksFactory extends HateoasLinksFactory[ListBenefitsResponse, ListBenefitHateoasData] {
+  implicit object ListBenefitLinksFactory extends HateoasLinksFactory[ListBenefitResponse, ListBenefitHateoasData] {
     override def links(appConfig: AppConfig, data: ListBenefitHateoasData): Seq[Link] = {
       import data._
       Seq(
         addBenefit(appConfig, nino, taxYear),
-        listBenefits(appConfig, nino, taxYear)
+        listBenefit(appConfig, nino, taxYear)
       )
     }
   }

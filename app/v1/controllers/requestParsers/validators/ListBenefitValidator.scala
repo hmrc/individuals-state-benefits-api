@@ -22,7 +22,7 @@ import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.MtdError
 import v1.models.request.listBenefit.ListBenefitRawData
 
-class ListBenefitsValidator @Inject()(implicit appConfig: AppConfig)
+class ListBenefitValidator @Inject()(implicit appConfig: AppConfig)
   extends Validator[ListBenefitRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)

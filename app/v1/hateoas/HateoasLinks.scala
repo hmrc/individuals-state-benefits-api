@@ -55,7 +55,7 @@ trait HateoasLinks {
       rel = DELETE_STATE_BENEFIT
     )
 
-  def listBenefits(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def listBenefit(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(
       href = baseUri(appConfig, nino, taxYear),
       method = GET,

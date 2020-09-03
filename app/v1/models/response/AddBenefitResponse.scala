@@ -31,7 +31,7 @@ object AddBenefitResponse extends HateoasLinks {
     override def links(appConfig: AppConfig, data: AddBenefitHateoasData): Seq[Link] = {
       import data._
       Seq(
-        listBenefits(appConfig, nino, taxYear),
+        listBenefit(appConfig, nino, taxYear),
         updateBenefit(appConfig, nino, taxYear, benefitId),
         deleteBenefit(appConfig, nino, taxYear, benefitId)
       )

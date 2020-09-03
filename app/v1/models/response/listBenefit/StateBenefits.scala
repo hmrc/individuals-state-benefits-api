@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package v1.models.response.listBenefits
+package v1.models.response.listBenefit
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomerIncapacityBenefit(submittedOn: Option[String],
-                                     benefitId: String,
-                                     startDate: String,
-                                     endDate: Option[String],
-                                     amount: Option[BigDecimal],
-                                     taxPaid: Option[BigDecimal])
+case class StateBenefits(incapacityBenefit: Seq[IncapacityBenefit],
+                         statePension: IncapacityBenefit,
+                         statePensionLumpSum: IncapacityBenefit,
+                         employmentSupportAllowance: Seq[IncapacityBenefit],
+                         jobSeekersAllowance: Seq[IncapacityBenefit],
+                         bereavementAllowance: IncapacityBenefit,
+                         otherStateBenefits: IncapacityBenefit)
 
-object CustomerIncapacityBenefit {
-  implicit val formatCustomerIncapacityBenefit: OFormat[CustomerIncapacityBenefit] = Json.format[CustomerIncapacityBenefit]
+object StateBenefits {
+  implicit val formatStateBenefits: OFormat[StateBenefits] = Json.format[StateBenefits]
 }

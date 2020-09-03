@@ -64,7 +64,7 @@ class AddBenefitControllerSpec
     MockedAppConfig.apiGatewayContext.returns("baseUrl").anyNumberOfTimes()
 
     val links: List[Link] = List(
-      listBenefits(mockAppConfig, nino, taxYear),
+      listBenefit(mockAppConfig, nino, taxYear),
       updateBenefit(mockAppConfig, nino, taxYear, benefitId),
       deleteBenefit(mockAppConfig, nino, taxYear, benefitId)
     )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.listBenefits
+package v1.models.response.listBenefit
 
 import play.api.libs.json.{Json, OFormat}
 

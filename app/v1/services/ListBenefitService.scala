@@ -21,25 +21,25 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
-import v1.connectors.ListBenefitsConnector
+import v1.connectors.ListBenefitConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefits.ListBenefitsRequest
-import v1.models.response.listBenefits.ListBenefitsResponse
+import v1.models.request.listBenefit.ListBenefitRequest
+import v1.models.response.listBenefit.ListBenefitResponse
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListBenefitsService @Inject()(connector: ListBenefitsConnector) extends DesResponseMappingSupport with Logging {
+class ListBenefitService @Inject()(connector: ListBenefitConnector) extends DesResponseMappingSupport with Logging {
 
-  def listBenefits(request: ListBenefitsRequest)
+  def listBenefit(request: ListBenefitRequest)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext, logContext: EndpointLogContext):
-  Future[Either[ErrorWrapper, ResponseWrapper[ListBenefitsResponse]]] = {
+  Future[Either[ErrorWrapper, ResponseWrapper[ListBenefitResponse]]] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(connector.listBenefits(request)).leftMap(mapDesErrors(mappingDesToMtdError))
+      desResponseWrapper <- EitherT(connector.listBenefit(request)).leftMap(mapDesErrors(mappingDesToMtdError))
     } yield desResponseWrapper.map(des => des)
 
     result.value
@@ -48,7 +48,6 @@ class ListBenefitsService @Inject()(connector: ListBenefitsConnector) extends De
   private def mappingDesToMtdError: Map[String, MtdError] = Map(
     "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
     "INVALID_TAX_YEAR" -> TaxYearFormatError,
-    "INVALID_BENEFIT_ID" -> DownstreamError,
     "INVALID_CORRELATIONID" -> DownstreamError,
     "NO_DATA_FOUND" -> NotFoundError,
     "INVALID_DATE_RANGE" -> RuleTaxYearNotSupportedError,

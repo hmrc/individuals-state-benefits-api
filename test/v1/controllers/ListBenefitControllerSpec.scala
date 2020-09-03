@@ -18,14 +18,15 @@ package v1.controllers
 
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContentAsJson, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.requestParsers.MockListBenefitRequestParser
-import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockListBenefitService}
-import v1.models.errors.{BadRequestError, BenefitIdFormatError, EndDateFormatError, NinoFormatError, RuleEndDateBeforeStartDateError, RuleEndDateBeforeTaxYearStartError, RuleIncorrectOrEmptyBodyError, RuleStartDateAfterTaxYearEndError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, StartDateFormatError, TaxYearFormatError, _}
+import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitService, MockMtdIdLookupService}
+import v1.models.errors.{BadRequestError, NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, _}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest, ListBenefitRequestBody}
+import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
+import v1.models.response.listBenefit._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -53,6 +54,144 @@ class ListBenefitControllerSpec
     taxYear = taxYear
   )
 
+  val responseData: ListBenefitResponse = ListBenefitResponse(
+    stateBenefits = StateBenefits(
+      incapacityBenefit = Seq(
+        IncapacityBenefit(
+          dateIgnored = Some("2019-04-04T01:01:01Z"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = None
+        )
+      ),
+      statePension = IncapacityBenefit(
+        dateIgnored = None,
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2019-01-01",
+        endDate = None,
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = None
+      ),
+      statePensionLumpSum = IncapacityBenefit(
+        dateIgnored = None,
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2019-01-01",
+        endDate = Some("2019-01-01"),
+        amount = Some(2000.00),
+        taxPaid = Some(2132.22),
+        submittedOn = None
+      ),
+      employmentSupportAllowance = Seq(
+        IncapacityBenefit(
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = None
+        )
+      ),
+      jobSeekersAllowance = Seq(
+        IncapacityBenefit(
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = None
+        )
+      ),
+      bereavementAllowance = IncapacityBenefit(
+        dateIgnored = None,
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2020-01-01",
+        endDate = Some("2020-04-01"),
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = None
+      ),
+      otherStateBenefits = IncapacityBenefit(
+        dateIgnored = None,
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2020-01-01",
+        endDate = Some("2020-04-01"),
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = None
+      )
+    ),
+    customerAddedStateBenefits = CustomerAddedStateBenefits(
+      incapacityBenefit = Seq(
+        CustomerIncapacityBenefit(
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        )
+      ),
+      statePension = CustomerIncapacityBenefit(
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2019-01-01",
+        endDate = None,
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = Some("2019-04-04T01:01:01Z")
+      ),
+      statePensionLumpSum = CustomerIncapacityBenefit(
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2019-01-01",
+        endDate = Some("2019-01-01"),
+        amount = Some(2000.00),
+        taxPaid = Some(2132.22),
+        submittedOn = Some("2019-04-04T01:01:01Z")
+      ),
+      employmentSupportAllowance = Seq(
+        CustomerIncapacityBenefit(
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        )
+      ),
+      jobSeekersAllowance = Seq(
+        CustomerIncapacityBenefit(
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        )
+      ),
+      bereavementAllowance = CustomerIncapacityBenefit(
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2020-01-01",
+        endDate = Some("2020-04-01"),
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = Some("2019-04-04T01:01:01Z")
+      ),
+      otherStateBenefits = CustomerIncapacityBenefit(
+        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+        startDate = "2020-01-01",
+        endDate = Some("2020-04-01"),
+        amount = Some(2000.00),
+        taxPaid = None,
+        submittedOn = Some("2019-04-04T01:01:01Z")
+      )
+    )
+  )
+
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
 
@@ -76,13 +215,13 @@ class ListBenefitControllerSpec
       |  "links": [
       |    {
       |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "POST",
-      |      "rel": "add-state-benefit"
+      |      "method": "GET",
+      |      "rel": "self"
       |    },
       |    {
       |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "GET",
-      |      "rel": "self"
+      |      "method": "POST",
+      |      "rel": "add-state-benefit"
       |    }
       |  ]
       |}
@@ -99,9 +238,9 @@ class ListBenefitControllerSpec
 
         MockListBenefitService
           .listBenefit(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
 
-        val result: Future[Result] = controller.list(nino, taxYear)(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody
@@ -118,7 +257,7 @@ class ListBenefitControllerSpec
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            val result: Future[Result] = controller.list(nino, taxYear)(fakeGetRequest)
+            val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -152,7 +291,7 @@ class ListBenefitControllerSpec
               .listBenefit(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
-            val result: Future[Result] = controller.list(nino, taxYear)(fakeGetRequest)
+            val result: Future[Result] = controller.listBenefit(nino, taxYear)(fakeGetRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)

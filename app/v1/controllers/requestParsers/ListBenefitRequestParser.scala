@@ -18,10 +18,10 @@ package v1.controllers.requestParsers
 
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
-import v1.controllers.requestParsers.validators.ListBenefitsValidator
+import v1.controllers.requestParsers.validators.ListBenefitValidator
 import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
 
-class ListBenefitsRequestParser @Inject()(val validator: ListBenefitsValidator)
+class ListBenefitRequestParser @Inject()(val validator: ListBenefitValidator)
   extends RequestParser[ListBenefitRawData, ListBenefitRequest] {
 
   override protected def requestFor(data: ListBenefitRawData): ListBenefitRequest =

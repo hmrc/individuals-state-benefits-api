@@ -21,24 +21,24 @@ import cats.implicits._
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.mvc.Http.MimeTypes
 import utils.Logging
 import v1.controllers.requestParsers.ListBenefitRequestParser
 import v1.hateoas.ListHateoasResponses
 import v1.models.errors._
 import v1.models.request.listBenefit.ListBenefitRawData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService, ListBenefitService}
+import v1.services.{EnrolmentsAuthService, ListBenefitService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ListBenefitController @Inject()(val authService: EnrolmentsAuthService,
-                                      val lookupService: MtdIdLookupService,
-                                      appConfig: AppConfig,
-                                      requestParser: ListBenefitRequestParser,
-                                      service: ListBenefitService,
-                                      cc: ControllerComponents)(implicit ec: ExecutionContext)
+                                       val lookupService: MtdIdLookupService,
+                                       appConfig: AppConfig,
+                                       requestParser: ListBenefitRequestParser,
+                                       service: ListBenefitService,
+                                       cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging with ListHateoasResponses {
 
   implicit val endpointLogContext: EndpointLogContext =
@@ -47,8 +47,8 @@ class ListBenefitController @Inject()(val authService: EnrolmentsAuthService,
       endpointName = "ListBenefitAmounts"
     )
 
-  def list(nino: String, taxYear: String): Action[JsValue] =
-    authorisedAction(nino).async(parse.json) { implicit request =>
+  def listBenefit(nino: String, taxYear: String): Action[AnyContent] =
+    authorisedAction(nino).async { implicit request =>
 
       val rawData = ListBenefitRawData(
         nino = nino,

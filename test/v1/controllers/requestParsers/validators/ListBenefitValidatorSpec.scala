@@ -26,7 +26,7 @@ import v1.mocks.MockCurrentDateTime
 import v1.models.errors._
 import v1.models.request.listBenefit.ListBenefitRawData
 
-class ListBenefitsValidatorSpec extends UnitSpec {
+class ListBenefitValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
   private val validTaxYear = "2020-21"
@@ -38,7 +38,7 @@ class ListBenefitsValidatorSpec extends UnitSpec {
 
     implicit val appConfig: AppConfig = mockAppConfig
 
-    val validator = new ListBenefitsValidator()
+    val validator = new ListBenefitValidator()
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2022-07-11", dateTimeFormatter))

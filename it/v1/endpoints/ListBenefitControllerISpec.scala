@@ -48,6 +48,127 @@ class ListBenefitControllerISpec extends IntegrationBaseSpec {
     }
   }
 
+  val json = Json.parse(
+    """
+      |{
+      |  "stateBenefits": {
+      |    "incapacityBenefit": [
+      |    {
+      |      "dateIgnored": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |     }
+      |    ],
+      |    "statePension": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "amount": 2000.00
+      |    },
+      |    "statePensionLumpSum": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "endDate"  : "2019-01-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |    },
+      |    "employmentSupportAllowance": [
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "jobSeekersAllowance": [
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "bereavementAllowance": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    },
+      |    "otherStateBenefits": {
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    }
+      |  },
+      |  "customerAddedStateBenefits": {
+      |    "incapacityBenefit": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "statePension": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "amount": 2000.00
+      |    },
+      |    "statePensionLumpSum": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2019-01-01",
+      |      "endDate" : "2019-01-01",
+      |      "amount": 2000.00,
+      |      "taxPaid": 2132.22
+      |    },
+      |    "employmentSupportAllowance": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "jobSeekersAllowance": [
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |      }
+      |    ],
+      |    "bereavementAllowance": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    },
+      |    "otherStateBenefits": {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |      "startDate": "2020-01-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 2000.00
+      |    }
+      |  }
+      |}
+      |""".stripMargin
+  )
+
   "Calling the sample endpoint" should {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
@@ -58,13 +179,13 @@ class ListBenefitControllerISpec extends IntegrationBaseSpec {
              |  "links": [
              |    {
              |      "href": "/individuals/state-benefits/$nino/$taxYear",
-             |      "method": "POST",
-             |      "rel": "add-state-benefit"
+             |      "method": "GET",
+             |      "rel": "self"
              |    },
              |    {
              |      "href": "/individuals/state-benefits/$nino/$taxYear",
-             |      "method": "GET",
-             |      "rel": "self"
+             |      "method": "POST",
+             |      "rel": "add-state-benefit"
              |    }
              |  ]
              |}
@@ -75,7 +196,7 @@ class ListBenefitControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.PUT, desUri, CREATED)
+          DesStub.onSuccess(DesStub.GET, desUri, OK, json)
         }
 
         val response: WSResponse = await(request().get())
@@ -126,7 +247,7 @@ class ListBenefitControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
+              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().get())
@@ -146,14 +267,12 @@ class ListBenefitControllerISpec extends IntegrationBaseSpec {
         val input = Seq(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
+          (BAD_REQUEST, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          (BAD_REQUEST, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
-          (FORBIDDEN, "UPDATE_FORBIDDEN", FORBIDDEN, RuleUpdateForbiddenError),
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError)
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError)
         )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))

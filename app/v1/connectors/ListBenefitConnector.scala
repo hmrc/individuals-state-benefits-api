@@ -20,18 +20,18 @@ import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.models.request.listBenefits.ListBenefitsRequest
-import v1.models.response.listBenefits.ListBenefitsResponse
+import v1.models.request.listBenefit.ListBenefitRequest
+import v1.models.response.listBenefit.ListBenefitResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListBenefitsConnector @Inject()(val http: HttpClient,
+class ListBenefitConnector @Inject()(val http: HttpClient,
                                       val appConfig: AppConfig) extends BaseDesConnector {
 
-  def listBenefits(request: ListBenefitsRequest)(
+  def listBenefit(request: ListBenefitRequest)(
     implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[DesOutcome[ListBenefitsResponse]] = {
+    ec: ExecutionContext): Future[DesOutcome[ListBenefitResponse]] = {
 
     import v1.connectors.httpparsers.StandardDesHttpParser._
     implicit val successCode: SuccessCode = SuccessCode(Status.OK)
@@ -40,7 +40,7 @@ class ListBenefitsConnector @Inject()(val http: HttpClient,
     val taxYear = request.taxYear
 
     get(
-      DesUri[ListBenefitsResponse](s"income-tax/income/state-benefits/$nino/$taxYear")
+      DesUri[ListBenefitResponse](s"income-tax/income/state-benefits/$nino/$taxYear")
     )
   }
 }

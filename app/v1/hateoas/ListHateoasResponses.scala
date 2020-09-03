@@ -24,7 +24,7 @@ trait ListHateoasResponses extends HateoasLinks {
   def listBenefitHateoasBody(appConfig: AppConfig, nino: String, taxYear: String): JsValue = {
 
     val links = Seq(
-      listBenefits(appConfig, nino, taxYear),
+      listBenefit(appConfig, nino, taxYear),
       addBenefit(appConfig, nino, taxYear)
     )
 

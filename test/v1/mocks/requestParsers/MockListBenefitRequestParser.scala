@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package v1.mocks.validators
+package v1.mocks.requestParsers
 
-import org.scalamock.handlers.CallHandler1
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.validators.ListBenefitsValidator
-import v1.models.errors.MtdError
-import v1.models.request.listBenefit.ListBenefitRawData
+import v1.controllers.requestParsers.ListBenefitRequestParser
+import v1.models.errors.ErrorWrapper
+import v1.models.request.listBenefit.{ListBenefitRawData, ListBenefitRequest}
 
-trait MockListBenefitsValidator extends MockFactory {
+trait MockListBenefitRequestParser extends MockFactory {
 
-  val mockListBenefitsValidator: ListBenefitsValidator = mock[ListBenefitsValidator]
+  val mockListBenefitRequestParser: ListBenefitRequestParser = mock[ListBenefitRequestParser]
 
-  object MockListBenefitsValidator {
-
-    def validate(data: ListBenefitRawData): CallHandler1[ListBenefitRawData, List[MtdError]] = {
-      (mockListBenefitsValidator
-        .validate(_: ListBenefitRawData))
-        .expects(data)
+  object MockListBenefitRequestParser {
+    def parse(data: ListBenefitRawData): CallHandler[Either[ErrorWrapper, ListBenefitRequest]] = {
+      (mockListBenefitRequestParser.parseRequest(_: ListBenefitRawData)).expects(data)
     }
   }
 
