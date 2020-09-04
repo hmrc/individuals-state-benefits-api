@@ -17,8 +17,6 @@
 package v1.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -173,24 +171,26 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
 
-        val mtdResponse: JsValue = Json.parse(
+        val hateoasJson: JsValue = Json.parse(
           s"""
              |{
              |  "links": [
+             |      {
+             |      "href": "/individuals/state-benefits/$nino/$taxYear",
+             |      "method": "POST",
+             |      "rel": "add-state-benefit"
+             |    },
              |    {
              |      "href": "/individuals/state-benefits/$nino/$taxYear",
              |      "method": "GET",
              |      "rel": "self"
-             |    },
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear",
-             |      "method": "POST",
-             |      "rel": "add-state-benefit"
              |    }
              |  ]
              |}
     """.stripMargin
         )
+
+        val mtdResponse: JsValue = (Json.toJson(json).as[JsObject].++(hateoasJson.as[JsObject])).as[JsValue]
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()

@@ -44,7 +44,7 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
   val addStateBenefitResponse: AddBenefitResponse = AddBenefitResponse(benefitId)
   val addStateBenefitsHateoasData: AddBenefitHateoasData = AddBenefitHateoasData(nino, taxYear, benefitId)
 
-  val listBenefitsHateoasData: ListBenefitsHateoasData = ListBenefitsHateoasData(nino, taxYear, benefitId)
+  val listBenefitsHateoasData: ListBenefitsHateoasData = ListBenefitsHateoasData(nino, taxYear)
   val listBenefitsResponse: ListBenefitsResponse = ListBenefitsResponse(
     stateBenefits = StateBenefits(
       incapacityBenefit = Seq(

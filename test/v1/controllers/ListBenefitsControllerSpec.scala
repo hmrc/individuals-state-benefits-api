@@ -17,13 +17,16 @@
 package v1.controllers
 
 import mocks.MockAppConfig
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.hateoas.HateoasLinks
+import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListBenefitsRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitsService, MockMtdIdLookupService}
 import v1.models.errors.{BadRequestError, NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, _}
+import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 import v1.models.response.listBenefits._
@@ -38,7 +41,9 @@ class ListBenefitsControllerSpec
     with MockAppConfig
     with MockListBenefitsService
     with MockListBenefitsRequestParser
-    with MockAuditService {
+    with MockHateoasFactory
+    with MockAuditService
+    with HateoasLinks {
 
   private val nino: String = "AA123456B"
   private val taxYear: String = "2020-21"
@@ -201,32 +206,40 @@ class ListBenefitsControllerSpec
       appConfig = mockAppConfig,
       requestParser = mockListBenefitsRequestParser,
       service = mockListBenefitsService,
+      hateoasFactory = mockHateoasFactory,
       cc = cc
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
+
+    val links: List[Link] = List(
+      listBenefits(mockAppConfig, nino, taxYear),
+      addBenefit(mockAppConfig, nino, taxYear)
+    )
   }
 
-  val responseBody: JsValue = Json.parse(
+  val hateosJson: JsValue = Json.parse(
     s"""
-      |{
-      |  "links": [
-      |    {
-      |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "GET",
-      |      "rel": "self"
-      |    },
-      |    {
-      |      "href": "/individuals/state-benefits/$nino/$taxYear",
-      |      "method": "POST",
-      |      "rel": "add-state-benefit"
-      |    }
-      |  ]
-      |}
+       |{
+       |  "links": [
+       |    {
+       |      "href": "/individuals/state-benefits/$nino/$taxYear",
+       |      "method": "GET",
+       |      "rel": "self"
+       |    },
+       |    {
+       |      "href": "/individuals/state-benefits/$nino/$taxYear",
+       |      "method": "POST",
+       |      "rel": "add-state-benefit"
+       |    }
+       |  ]
+       |}
     """.stripMargin
   )
+
+  val responseBody: JsValue = (Json.toJson(responseData).as[JsObject].++(hateosJson.as[JsObject])).as[JsValue]
 
   "ListBenefitsController" should {
     "return OK" when {
@@ -239,6 +252,10 @@ class ListBenefitsControllerSpec
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
+
+        MockHateoasFactory
+          .wrap(responseData, ListBenefitsHateoasData(nino, taxYear))
+          .returns(HateoasWrapper(responseData, links))
 
         val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
 

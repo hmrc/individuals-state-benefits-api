@@ -15,7 +15,6 @@
  */
 
 package v1.controllers
-
 import cats.data.EitherT
 import cats.implicits._
 import config.AppConfig
@@ -25,9 +24,10 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.mvc.Http.MimeTypes
 import utils.Logging
 import v1.controllers.requestParsers.ListBenefitsRequestParser
-import v1.hateoas.ListHateoasResponses
+import v1.hateoas.HateoasFactory
 import v1.models.errors._
 import v1.models.request.listBenefits.ListBenefitsRawData
+import v1.models.response.listBenefits.ListBenefitsHateoasData
 import v1.services.{EnrolmentsAuthService, ListBenefitsService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,8 +38,9 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
                                        appConfig: AppConfig,
                                        requestParser: ListBenefitsRequestParser,
                                        service: ListBenefitsService,
+                                       hateoasFactory: HateoasFactory,
                                        cc: ControllerComponents)(implicit ec: ExecutionContext)
-  extends AuthorisedController(cc) with BaseController with Logging with ListHateoasResponses {
+  extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
@@ -59,12 +60,19 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
         for {
           parsedRequest <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
           serviceResponse <- EitherT(service.listBenefits(parsedRequest))
+          hateoasResponse <- EitherT.fromEither[Future](
+            hateoasFactory
+              .wrap(
+                serviceResponse.responseData,
+                ListBenefitsHateoasData(nino, taxYear)
+              )
+              .asRight[ErrorWrapper])
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
-          Ok(listBenefitsHateoasBody(appConfig, nino, taxYear))
+          Ok(Json.toJson(hateoasResponse))
             .withApiHeaders(serviceResponse.correlationId)
             .as(MimeTypes.JSON)
         }

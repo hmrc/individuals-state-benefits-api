@@ -38,4 +38,4 @@ object ListBenefitsResponse extends HateoasLinks {
   }
 }
 
-case class ListBenefitsHateoasData(nino: String, taxYear: String, benefitId: String) extends HateoasData
+case class ListBenefitsHateoasData(nino: String, taxYear: String) extends HateoasData
