@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.mvc.Http.MimeTypes
 import utils.Logging
