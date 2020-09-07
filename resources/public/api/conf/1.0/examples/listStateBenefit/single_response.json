@@ -1,7 +1,7 @@
 {
   "stateBenefits": [
     {
-      "typeOfBenefit": "statePensionLumpSum",
+      "benefitType": "statePensionLumpSum",
       "benefitId": "e4bf331e-0e55-297f-9a74-c766674775d4",
       "startDate": "2019-09-01",
       "endDate": "2019-09-02",

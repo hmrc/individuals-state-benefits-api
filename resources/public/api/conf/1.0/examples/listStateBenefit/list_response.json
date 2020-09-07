@@ -1,7 +1,7 @@
 {
   "stateBenefits": [
     {
-      "typeOfBenefit": "incapacityBenefit",
+      "benefitType": "incapacityBenefit",
       "dateIgnored": "2019-04-04T01:01:01Z",
       "benefitId": "9d51a3eb-e374-5349-aa02-96db92561138",
       "startDate": "2020-01-01",
@@ -12,7 +12,7 @@
   ],
   "customerAddedStateBenefits": [
     {
-      "typeOfBenefit": "statePensionLumpSum",
+      "benefitType": "statePensionLumpSum",
       "submittedOn": "2019-04-04T01:01:01Z",
       "benefitId": "cf87eb89-3d07-1496-89da-cf16d45c934b",
       "startDate": "2019-11-01",

@@ -66,8 +66,8 @@
         "startDate"
       ],
       "properties": {
-        "typeOfBenefit": {
-          "$ref": "#/definitions/typeOfBenefit"
+        "benefitType": {
+          "$ref": "#/definitions/benefitType"
         },
         "dateIgnored": {
           "$ref": "#/definitions/dateIgnored"
@@ -103,8 +103,8 @@
         "startDate"
       ],
       "properties": {
-        "typeOfBenefit": {
-          "$ref": "#/definitions/typeOfBenefit"
+        "benefitType": {
+          "$ref": "#/definitions/benefitType"
         },
         "submittedOn": {
           "$ref": "#/definitions/submittedOn"
@@ -129,8 +129,7 @@
         }
       }
     },
-
-    "typeOfBenefit": {
+    "benefitType": {
       "description": "Type of benefit.",
       "type": "string",
       "enum": [
