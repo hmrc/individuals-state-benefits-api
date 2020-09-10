@@ -16,15 +16,21 @@
 
 package v1.models.response.listBenefits
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OWrites, Reads}
 
-case class CustomerIncapacityBenefit(submittedOn: Option[String],
-                                     benefitId: String,
-                                     startDate: String,
-                                     endDate: Option[String],
-                                     amount: Option[BigDecimal],
-                                     taxPaid: Option[BigDecimal])
+case class StateBenefit(benefitType: Option[String],
+                        dateIgnored: Option[String],
+                        submittedOn: Option[String],
+                        benefitId: String,
+                        startDate: String,
+                        endDate: Option[String],
+                        amount: Option[BigDecimal],
+                        taxPaid: Option[BigDecimal])
 
-object CustomerIncapacityBenefit {
-  implicit val formatCustomerIncapacityBenefit: OFormat[CustomerIncapacityBenefit] = Json.format[CustomerIncapacityBenefit]
+object StateBenefit {
+
+  implicit val writes: OWrites[StateBenefit] = Json.writes[StateBenefit]
+
+  implicit val reads: Reads[StateBenefit] = Json.reads[StateBenefit]
+
 }

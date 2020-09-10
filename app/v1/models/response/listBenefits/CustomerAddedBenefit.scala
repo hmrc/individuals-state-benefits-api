@@ -18,14 +18,14 @@ package v1.models.response.listBenefits
 
 import play.api.libs.json.{Json, OFormat}
 
-case class IncapacityBenefit(dateIgnored: Option[String],
-                             submittedOn: Option[String],
-                             benefitId: String,
-                             startDate: String,
-                             endDate: Option[String],
-                             amount: Option[BigDecimal],
-                             taxPaid: Option[BigDecimal])
+case class CustomerAddedBenefit(benefitType: Option[String],
+                                submittedOn: Option[String],
+                                benefitId: String,
+                                startDate: String,
+                                endDate: Option[String],
+                                amount: Option[BigDecimal],
+                                taxPaid: Option[BigDecimal])
 
-object IncapacityBenefit {
-  implicit val formatIncapacityBenefit: OFormat[IncapacityBenefit] = Json.format[IncapacityBenefit]
+object CustomerAddedBenefit {
+  implicit val formatCustomerIncapacityBenefit: OFormat[CustomerAddedBenefit] = Json.format[CustomerAddedBenefit]
 }

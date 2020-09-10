@@ -16,13 +16,13 @@
 
 package v1.models.response
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerIncapacityBenefit, IncapacityBenefit, ListBenefitsResponse, StateBenefits}
+import v1.models.response.listBenefits.{CustomerAddedBenefit, ListBenefitsResponse, StateBenefit}
 
 class ListBenefitsResponseSpec extends UnitSpec {
 
-  val json = Json.parse(
+  val desJson: JsValue = Json.parse(
     """
       |{
       |  "stateBenefits": {
@@ -34,6 +34,13 @@ class ListBenefitsResponseSpec extends UnitSpec {
       |      "endDate": "2020-04-01",
       |      "amount": 2000.00,
       |      "taxPaid": 2132.22
+      |     },
+      |     {
+      |      "dateIgnored": "2019-03-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |      "startDate": "2020-03-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 1000.00
       |     }
       |    ],
       |    "statePension": {
@@ -55,6 +62,12 @@ class ListBenefitsResponseSpec extends UnitSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "jobSeekersAllowance": [
@@ -64,6 +77,12 @@ class ListBenefitsResponseSpec extends UnitSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "bereavementAllowance": {
@@ -88,6 +107,13 @@ class ListBenefitsResponseSpec extends UnitSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-03-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "statePension": {
@@ -144,9 +170,10 @@ class ListBenefitsResponseSpec extends UnitSpec {
   )
 
   val model: ListBenefitsResponse = ListBenefitsResponse(
-    stateBenefits = StateBenefits(
-      incapacityBenefit = Seq(
-        IncapacityBenefit(
+    stateBenefits = Some(
+      Seq(
+        StateBenefit(
+          benefitType = Some("incapacityBenefit"),
           dateIgnored = Some("2019-04-04T01:01:01Z"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -154,28 +181,39 @@ class ListBenefitsResponseSpec extends UnitSpec {
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = None
-        )
-      ),
-      statePension = IncapacityBenefit(
-        dateIgnored = None,
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2019-01-01",
-        endDate = None,
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = None
-      ),
-      statePensionLumpSum = IncapacityBenefit(
-        dateIgnored = None,
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2019-01-01",
-        endDate = Some("2019-01-01"),
-        amount = Some(2000.00),
-        taxPaid = Some(2132.22),
-        submittedOn = None
-      ),
-      employmentSupportAllowance = Seq(
-        IncapacityBenefit(
+        ),
+        StateBenefit(
+          benefitType = Some("incapacityBenefit"),
+          dateIgnored = Some("2019-03-04T01:01:01Z"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+          startDate = "2020-03-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(1000.00),
+          taxPaid = None,
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("statePension"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2019-01-01",
+          endDate = None,
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("statePensionLumpSum"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2019-01-01",
+          endDate = Some("2019-01-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("employmentSupportAllowance"),
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -183,10 +221,19 @@ class ListBenefitsResponseSpec extends UnitSpec {
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = None
-        )
-      ),
-      jobSeekersAllowance = Seq(
-        IncapacityBenefit(
+        ),
+        StateBenefit(
+          benefitType = Some("employmentSupportAllowance"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(1000.00),
+          taxPaid = None,
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("jobSeekersAllowance"),
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -194,105 +241,284 @@ class ListBenefitsResponseSpec extends UnitSpec {
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("jobSeekersAllowance"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(1000.00),
+          taxPaid = None,
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("bereavementAllowance"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = None
+        ),
+        StateBenefit(
+          benefitType = Some("otherStateBenefits"),
+          dateIgnored = None,
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = None
         )
-      ),
-      bereavementAllowance = IncapacityBenefit(
-        dateIgnored = None,
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2020-01-01",
-        endDate = Some("2020-04-01"),
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = None
-      ),
-      otherStateBenefits = IncapacityBenefit(
-        dateIgnored = None,
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2020-01-01",
-        endDate = Some("2020-04-01"),
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = None
       )
     ),
-    customerAddedStateBenefits = CustomerAddedStateBenefits(
-      incapacityBenefit = Seq(
-        CustomerIncapacityBenefit(
+    customerAddedStateBenefits = Some(
+      Seq(
+        CustomerAddedBenefit(
+          benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
-        )
-      ),
-      statePension = CustomerIncapacityBenefit(
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2019-01-01",
-        endDate = None,
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = Some("2019-04-04T01:01:01Z")
-      ),
-      statePensionLumpSum = CustomerIncapacityBenefit(
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2019-01-01",
-        endDate = Some("2019-01-01"),
-        amount = Some(2000.00),
-        taxPaid = Some(2132.22),
-        submittedOn = Some("2019-04-04T01:01:01Z")
-      ),
-      employmentSupportAllowance = Seq(
-        CustomerIncapacityBenefit(
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("incapacityBenefit"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+          startDate = "2020-03-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(1000.00),
+          taxPaid = None,
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("statePension"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2019-01-01",
+          endDate = None,
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("statePensionLumpSum"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2019-01-01",
+          endDate = Some("2019-01-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("employmentSupportAllowance"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
-        )
-      ),
-      jobSeekersAllowance = Seq(
-        CustomerIncapacityBenefit(
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("jobSeekersAllowance"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("bereavementAllowance"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        ),
+        CustomerAddedBenefit(
+          benefitType = Some("otherStateBenefits"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = None,
+          submittedOn = Some("2019-04-04T01:01:01Z")
         )
-      ),
-      bereavementAllowance = CustomerIncapacityBenefit(
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2020-01-01",
-        endDate = Some("2020-04-01"),
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = Some("2019-04-04T01:01:01Z")
-      ),
-      otherStateBenefits = CustomerIncapacityBenefit(
-        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-        startDate = "2020-01-01",
-        endDate = Some("2020-04-01"),
-        amount = Some(2000.00),
-        taxPaid = None,
-        submittedOn = Some("2019-04-04T01:01:01Z")
       )
     )
   )
 
+
+  val mtdJson: JsValue = Json.parse(
+    """
+      {
+        "stateBenefits": [
+          {
+            "benefitType": "incapacityBenefit",
+            "dateIgnored": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "incapacityBenefit",
+            "dateIgnored": "2019-03-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-03-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "statePension",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "statePensionLumpSum",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "endDate"  : "2019-01-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "bereavementAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "otherStateBenefits",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          }
+        ],
+        "customerAddedStateBenefits": [
+          {
+            "benefitType": "incapacityBenefit",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "incapacityBenefit",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-03-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "statePension",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "statePensionLumpSum",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "endDate" : "2019-01-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "bereavementAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "otherStateBenefits",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          }
+        ]
+      }
+      |""".stripMargin)
+
+
   "ListBenefitsResponse" when {
     "read from valid JSON" should {
+
       "produce the expected ListBenefitsResponse object" in {
 
-        json.as[ListBenefitsResponse] shouldBe model
+        desJson.as[ListBenefitsResponse] shouldBe model
       }
     }
 
     "written to JSON" should {
       "produce the expected JsObject" in {
 
-        Json.toJson(model) shouldBe json
+        Json.toJson(model) shouldBe mtdJson
       }
     }
   }
