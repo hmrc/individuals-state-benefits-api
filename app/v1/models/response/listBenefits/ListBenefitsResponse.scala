@@ -37,37 +37,34 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     }
   }
 
+  implicit class StateBenefitsReads(jsPath: JsPath) {
+
+    def readSeqBenefit(field: String): Reads[Seq[StateBenefit]] =
+      jsPath.readNestedNullable[Seq[StateBenefit]].map {
+        case Some(benefits: Seq[StateBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
+        case _ => Seq.empty[StateBenefit]
+      }
+    def readBenefit(field: String): Reads[Option[StateBenefit]] =
+      jsPath.readNestedNullable[StateBenefit].map {
+        case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
+        case _ => None
+      }
+    def bleskdf(field: String)(implicit rds: Reads[A]): Reads[T[StateBenefit]] =
+      jsPath.readNestedNullable[A]. map {
+        case Some(benefit: StateBenefit) => Some(benefit.copy(benefitType = Some(field)))
+      }
+  }
+
   implicit val writes: OWrites[ListBenefitsResponse] = Json.writes[ListBenefitsResponse]
 
   implicit val reads: Reads[ListBenefitsResponse] = for {
-    incapacities <- (__ \ "stateBenefits" \\ "incapacityBenefit").readNestedNullable[Seq[StateBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("incapacityBenefit")))
-      case _ => Seq.empty[StateBenefit]
-    }
-    stateBenefits <- (__ \ "stateBenefits" \ "statePension").readNestedNullable[StateBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("statePension")))
-      case _ => None
-    }
-    statePensionLumpSum <- (__ \ "stateBenefits" \ "statePensionLumpSum").readNestedNullable[StateBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("statePensionLumpSum")))
-      case _ => None
-    }
-    employmentSupportAllowance <- (__ \ "stateBenefits" \\ "employmentSupportAllowance").readNestedNullable[Seq[StateBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("employmentSupportAllowance")))
-      case _ => Seq.empty[StateBenefit]
-    }
-    jobSeekersAllowance <- (__ \ "stateBenefits" \\ "jobSeekersAllowance").readNestedNullable[Seq[StateBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("jobSeekersAllowance")))
-      case _ => Seq.empty[StateBenefit]
-    }
-    bereavementAllowance <- (__ \ "stateBenefits" \ "bereavementAllowance").readNestedNullable[StateBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("bereavementAllowance")))
-      case _ => None
-    }
-    otherStateBenefits <- (__ \ "stateBenefits" \ "otherStateBenefits").readNestedNullable[StateBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("otherStateBenefits")))
-      case _ => None
-    }
+    incapacities <- (__ \ "stateBenefits" \\ "incapacityBenefit").readSeqBenefit("incapacityBenefit")
+    stateBenefits <- (__ \ "stateBenefits" \ "statePension").readBenefit("statePension")
+    statePensionLumpSum <- (__ \ "stateBenefits" \ "statePensionLumpSum").readBenefit("statePensionLumpSum")
+    employmentSupportAllowance <- (__ \ "stateBenefits" \\ "employmentSupportAllowance").readSeqBenefit("employmentSupportAllowance")
+    jobSeekersAllowance <- (__ \ "stateBenefits" \\ "jobSeekersAllowance").readSeqBenefit("jobSeekersAllowance")
+    bereavementAllowance <- (__ \ "stateBenefits" \ "bereavementAllowance").readBenefit("bereavementAllowance")
+    otherStateBenefits <- (__ \ "stateBenefits" \ "otherStateBenefits").readBenefit("otherStateBenefits")
 
     customerIncapacities <- (__ \ "customerAddedStateBenefits" \\ "incapacityBenefit").readNestedNullable[Seq[CustomerAddedBenefit]].map {
       case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("incapacityBenefit")))
@@ -102,11 +99,11 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
     val sb: Seq[StateBenefit] =
       incapacities ++ stateBenefits ++ statePensionLumpSum ++ employmentSupportAllowance ++
-      jobSeekersAllowance ++ bereavementAllowance ++ otherStateBenefits toList
+      jobSeekersAllowance ++ bereavementAllowance ++ otherStateBenefits
 
     val customerSb: Seq[CustomerAddedBenefit] =
       customerIncapacities ++ customerStateBenefits ++ customerStatePensionLumpSum ++ customerEmploymentSupportAllowance ++
-      customerJobSeekersAllowance ++ customerBereavementAllowance++ customerOtherStateBenefits toList
+        customerJobSeekersAllowance ++ customerBereavementAllowance++ customerOtherStateBenefits
 
     (sb, customerSb) match {
       case (Nil, Nil) => ListBenefitsResponse(None, None)
