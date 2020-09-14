@@ -46,7 +46,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
     }
   }
 
-  val json = Json.parse(
+  val desJson: JsValue = Json.parse(
     """
       |{
       |  "stateBenefits": {
@@ -58,6 +58,13 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       |      "endDate": "2020-04-01",
       |      "amount": 2000.00,
       |      "taxPaid": 2132.22
+      |     },
+      |     {
+      |      "dateIgnored": "2019-03-04T01:01:01Z",
+      |      "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |      "startDate": "2020-03-01",
+      |      "endDate": "2020-04-01",
+      |      "amount": 1000.00
       |     }
       |    ],
       |    "statePension": {
@@ -79,6 +86,12 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "jobSeekersAllowance": [
@@ -88,6 +101,12 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "bereavementAllowance": {
@@ -112,6 +131,13 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       |        "endDate": "2020-04-01",
       |        "amount": 2000.00,
       |        "taxPaid": 2132.22
+      |      },
+      |      {
+      |        "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+      |        "startDate": "2020-03-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 1000.00
       |      }
       |    ],
       |    "statePension": {
@@ -167,41 +193,185 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       |""".stripMargin
   )
 
+  val mtdJson: (String, String) => JsValue = (nino, taxYear) =>  Json.parse(
+    s"""
+      {
+        "stateBenefits": [
+          {
+            "benefitType": "incapacityBenefit",
+            "dateIgnored": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "incapacityBenefit",
+            "dateIgnored": "2019-03-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-03-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "statePension",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "statePensionLumpSum",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "endDate"  : "2019-01-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "bereavementAllowance",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "otherStateBenefits",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          }
+        ],
+        "customerAddedStateBenefits": [
+          {
+            "benefitType": "incapacityBenefit",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "incapacityBenefit",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779g",
+            "startDate": "2020-03-01",
+            "endDate": "2020-04-01",
+            "amount": 1000.00
+          },
+          {
+            "benefitType": "statePension",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "statePensionLumpSum",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2019-01-01",
+            "endDate" : "2019-01-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "employmentSupportAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "jobSeekersAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00,
+            "taxPaid": 2132.22
+          },
+          {
+            "benefitType": "bereavementAllowance",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          },
+          {
+            "benefitType": "otherStateBenefits",
+            "submittedOn": "2019-04-04T01:01:01Z",
+            "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+            "startDate": "2020-01-01",
+            "endDate": "2020-04-01",
+            "amount": 2000.00
+          }
+        ],
+       |"links": [
+       |   {
+       |      "href": "/individuals/state-benefits/AA123456B/2019-20",
+       |      "method": "POST",
+       |      "rel": "add-state-benefit"
+       |   },
+       |   {
+       |      "href": "/individuals/state-benefits/$nino/$taxYear",
+       |      "method": "GET",
+       |      "rel": "self"
+       |    }
+       |  ]
+      }
+      |""".stripMargin)
+
+
   "Calling the sample endpoint" should {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
-
-        val hateoasJson: JsValue = Json.parse(
-          s"""
-             |{
-             |  "links": [
-             |      {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear",
-             |      "method": "POST",
-             |      "rel": "add-state-benefit"
-             |    },
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear",
-             |      "method": "GET",
-             |      "rel": "self"
-             |    }
-             |  ]
-             |}
-    """.stripMargin
-        )
-
-        val mtdResponse: JsValue = (Json.toJson(json).as[JsObject].++(hateoasJson.as[JsObject])).as[JsValue]
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, OK, json)
+          DesStub.onSuccess(DesStub.GET, desUri, OK, desJson)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponse
+        response.json shouldBe mtdJson(nino, taxYear)
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }

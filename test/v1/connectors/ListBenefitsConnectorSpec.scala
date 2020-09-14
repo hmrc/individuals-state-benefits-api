@@ -32,144 +32,35 @@ class ListBenefitsConnectorSpec extends ConnectorSpec {
 
   val request: ListBenefitsRequest = ListBenefitsRequest(Nino(nino), taxYear)
 
-  private val validResponse = ListBenefitsResponse(None, None)
-  //  ListBenefitsResponse(
-//    stateBenefits = StateBenefits(
-//      incapacityBenefit = Seq(
-//        StateBenefit(
-//          dateIgnored = Some("2019-04-04T01:01:01Z"),
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = None
-//        )
-//      ),
-//      statePension = StateBenefit(
-//        dateIgnored = None,
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2019-01-01",
-//        endDate = None,
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = None
-//      ),
-//      statePensionLumpSum = StateBenefit(
-//        dateIgnored = None,
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2019-01-01",
-//        endDate = Some("2019-01-01"),
-//        amount = Some(2000.00),
-//        taxPaid = Some(2132.22),
-//        submittedOn = None
-//      ),
-//      employmentSupportAllowance = Seq(
-//        StateBenefit(
-//          dateIgnored = None,
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = None
-//        )
-//      ),
-//      jobSeekersAllowance = Seq(
-//        StateBenefit(
-//          dateIgnored = None,
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = None
-//        )
-//      ),
-//      bereavementAllowance = StateBenefit(
-//        dateIgnored = None,
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2020-01-01",
-//        endDate = Some("2020-04-01"),
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = None
-//      ),
-//      otherStateBenefits = StateBenefit(
-//        dateIgnored = None,
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2020-01-01",
-//        endDate = Some("2020-04-01"),
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = None
-//      )
-//    ),
-//    customerAddedStateBenefits = CustomerAddedStateBenefits(
-//      incapacityBenefit = Seq(
-//        CustomerAddedBenefit(
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = Some("2019-04-04T01:01:01Z")
-//        )
-//      ),
-//      statePension = CustomerAddedBenefit(
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2019-01-01",
-//        endDate = None,
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = Some("2019-04-04T01:01:01Z")
-//      ),
-//      statePensionLumpSum = CustomerAddedBenefit(
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2019-01-01",
-//        endDate = Some("2019-01-01"),
-//        amount = Some(2000.00),
-//        taxPaid = Some(2132.22),
-//        submittedOn = Some("2019-04-04T01:01:01Z")
-//      ),
-//      employmentSupportAllowance = Seq(
-//        CustomerAddedBenefit(
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = Some("2019-04-04T01:01:01Z")
-//        )
-//      ),
-//      jobSeekersAllowance = Seq(
-//        CustomerAddedBenefit(
-//          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//          startDate = "2020-01-01",
-//          endDate = Some("2020-04-01"),
-//          amount = Some(2000.00),
-//          taxPaid = Some(2132.22),
-//          submittedOn = Some("2019-04-04T01:01:01Z")
-//        )
-//      ),
-//      bereavementAllowance = CustomerAddedBenefit(
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2020-01-01",
-//        endDate = Some("2020-04-01"),
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = Some("2019-04-04T01:01:01Z")
-//      ),
-//      otherStateBenefits = CustomerAddedBenefit(
-//        benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-//        startDate = "2020-01-01",
-//        endDate = Some("2020-04-01"),
-//        amount = Some(2000.00),
-//        taxPaid = None,
-//        submittedOn = Some("2019-04-04T01:01:01Z")
-//      )
-//    )
-//  )
+  private val validResponse = ListBenefitsResponse(
+    stateBenefits = Some(
+      Seq(
+        StateBenefit(
+          benefitType = Some("incapacityBenefit"),
+          dateIgnored = Some("2019-04-04T01:01:01Z"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = None
+        )
+      )
+    ),
+    customerAddedStateBenefits = Some(
+      Seq(
+        CustomerAddedBenefit(
+          benefitType = Some("incapacityBenefit"),
+          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+          startDate = "2020-01-01",
+          endDate = Some("2020-04-01"),
+          amount = Some(2000.00),
+          taxPaid = Some(2132.22),
+          submittedOn = Some("2019-04-04T01:01:01Z")
+        )
+      )
+    )
+  )
 
   class Test extends MockHttpClient with MockAppConfig {
 

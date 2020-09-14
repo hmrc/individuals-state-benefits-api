@@ -49,10 +49,17 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
         case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
         case _ => None
       }
-    def bleskdf(field: String)(implicit rds: Reads[A]): Reads[T[StateBenefit]] =
-      jsPath.readNestedNullable[A]. map {
-        case Some(benefit: StateBenefit) => Some(benefit.copy(benefitType = Some(field)))
+    def readSeqCustomerBenefit(field: String): Reads[Seq[CustomerAddedBenefit]] =
+      jsPath.readNestedNullable[Seq[CustomerAddedBenefit]].map {
+        case Some(benefits: Seq[CustomerAddedBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
+        case _ => Seq.empty[CustomerAddedBenefit]
       }
+    def readCustomBenefit(field: String): Reads[Option[CustomerAddedBenefit]] =
+      jsPath.readNestedNullable[CustomerAddedBenefit].map {
+        case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
+        case _ => None
+      }
+
   }
 
   implicit val writes: OWrites[ListBenefitsResponse] = Json.writes[ListBenefitsResponse]
@@ -66,35 +73,14 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     bereavementAllowance <- (__ \ "stateBenefits" \ "bereavementAllowance").readBenefit("bereavementAllowance")
     otherStateBenefits <- (__ \ "stateBenefits" \ "otherStateBenefits").readBenefit("otherStateBenefits")
 
-    customerIncapacities <- (__ \ "customerAddedStateBenefits" \\ "incapacityBenefit").readNestedNullable[Seq[CustomerAddedBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("incapacityBenefit")))
-      case _ => Seq.empty[CustomerAddedBenefit]
-    }
-    customerStateBenefits <- (__ \ "customerAddedStateBenefits" \ "statePension").readNestedNullable[CustomerAddedBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("statePension")))
-      case _ => None
-    }
-    customerStatePensionLumpSum <- (__ \ "customerAddedStateBenefits" \ "statePensionLumpSum").readNestedNullable[CustomerAddedBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("statePensionLumpSum")))
-      case _ => None
-    }
-    customerEmploymentSupportAllowance <- (__ \ "customerAddedStateBenefits" \\ "employmentSupportAllowance")
-      .readNestedNullable[Seq[CustomerAddedBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("employmentSupportAllowance")))
-      case _ => Seq.empty[CustomerAddedBenefit]
-    }
-    customerJobSeekersAllowance <- (__ \ "customerAddedStateBenefits" \\ "jobSeekersAllowance").readNestedNullable[Seq[CustomerAddedBenefit]].map {
-      case Some(benefits) => benefits.map(ben => ben.copy(benefitType = Some("jobSeekersAllowance")))
-      case _ => Seq.empty[CustomerAddedBenefit]
-    }
-    customerBereavementAllowance <- (__ \ "customerAddedStateBenefits" \ "bereavementAllowance").readNestedNullable[CustomerAddedBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("bereavementAllowance")))
-      case _ => None
-    }
-    customerOtherStateBenefits <- (__ \ "customerAddedStateBenefits" \ "otherStateBenefits").readNestedNullable[CustomerAddedBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some("otherStateBenefits")))
-      case _ => None
-    }
+    customerIncapacities <- (__ \ "customerAddedStateBenefits" \\ "incapacityBenefit").readSeqCustomerBenefit("incapacityBenefit")
+    customerStateBenefits <- (__ \ "customerAddedStateBenefits" \ "statePension").readCustomBenefit("statePension")
+    customerStatePensionLumpSum <- (__ \ "customerAddedStateBenefits" \ "statePensionLumpSum").readCustomBenefit("statePensionLumpSum")
+    customerEmploymentSupportAllowance <-
+      (__ \ "customerAddedStateBenefits" \\ "employmentSupportAllowance").readSeqCustomerBenefit("employmentSupportAllowance")
+    customerJobSeekersAllowance <- (__ \ "customerAddedStateBenefits" \\ "jobSeekersAllowance").readSeqCustomerBenefit("jobSeekersAllowance")
+    customerBereavementAllowance <- (__ \ "customerAddedStateBenefits" \ "bereavementAllowance").readCustomBenefit("bereavementAllowance")
+    customerOtherStateBenefits <- (__ \ "customerAddedStateBenefits" \ "otherStateBenefits").readCustomBenefit("otherStateBenefits")
   } yield {
 
     val sb: Seq[StateBenefit] =
