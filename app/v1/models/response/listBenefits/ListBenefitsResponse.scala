@@ -17,17 +17,26 @@
 package v1.models.response.listBenefits
 
 import config.AppConfig
+import cats.Functor
 import play.api.libs.json.{__, _}
 import utils.JsonUtils
-import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
+import v1.hateoas.{HateoasLinks, HateoasListLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-case class ListBenefitsResponse(stateBenefits: Option[Seq[StateBenefit]],
-                                customerAddedStateBenefits: Option[Seq[CustomerAddedBenefit]])
+case class ListBenefitsResponse[B](stateBenefits: Option[Seq[B]],
+                                customerAddedStateBenefits: Option[Seq[B]])
 
 object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
-  implicit object ListBenefitsLinksFactory extends HateoasLinksFactory[ListBenefitsResponse, ListBenefitsHateoasData] {
+  implicit object ListBenefitsLinksFactory extends HateoasListLinksFactory[ListBenefitsResponse, StateBenefit, ListBenefitsHateoasData] {
+
+    override def itemLinks(appConfig: AppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit): Seq[Link] = {
+      import data._
+      Seq(
+        retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
+      )
+    }
+
     override def links(appConfig: AppConfig, data: ListBenefitsHateoasData): Seq[Link] = {
       import data._
       Seq(
@@ -37,67 +46,59 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     }
   }
 
-  implicit class StateBenefitsReads(jsPath: JsPath) {
+    implicit object ResponseFunctor extends Functor[ListBenefitsResponse] {
+      override def map[A, B](fa: ListBenefitsResponse[A])(f: A => B): ListBenefitsResponse[B] =
+        ListBenefitsResponse(
+          fa.stateBenefits.map(x => x.map(f)), fa.customerAddedStateBenefits.map(y => y.map(f)))
+    }
 
-    def readSeqBenefit(field: String): Reads[Seq[StateBenefit]] =
-      jsPath.readNestedNullable[Seq[StateBenefit]].map {
-        case Some(benefits: Seq[StateBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
-        case _ => Seq.empty[StateBenefit]
-      }
-    def readBenefit(field: String): Reads[Option[StateBenefit]] =
-      jsPath.readNestedNullable[StateBenefit].map {
-        case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
-        case _ => None
-      }
-    def readSeqCustomerBenefit(field: String): Reads[Seq[CustomerAddedBenefit]] =
-      jsPath.readNestedNullable[Seq[CustomerAddedBenefit]].map {
-        case Some(benefits: Seq[CustomerAddedBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
-        case _ => Seq.empty[CustomerAddedBenefit]
-      }
-    def readCustomBenefit(field: String): Reads[Option[CustomerAddedBenefit]] =
-      jsPath.readNestedNullable[CustomerAddedBenefit].map {
-        case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
-        case _ => None
-      }
-
+  implicit def writes[B : Writes]: OWrites[ListBenefitsResponse[B]] = new OWrites[ListBenefitsResponse[B]] {
+    def writes(response: ListBenefitsResponse[B]): JsObject =
+      Json.obj(
+        "stateBenefits"-> response.stateBenefits,
+        "customerAddedStateBenefits" -> response.customerAddedStateBenefits
+      )
   }
 
-  implicit val writes: OWrites[ListBenefitsResponse] = Json.writes[ListBenefitsResponse]
+  implicit def reads[B]: Reads[ListBenefitsResponse[B]] = for {
+    incapacities <- readSeqBenefit("stateBenefits", "incapacityBenefit")
+    stateBenefits <- readBenefit("stateBenefits","statePension")
+    statePensionLumpSum <- readBenefit("stateBenefits", "statePensionLumpSum")
+    employmentSupportAllowance <- readSeqBenefit("stateBenefits", "employmentSupportAllowance")
+    jobSeekersAllowance <- readSeqBenefit("stateBenefits", "jobSeekersAllowance")
+    bereavementAllowance <- readBenefit("stateBenefits", "bereavementAllowance")
+    otherStateBenefits <- readBenefit("stateBenefits", "otherStateBenefits")
 
-  implicit val reads: Reads[ListBenefitsResponse] = for {
-    incapacities <- (__ \ "stateBenefits" \\ "incapacityBenefit").readSeqBenefit("incapacityBenefit")
-    stateBenefits <- (__ \ "stateBenefits" \ "statePension").readBenefit("statePension")
-    statePensionLumpSum <- (__ \ "stateBenefits" \ "statePensionLumpSum").readBenefit("statePensionLumpSum")
-    employmentSupportAllowance <- (__ \ "stateBenefits" \\ "employmentSupportAllowance").readSeqBenefit("employmentSupportAllowance")
-    jobSeekersAllowance <- (__ \ "stateBenefits" \\ "jobSeekersAllowance").readSeqBenefit("jobSeekersAllowance")
-    bereavementAllowance <- (__ \ "stateBenefits" \ "bereavementAllowance").readBenefit("bereavementAllowance")
-    otherStateBenefits <- (__ \ "stateBenefits" \ "otherStateBenefits").readBenefit("otherStateBenefits")
-
-    customerIncapacities <- (__ \ "customerAddedStateBenefits" \\ "incapacityBenefit").readSeqCustomerBenefit("incapacityBenefit")
-    customerStateBenefits <- (__ \ "customerAddedStateBenefits" \ "statePension").readCustomBenefit("statePension")
-    customerStatePensionLumpSum <- (__ \ "customerAddedStateBenefits" \ "statePensionLumpSum").readCustomBenefit("statePensionLumpSum")
-    customerEmploymentSupportAllowance <-
-      (__ \ "customerAddedStateBenefits" \\ "employmentSupportAllowance").readSeqCustomerBenefit("employmentSupportAllowance")
-    customerJobSeekersAllowance <- (__ \ "customerAddedStateBenefits" \\ "jobSeekersAllowance").readSeqCustomerBenefit("jobSeekersAllowance")
-    customerBereavementAllowance <- (__ \ "customerAddedStateBenefits" \ "bereavementAllowance").readCustomBenefit("bereavementAllowance")
-    customerOtherStateBenefits <- (__ \ "customerAddedStateBenefits" \ "otherStateBenefits").readCustomBenefit("otherStateBenefits")
+    customerIncapacities <- readSeqBenefit("customerAddedStateBenefits", "incapacityBenefit")
+    customerStateBenefits <- readBenefit("customerAddedStateBenefits", "statePension")
+    customerStatePensionLumpSum <- readBenefit("customerAddedStateBenefits", "statePensionLumpSum")
+    customerEmploymentSupportAllowance <- readSeqBenefit("customerAddedStateBenefits", "employmentSupportAllowance")
+    customerJobSeekersAllowance <- readSeqBenefit("customerAddedStateBenefits", "jobSeekersAllowance")
+    customerBereavementAllowance <- readBenefit("customerAddedStateBenefits", "bereavementAllowance")
+    customerOtherStateBenefits <- readBenefit("customerAddedStateBenefits", "otherStateBenefits")
   } yield {
 
-    val sb: Seq[StateBenefit] =
-      incapacities ++ stateBenefits ++ statePensionLumpSum ++ employmentSupportAllowance ++
-      jobSeekersAllowance ++ bereavementAllowance ++ otherStateBenefits
+    val sb: Option[Seq[StateBenefit]] =
+      Option(incapacities ++ stateBenefits ++ statePensionLumpSum ++ employmentSupportAllowance ++
+      jobSeekersAllowance ++ bereavementAllowance ++ otherStateBenefits).filter(_.nonEmpty)
 
-    val customerSb: Seq[CustomerAddedBenefit] =
-      customerIncapacities ++ customerStateBenefits ++ customerStatePensionLumpSum ++ customerEmploymentSupportAllowance ++
-        customerJobSeekersAllowance ++ customerBereavementAllowance++ customerOtherStateBenefits
+    val customerSb: Option[Seq[StateBenefit]] =
+      Option(customerIncapacities ++ customerStateBenefits ++ customerStatePensionLumpSum ++ customerEmploymentSupportAllowance ++
+        customerJobSeekersAllowance ++ customerBereavementAllowance++ customerOtherStateBenefits).filter(_.nonEmpty)
 
-    (sb, customerSb) match {
-      case (Nil, Nil) => ListBenefitsResponse(None, None)
-      case (sb, Nil) => ListBenefitsResponse(Some(sb), None)
-      case (Nil, customerSb) => ListBenefitsResponse(None, Some(customerSb))
-      case _ => ListBenefitsResponse.apply(Some(sb), Some(customerSb))
-    }
+    ListBenefitsResponse.apply(sb, customerSb)
   }
+  def readSeqBenefit[B](path: String, field: String): Reads[Seq[B]] =
+    (__ \ path \\ field).readNestedNullable[Seq[B]].map {
+      case Some(benefits: Seq[StateBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
+      case _ => Seq.empty[StateBenefit]
+    }
+  def readBenefit(path: String, field: String): Reads[Option[StateBenefit]] =
+    (__ \ path \ field).readNestedNullable[StateBenefit].map {
+      case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
+      case _ => None
+    }
+
 
 }
 

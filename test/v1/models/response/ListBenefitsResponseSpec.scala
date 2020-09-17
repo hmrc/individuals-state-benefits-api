@@ -18,7 +18,7 @@ package v1.models.response
 
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.response.listBenefits.{CustomerAddedBenefit, ListBenefitsResponse, StateBenefit}
+import v1.models.response.listBenefits.{ListBenefitsResponse, StateBenefit}
 
 class ListBenefitsResponseSpec extends UnitSpec {
 
@@ -276,7 +276,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
     ),
     customerAddedStateBenefits = Some(
       Seq(
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -285,7 +285,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
           startDate = "2020-03-01",
@@ -294,7 +294,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = None,
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("statePension"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
@@ -303,7 +303,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = None,
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("statePensionLumpSum"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
@@ -312,7 +312,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("employmentSupportAllowance"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -321,7 +321,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("jobSeekersAllowance"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -330,7 +330,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = Some(2132.22),
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("bereavementAllowance"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -339,7 +339,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           taxPaid = None,
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("otherStateBenefits"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",

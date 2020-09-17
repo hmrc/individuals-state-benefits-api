@@ -19,7 +19,7 @@ package v1.models.response.listBenefits
 import play.api.libs.json.{Json, OWrites, Reads}
 
 case class StateBenefit(benefitType: Option[String],
-                        dateIgnored: Option[String],
+                        dateIgnored: Option[String] = None,
                         submittedOn: Option[String],
                         benefitId: String,
                         startDate: String,

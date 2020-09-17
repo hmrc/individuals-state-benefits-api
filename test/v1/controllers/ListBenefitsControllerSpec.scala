@@ -76,7 +76,7 @@ class ListBenefitsControllerSpec
     ),
     customerAddedStateBenefits = Some(
       Seq(
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",

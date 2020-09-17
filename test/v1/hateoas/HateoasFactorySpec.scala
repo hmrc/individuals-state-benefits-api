@@ -22,7 +22,7 @@ import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
 import v1.models.hateoas.{HateoasData, HateoasWrapper, Link}
-import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerAddedBenefit, StateBenefit, ListBenefitsHateoasData, ListBenefitsResponse, StateBenefits}
+import v1.models.response.listBenefits.{ListBenefitsHateoasData, ListBenefitsResponse, StateBenefit}
 import v1.models.response.{AddBenefitHateoasData, AddBenefitResponse}
 
 class HateoasFactorySpec extends UnitSpec with MockAppConfig {
@@ -62,7 +62,7 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
     ),
     customerAddedStateBenefits = Some(
       Seq(
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",

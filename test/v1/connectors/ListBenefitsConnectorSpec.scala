@@ -21,7 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listBenefits.ListBenefitsRequest
-import v1.models.response.listBenefits.{CustomerAddedStateBenefits, CustomerAddedBenefit, StateBenefit, ListBenefitsResponse, StateBenefits}
+import v1.models.response.listBenefits.{ListBenefitsResponse, StateBenefit}
 
 import scala.concurrent.Future
 
@@ -49,7 +49,7 @@ class ListBenefitsConnectorSpec extends ConnectorSpec {
     ),
     customerAddedStateBenefits = Some(
       Seq(
-        CustomerAddedBenefit(
+        StateBenefit(
           benefitType = Some("incapacityBenefit"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
