@@ -16,9 +16,9 @@
 
 package v1.models.response.listBenefits
 
-import config.AppConfig
 import cats.Functor
-import play.api.libs.json.{__, _}
+import config.AppConfig
+import play.api.libs.json._
 import utils.JsonUtils
 import v1.hateoas.{HateoasLinks, HateoasListLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
@@ -46,59 +46,37 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     }
   }
 
-    implicit object ResponseFunctor extends Functor[ListBenefitsResponse] {
-      override def map[A, B](fa: ListBenefitsResponse[A])(f: A => B): ListBenefitsResponse[B] =
-        ListBenefitsResponse(
-          fa.stateBenefits.map(x => x.map(f)), fa.customerAddedStateBenefits.map(y => y.map(f)))
-    }
-
-  implicit def writes[B : Writes]: OWrites[ListBenefitsResponse[B]] = new OWrites[ListBenefitsResponse[B]] {
-    def writes(response: ListBenefitsResponse[B]): JsObject =
-      Json.obj(
-        "stateBenefits"-> response.stateBenefits,
-        "customerAddedStateBenefits" -> response.customerAddedStateBenefits
-      )
+  implicit object ResponseFunctor extends Functor[ListBenefitsResponse] {
+    override def map[A, B](fa: ListBenefitsResponse[A])(f: A => B): ListBenefitsResponse[B] =
+      ListBenefitsResponse(
+        fa.stateBenefits.map(x => x.map(f)), fa.customerAddedStateBenefits.map(y => y.map(f)))
   }
 
-  implicit def reads[B]: Reads[ListBenefitsResponse[B]] = for {
-    incapacities <- readSeqBenefit("stateBenefits", "incapacityBenefit")
-    stateBenefits <- readBenefit("stateBenefits","statePension")
-    statePensionLumpSum <- readBenefit("stateBenefits", "statePensionLumpSum")
-    employmentSupportAllowance <- readSeqBenefit("stateBenefits", "employmentSupportAllowance")
-    jobSeekersAllowance <- readSeqBenefit("stateBenefits", "jobSeekersAllowance")
-    bereavementAllowance <- readBenefit("stateBenefits", "bereavementAllowance")
-    otherStateBenefits <- readBenefit("stateBenefits", "otherStateBenefits")
+  implicit def writes[B: Writes]: OWrites[ListBenefitsResponse[B]] = (response: ListBenefitsResponse[B]) => Json.obj(
+    "stateBenefits" -> response.stateBenefits,
+    "customerAddedStateBenefits" -> response.customerAddedStateBenefits
+  )
 
-    customerIncapacities <- readSeqBenefit("customerAddedStateBenefits", "incapacityBenefit")
-    customerStateBenefits <- readBenefit("customerAddedStateBenefits", "statePension")
-    customerStatePensionLumpSum <- readBenefit("customerAddedStateBenefits", "statePensionLumpSum")
-    customerEmploymentSupportAllowance <- readSeqBenefit("customerAddedStateBenefits", "employmentSupportAllowance")
-    customerJobSeekersAllowance <- readSeqBenefit("customerAddedStateBenefits", "jobSeekersAllowance")
-    customerBereavementAllowance <- readBenefit("customerAddedStateBenefits", "bereavementAllowance")
-    customerOtherStateBenefits <- readBenefit("customerAddedStateBenefits", "otherStateBenefits")
-  } yield {
-
-    val sb: Option[Seq[StateBenefit]] =
-      Option(incapacities ++ stateBenefits ++ statePensionLumpSum ++ employmentSupportAllowance ++
-      jobSeekersAllowance ++ bereavementAllowance ++ otherStateBenefits).filter(_.nonEmpty)
-
-    val customerSb: Option[Seq[StateBenefit]] =
-      Option(customerIncapacities ++ customerStateBenefits ++ customerStatePensionLumpSum ++ customerEmploymentSupportAllowance ++
-        customerJobSeekersAllowance ++ customerBereavementAllowance++ customerOtherStateBenefits).filter(_.nonEmpty)
-
-    ListBenefitsResponse.apply(sb, customerSb)
+  def readJson[T]()(implicit rds: Reads[Seq[T]]): Reads[Seq[T]] = (json: JsValue) => {
+    json
+      .validate[JsValue]
+      .flatMap(
+        readJson => {
+          Json.toJson(readJson.as[JsObject].fields.flatMap {
+            case (field, arr: JsArray) =>
+              arr.value.map {
+                element =>
+                  element.as[JsObject] + ("benefitType" -> Json.toJson(field))
+              }
+            case (field, obj: JsObject) =>
+              Seq(obj.as[JsObject] + ("benefitType" -> Json.toJson(field)))
+          }).validate[Seq[T]]})
   }
-  def readSeqBenefit[B](path: String, field: String): Reads[Seq[B]] =
-    (__ \ path \\ field).readNestedNullable[Seq[B]].map {
-      case Some(benefits: Seq[StateBenefit]) => benefits.map(ben => ben.copy(benefitType = Some(field)))
-      case _ => Seq.empty[StateBenefit]
-    }
-  def readBenefit(path: String, field: String): Reads[Option[StateBenefit]] =
-    (__ \ path \ field).readNestedNullable[StateBenefit].map {
-      case Some(benefit) => Some(benefit.copy(benefitType = Some(field)))
-      case _ => None
-    }
 
+  implicit def reads[B: Reads]: Reads[ListBenefitsResponse[B]] = for {
+    stateBenefits <- (__ \ "stateBenefits").readNullable(readJson[B]())
+    customerAddedStateBenefits <- (__ \ "customerAddedStateBenefits").readNullable(readJson[B]())
+  } yield ListBenefitsResponse[B](stateBenefits, customerAddedStateBenefits)
 
 }
 

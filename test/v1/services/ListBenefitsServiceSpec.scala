@@ -37,7 +37,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
     stateBenefits = Some(
       Seq(
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           dateIgnored = Some("2019-04-04T01:01:01Z"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -51,7 +51,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
     customerAddedStateBenefits = Some(
       Seq(
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),

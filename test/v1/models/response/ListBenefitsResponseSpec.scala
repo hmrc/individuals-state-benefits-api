@@ -169,11 +169,11 @@ class ListBenefitsResponseSpec extends UnitSpec {
       |""".stripMargin
   )
 
-  val model: ListBenefitsResponse = ListBenefitsResponse(
+  val model: ListBenefitsResponse[StateBenefit] = ListBenefitsResponse(
     stateBenefits = Some(
       Seq(
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           dateIgnored = Some("2019-04-04T01:01:01Z"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -183,7 +183,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           dateIgnored = Some("2019-03-04T01:01:01Z"),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
           startDate = "2020-03-01",
@@ -193,7 +193,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("statePension"),
+          benefitType = "statePension",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
@@ -203,7 +203,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("statePensionLumpSum"),
+          benefitType = "statePensionLumpSum",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
@@ -213,7 +213,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("employmentSupportAllowance"),
+          benefitType = "employmentSupportAllowance",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -223,7 +223,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("employmentSupportAllowance"),
+          benefitType = "employmentSupportAllowance",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
           startDate = "2020-01-01",
@@ -233,7 +233,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("jobSeekersAllowance"),
+          benefitType = "jobSeekersAllowance",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -243,7 +243,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("jobSeekersAllowance"),
+          benefitType = "jobSeekersAllowance",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
           startDate = "2020-01-01",
@@ -253,7 +253,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("bereavementAllowance"),
+          benefitType = "bereavementAllowance",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -263,7 +263,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = None
         ),
         StateBenefit(
-          benefitType = Some("otherStateBenefits"),
+          benefitType = "otherStateBenefits",
           dateIgnored = None,
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
@@ -277,7 +277,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
     customerAddedStateBenefits = Some(
       Seq(
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -286,7 +286,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("incapacityBenefit"),
+          benefitType = "incapacityBenefit",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779g",
           startDate = "2020-03-01",
           endDate = Some("2020-04-01"),
@@ -295,7 +295,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("statePension"),
+          benefitType = "statePension",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
           endDate = None,
@@ -304,7 +304,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("statePensionLumpSum"),
+          benefitType = "statePensionLumpSum",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2019-01-01",
           endDate = Some("2019-01-01"),
@@ -313,7 +313,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("employmentSupportAllowance"),
+          benefitType = "employmentSupportAllowance",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -322,7 +322,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("jobSeekersAllowance"),
+          benefitType = "jobSeekersAllowance",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -331,7 +331,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("bereavementAllowance"),
+          benefitType = "bereavementAllowance",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -340,7 +340,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
           submittedOn = Some("2019-04-04T01:01:01Z")
         ),
         StateBenefit(
-          benefitType = Some("otherStateBenefits"),
+          benefitType = "otherStateBenefits",
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -511,7 +511,7 @@ class ListBenefitsResponseSpec extends UnitSpec {
 
       "produce the expected ListBenefitsResponse object" in {
 
-        desJson.as[ListBenefitsResponse] shouldBe model
+        desJson.as[ListBenefitsResponse[StateBenefit]] shouldBe model
       }
     }
 

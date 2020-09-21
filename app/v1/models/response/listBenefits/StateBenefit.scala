@@ -16,9 +16,11 @@
 
 package v1.models.response.listBenefits
 
-import play.api.libs.json.{Json, OWrites, Reads}
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.functional.syntax._
+import utils.JsonUtils
 
-case class StateBenefit(benefitType: Option[String],
+case class StateBenefit(benefitType: String,
                         dateIgnored: Option[String] = None,
                         submittedOn: Option[String],
                         benefitId: String,
@@ -27,10 +29,32 @@ case class StateBenefit(benefitType: Option[String],
                         amount: Option[BigDecimal],
                         taxPaid: Option[BigDecimal])
 
-object StateBenefit {
+object StateBenefit extends JsonUtils {
 
   implicit val writes: OWrites[StateBenefit] = Json.writes[StateBenefit]
 
-  implicit val reads: Reads[StateBenefit] = Json.reads[StateBenefit]
+  //implicit val reads: Reads[StateBenefit] = Json.reads[StateBenefit]
+
+  implicit val reads: Reads[StateBenefit] =  (
+    (JsPath \ "benefitType").read[String] and
+      (JsPath \ "dateIgnored").readNullable[String] and
+      (JsPath \ "submittedOn").readNullable[String] and
+      (JsPath \ "benefitId").read[String] and
+      (JsPath \ "startDate").read[String] and
+      (JsPath \ "endDate").readNullable[String] and
+      (JsPath \ "amount").readNullable[BigDecimal] and
+      (JsPath \ "taxPaid").readNullable[BigDecimal]
+    )(StateBenefit.apply _)
+
+  implicit val paramReads: (String => Reads[StateBenefit]) = field => (
+    Reads.pure(field) and
+      (JsPath \ "dateIgnored").readNullable[String] and
+      (JsPath \ "submittedOn").readNullable[String] and
+      (JsPath \ "benefitId").read[String] and
+      (JsPath \ "startDate").read[String] and
+      (JsPath \ "endDate").readNullable[String] and
+      (JsPath \ "amount").readNullable[BigDecimal] and
+      (JsPath \ "taxPaid").readNullable[BigDecimal]
+    )(StateBenefit.apply _)
 
 }
