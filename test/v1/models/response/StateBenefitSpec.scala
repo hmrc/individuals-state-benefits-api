@@ -16,74 +16,60 @@
 
 package v1.models.response
 
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
+import v1.models.response.listBenefits.StateBenefit
+import v1.models.utils.JsonErrorValidators
 
-class StateBenefitSpec extends UnitSpec {
+class StateBenefitSpec extends UnitSpec with JsonErrorValidators {
 
-  val json =
+  val json: JsValue = Json.parse(
     """{
-      |	"stateBenefits": {
-      |		"incapacityBenefit": [{
+      |     "benefitType": "incapacityBenefit",
       |			"dateIgnored": "2019-04-04T01:01:01Z",
+      |     "submittedOn": "9d51a3eb-e374-5349-aa02-96db92561138",
       |			"benefitId": "9d51a3eb-e374-5349-aa02-96db92561138",
       |			"startDate": "2020-01-01",
       |			"endDate": "2020-04-01",
       |			"amount": 34345.55,
       |			"taxPaid": 345.55
-      |		}],
-      |		"statePension": {
-      |			"benefitId": "d65d6853-8455-4bfa-9995-746354320840",
-      |			"startDate": "2019-08-01",
-      |			"amount": 9583.44
-      |		},
-      |		"statePensionLumpSum": {
-      |			"benefitId": "e4bf331e-0e55-297f-9a74-c766674775d4",
-      |			"startDate": "2019-09-01",
-      |			"endDate": "2019-09-02",
-      |			"amount": 345.55,
-      |			"taxPaid": 78.88
-      |		},
-      |		"employmentSupportAllowance": [{
-      |			"benefitId": "61152305-5d52-2329-9b18-7ab8383313bd",
-      |			"startDate": "2020-02-12",
-      |			"endDate": "2020-04-03",
-      |			"amount": 1230.30,
-      |			"taxPaid": 506.66
-      |		}],
-      |		"jobSeekersAllowance": [{
-      |			"benefitId": "412b6427-0142-500f-828d-d2a44eeffd9e",
-      |			"startDate": "2020-02-05",
-      |			"endDate": "2020-03-17",
-      |			"amount": 284.33,
-      |			"taxPaid": 11.23
-      |		}],
-      |		"bereavementAllowance": {
-      |			"benefitId": "ffbe2472-cc9c-5171-bf73-005882109f32",
-      |			"startDate": "2020-03-12",
-      |			"endDate": "2020-04-01",
-      |			"amount": 39234.44
-      |		},
-      |		"otherStateBenefits": {
-      |			"benefitId": "f6457da0-546f-53bf-86f2-fbb83a76eb44",
-      |			"startDate": "2020-01-13",
-      |			"endDate": "2020-02-21",
-      |			"amount": 403.33
-      |		}
-      |	}
-      |}""".stripMargin
+      |}""".stripMargin)
 
-  "AddBenefitResponse" when {
+  val model = StateBenefit(
+    benefitType = "incapacityBenefit",
+    dateIgnored = Some("2019-04-04T01:01:01Z"),
+    submittedOn = Some("9d51a3eb-e374-5349-aa02-96db92561138"),
+    benefitId = "9d51a3eb-e374-5349-aa02-96db92561138",
+    startDate = "2020-01-01",
+    endDate = Some("2020-04-01"),
+    amount = Some(34345.55),
+    taxPaid = Some(345.55))
+
+  testJsonProperties[StateBenefit](json)(
+    mandatoryProperties = Seq(
+      "benefitType",
+      "benefitId",
+      "startDate"
+    ),
+    optionalProperties = Seq(
+      "dateIgnored",
+      "submittedOn",
+      "endDate",
+      "amount",
+      "taxPaid"
+    )
+  )
+
+  "StateBenefits" when {
     "read from valid JSON" should {
-      "produce the expected AddBenefitResponse object" in {
-        val result = Json.parse(json).as[JsObject].fields.map {
-          case (field, arr: Seq[JsValue]) => println(" ----------------- "+field)
-            arr.map(element => {
-              element.as[JsObject] + ("benefitType" -> Json.toJson(field))})
-          case (field, obj: JsValue) => obj.as[JsObject] + ("benefitType" -> Json.toJson(field))
-        }
+      "produce the expected StateBenefit object" in {
+        json.as[StateBenefit] shouldBe model
+      }
+    }
 
-        println(result)
+    "writes from valid object" should {
+      "produce the expected json" in {
+        Json.toJson(model) shouldBe json
       }
     }
   }

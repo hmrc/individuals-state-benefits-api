@@ -70,6 +70,7 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
               }
             case (field, obj: JsObject) =>
               Seq(obj.as[JsObject] + ("benefitType" -> Json.toJson(field)))
+            case (_, _) => Seq.empty
           }).validate[Seq[T]]})
   }
 

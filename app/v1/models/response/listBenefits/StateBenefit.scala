@@ -33,21 +33,8 @@ object StateBenefit extends JsonUtils {
 
   implicit val writes: OWrites[StateBenefit] = Json.writes[StateBenefit]
 
-  //implicit val reads: Reads[StateBenefit] = Json.reads[StateBenefit]
-
   implicit val reads: Reads[StateBenefit] =  (
     (JsPath \ "benefitType").read[String] and
-      (JsPath \ "dateIgnored").readNullable[String] and
-      (JsPath \ "submittedOn").readNullable[String] and
-      (JsPath \ "benefitId").read[String] and
-      (JsPath \ "startDate").read[String] and
-      (JsPath \ "endDate").readNullable[String] and
-      (JsPath \ "amount").readNullable[BigDecimal] and
-      (JsPath \ "taxPaid").readNullable[BigDecimal]
-    )(StateBenefit.apply _)
-
-  implicit val paramReads: (String => Reads[StateBenefit]) = field => (
-    Reads.pure(field) and
       (JsPath \ "dateIgnored").readNullable[String] and
       (JsPath \ "submittedOn").readNullable[String] and
       (JsPath \ "benefitId").read[String] and
