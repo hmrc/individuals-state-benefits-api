@@ -48,16 +48,20 @@ class ListBenefitsControllerSpec
 
   private val nino: String = "AA123456B"
   private val taxYear: String = "2020-21"
+  private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
+
   val correlationId: String = "X-123"
 
   val rawData: ListBenefitsRawData = ListBenefitsRawData(
     nino = nino,
-    taxYear = taxYear
+    taxYear = taxYear,
+    benefitId = benefitId
   )
 
   val requestData: ListBenefitsRequest = ListBenefitsRequest(
     nino = Nino(nino),
-    taxYear = taxYear
+    taxYear = taxYear,
+    benefitId = benefitId
   )
 
   val responseData: ListBenefitsResponse[StateBenefit] = ListBenefitsResponse(
@@ -229,7 +233,8 @@ class ListBenefitsControllerSpec
           .wrapList(responseData, ListBenefitsHateoasData(nino, taxYear))
           .returns(hateoasResponse)
 
-        val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId
+        )(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody
@@ -246,7 +251,7 @@ class ListBenefitsControllerSpec
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
+            val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -280,7 +285,7 @@ class ListBenefitsControllerSpec
               .listBenefits(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
-            val result: Future[Result] = controller.listBenefits(nino, taxYear)(fakeGetRequest)
+            val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)

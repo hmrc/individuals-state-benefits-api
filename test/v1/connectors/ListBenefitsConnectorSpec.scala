@@ -29,8 +29,9 @@ class ListBenefitsConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA111111A"
   val taxYear: String = "2019"
+  private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
-  val request: ListBenefitsRequest = ListBenefitsRequest(Nino(nino), taxYear)
+  val request: ListBenefitsRequest = ListBenefitsRequest(Nino(nino), taxYear, benefitId)
 
   private val validResponse = ListBenefitsResponse(
     stateBenefits = Some(

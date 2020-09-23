@@ -48,12 +48,13 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
       endpointName = "ListBenefitsAmounts"
     )
 
-  def listBenefits(nino: String, taxYear: String): Action[AnyContent] =
+  def listBenefits(nino: String, taxYear: String, benefitId: Option[String]): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
 
       val rawData = ListBenefitsRawData(
         nino = nino,
-        taxYear = taxYear
+        taxYear = taxYear,
+        benefitId = benefitId
       )
 
       val result =
