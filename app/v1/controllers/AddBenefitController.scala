@@ -22,17 +22,16 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
 import play.mvc.Http.MimeTypes
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.Logging
 import v1.controllers.requestParsers.AddBenefitRequestParser
 import v1.hateoas.HateoasFactory
+import v1.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import v1.models.errors._
 import v1.models.request.addBenefit.AddBenefitRawData
 import v1.models.response.AddBenefitHateoasData
 import v1.services.{AddBenefitService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import v1.models.audit.{GenericAuditDetail, AuditEvent, AuditResponse}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
-
 
 import scala.concurrent.{ExecutionContext, Future}
 
