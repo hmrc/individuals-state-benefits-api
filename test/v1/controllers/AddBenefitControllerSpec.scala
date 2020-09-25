@@ -25,13 +25,14 @@ import v1.hateoas.HateoasLinks
 import v1.mocks.MockAddBenefitService
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockAddBenefitRequestParser
-import v1.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService, MockAuditService}
 import v1.models.domain.BenefitType
 import v1.models.errors._
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.addBenefit.{AddBenefitRawData, AddBenefitRequest, AddBenefitRequestBody}
 import v1.models.response.{AddBenefitHateoasData, AddBenefitResponse}
+import v1.models.audit.{GenericAuditDetail, AuditError, AuditEvent, AuditResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,6 +42,7 @@ class AddBenefitControllerSpec
   extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
+    with MockAuditService
     with MockAppConfig
     with MockAddBenefitService
     with MockAddBenefitRequestParser
@@ -55,13 +57,14 @@ class AddBenefitControllerSpec
       lookupService = mockMtdIdLookupService,
       requestParser = mockAddBenefitRequestParser,
       service = mockAddStateBenefitService,
+      auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
       cc = cc
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
-    MockedAppConfig.apiGatewayContext.returns("baseUrl").anyNumberOfTimes()
+    MockedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
 
     val links: List[Link] = List(
       listBenefits(mockAppConfig, nino, taxYear),
@@ -73,7 +76,7 @@ class AddBenefitControllerSpec
   val nino: String = "AA123456A"
   val taxYear: String = "2019-20"
   val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val correlationId: String = "X-123"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   val startDate = "2020-08-03"
   val endDate = "2020-12-03"
 
@@ -113,17 +116,17 @@ class AddBenefitControllerSpec
        |   "benefitId": "b1e8057e-fbbc-47a8-a8b4-78d9f015c253",
        |   "links": [
        |         {
-       |         "href": "/baseUrl/$nino/$taxYear",
+       |         "href": "/individuals/state-benefits/$nino/$taxYear",
        |         "rel": "self",
        |         "method": "GET"
        |      },
        |      {
-       |         "href": "/baseUrl/$nino/$taxYear/$benefitId",
+       |         "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
        |         "rel": "update-state-benefit",
        |         "method": "PUT"
        |      },
        |      {
-       |         "href": "/baseUrl/$nino/$taxYear/$benefitId",
+       |         "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
        |         "rel": "delete-state-benefit",
        |         "method": "DELETE"
        |      }
@@ -131,6 +134,20 @@ class AddBenefitControllerSpec
        |}
     """.stripMargin
   )
+
+  def event(auditResponse: AuditResponse): AuditEvent[GenericAuditDetail] =
+    AuditEvent(
+      auditType = "CreateStateBenefit",
+      transactionName = "create-state-benefit",
+      detail = GenericAuditDetail(
+        userType = "Individual",
+        agentReferenceNumber = None,
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        request = Some(requestBodyJson),
+        `X-CorrelationId` = correlationId,
+        response = auditResponse
+      )
+    )
 
   "AddBenefitController" should {
     "return OK" when {
@@ -153,6 +170,9 @@ class AddBenefitControllerSpec
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseJson
         header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseJson))
+        MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
 
@@ -171,6 +191,9 @@ class AddBenefitControllerSpec
             contentAsJson(result) shouldBe Json.toJson(error)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
           }
+
+          val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
+          MockedAuditService.verifyAuditEvent(event(auditResponse)).once
         }
 
         val input = Seq(
@@ -209,6 +232,9 @@ class AddBenefitControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 

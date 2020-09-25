@@ -28,7 +28,11 @@ import v1.hateoas.HateoasFactory
 import v1.models.errors._
 import v1.models.request.addBenefit.AddBenefitRawData
 import v1.models.response.AddBenefitHateoasData
-import v1.services.{AddBenefitService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.{AddBenefitService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.models.audit.{GenericAuditDetail, AuditEvent, AuditResponse}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,6 +41,7 @@ class AddBenefitController @Inject()(val authService: EnrolmentsAuthService,
                                      val lookupService: MtdIdLookupService,
                                      requestParser: AddBenefitRequestParser,
                                      service: AddBenefitService,
+                                     auditService: AuditService,
                                      hateoasFactory: HateoasFactory,
                                      cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
@@ -73,6 +78,12 @@ class AddBenefitController @Inject()(val authService: EnrolmentsAuthService,
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}"
           )
 
+          auditSubmission(
+            GenericAuditDetail(request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear), Some(request.body),
+              serviceResponse.correlationId, AuditResponse(httpStatus = OK, response = Right(Some(Json.toJson(hateoasResponse))))
+            )
+          )
+
           Ok(Json.toJson(hateoasResponse))
             .withApiHeaders(serviceResponse.correlationId)
             .as(MimeTypes.JSON)
@@ -81,6 +92,12 @@ class AddBenefitController @Inject()(val authService: EnrolmentsAuthService,
       result.leftMap { errorWrapper =>
         val correlationId = getCorrelationId(errorWrapper)
         val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+
+        auditSubmission(
+          GenericAuditDetail(request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear), Some(request.body),
+            correlationId, AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
+          )
+        )
 
         result
       }.merge
@@ -97,4 +114,12 @@ class AddBenefitController @Inject()(val authService: EnrolmentsAuthService,
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
     }
   }
+
+  private def auditSubmission(details: GenericAuditDetail)
+                             (implicit hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[AuditResult] = {
+    val event = AuditEvent("AddACustomEmployment", "add-a-custom-employment", details)
+    auditService.auditEvent(event)
+  }
+
 }
