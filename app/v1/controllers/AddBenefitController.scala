@@ -118,7 +118,7 @@ class AddBenefitController @Inject()(val authService: EnrolmentsAuthService,
   private def auditSubmission(details: GenericAuditDetail)
                              (implicit hc: HeaderCarrier,
                               ec: ExecutionContext): Future[AuditResult] = {
-    val event = AuditEvent("AddACustomEmployment", "add-a-custom-employment", details)
+    val event = AuditEvent("CreateStateBenefit", "create-state-benefit", details)
     auditService.auditEvent(event)
   }
 
