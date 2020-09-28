@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package v1.models.hateoas
+package v1.models.audit
 
-object RelType {
-  val AMEND_SAMPLE_REL = "amend-sample-rel"
-  val RETRIEVE_SAMPLE_REL = "retrieve-sample-rel"
-  val DELETE_SAMPLE_REL = "delete-sample-rel"
+import play.api.libs.json.{JsValue, Json, OWrites}
 
-  val CREATE_STATE_BENEFIT = "create-state-benefit"
-  val LIST_STATE_BENEFITS = "list-state-benefits"
-  val AMEND_STATE_BENEFIT = "amend-state-benefit"
-  val DELETE_STATE_BENEFIT = "delete-state-benefit"
-  val AMEND_STATE_BENEFIT_AMOUNTS = "amend-state-benefit-amounts"
-  val DELETE_STATE_BENEFIT_AMOUNTS = "delete-state-benefit-amounts"
-  val IGNORE_STATE_BENEFIT = "ignore-state-benefit"
+case class AuditResponse(httpStatus: Int, errors: Option[Seq[AuditError]], body: Option[JsValue])
 
-  val SELF = "self"
+object AuditResponse {
+  implicit val writes: OWrites[AuditResponse] = Json.writes[AuditResponse]
+
+  def apply(httpStatus: Int, response: Either[Seq[AuditError], Option[JsValue]]): AuditResponse =
+    response match {
+      case Right(body) => AuditResponse(httpStatus, None, body)
+      case Left(errs)  => AuditResponse(httpStatus, Some(errs), None)
+    }
 }
