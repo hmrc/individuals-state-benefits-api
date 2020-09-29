@@ -121,7 +121,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
   private def auditSubmission(details: GenericAuditDetail)
                              (implicit hc: HeaderCarrier,
                               ec: ExecutionContext): Future[AuditResult] = {
-    val event = AuditEvent("DeleteStateBenefitAmount", "delete-state-benefit-amount", details)
+    val event = AuditEvent("DeleteStateBenefitAmount", "delete-state-benefit-amounts", details)
     auditService.auditEvent(event)
   }
 }

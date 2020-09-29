@@ -58,7 +58,7 @@ class DeleteBenefitControllerSpec
   def event(auditResponse: AuditResponse): AuditEvent[GenericAuditDetail] =
     AuditEvent(
       auditType = "DeleteStateBenefit",
-      transactionName = "delete-state-benefits",
+      transactionName = "delete-state-benefit",
       detail = GenericAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
