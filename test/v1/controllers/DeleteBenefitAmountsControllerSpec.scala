@@ -41,7 +41,7 @@ class DeleteBenefitAmountsControllerSpec
   val nino: String = "AA123456A"
   val taxYear: String = "2019-20"
   val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val correlationId: String = "X-123"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b478d9f015c253"
 
   val rawData: DeleteBenefitRawData = DeleteBenefitRawData(
     nino = nino,
@@ -57,12 +57,12 @@ class DeleteBenefitAmountsControllerSpec
 
   def event(auditResponse: AuditResponse): AuditEvent[GenericAuditDetail] =
     AuditEvent(
-      auditType = "DeleteStateBenefitAmount",
+      auditType = "DeleteStateBenefitAmounts",
       transactionName = "delete-state-benefit-amounts",
       detail = GenericAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
-        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        params = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
         request = None,
         `X-CorrelationId` = correlationId,
         response = auditResponse

@@ -73,7 +73,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
 
           auditSubmission(
             GenericAuditDetail(
-              request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear), None,
+              request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId), None,
               serviceResponse.correlationId, AuditResponse(httpStatus = NO_CONTENT, response = Right(None))
             )
           )
@@ -89,7 +89,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
 
         auditSubmission(
           GenericAuditDetail(
-            request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear), None,
+            request.userDetails, Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId), None,
             correlationId, AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
           )
         )
@@ -121,7 +121,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
   private def auditSubmission(details: GenericAuditDetail)
                              (implicit hc: HeaderCarrier,
                               ec: ExecutionContext): Future[AuditResult] = {
-    val event = AuditEvent("DeleteStateBenefitAmount", "delete-state-benefit-amounts", details)
+    val event = AuditEvent("DeleteStateBenefitAmounts", "delete-state-benefit-amounts", details)
     auditService.auditEvent(event)
   }
 }
