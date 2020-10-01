@@ -28,6 +28,7 @@ import v1.hateoas.HateoasFactory
 import v1.models.errors._
 import v1.models.request.listBenefits.ListBenefitsRawData
 import v1.models.response.listBenefits.ListBenefitsHateoasData
+import v1.models.response.listBenefits.ListBenefitsResponse.ListBenefitsLinksFactory
 import v1.services.{EnrolmentsAuthService, ListBenefitsService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,7 +89,7 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case BadRequestError | NinoFormatError | TaxYearFormatError |
+      case BadRequestError | NinoFormatError | TaxYearFormatError | BenefitIdFormatError |
            RuleTaxYearNotSupportedError | RuleTaxYearRangeInvalidError |
            CustomMtdError(RuleIncorrectOrEmptyBodyError.code) => BadRequest(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))

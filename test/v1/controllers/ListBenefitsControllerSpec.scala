@@ -17,20 +17,18 @@
 package v1.controllers
 
 import mocks.MockAppConfig
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.fixtures.ListBenefitsFixture._
 import v1.hateoas.HateoasLinks
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListBenefitsRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitsService, MockMtdIdLookupService}
 import v1.models.errors.{BadRequestError, NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, _}
-import v1.models.hateoas.Method.{GET, POST}
-import v1.models.hateoas.{HateoasWrapper, Link}
+import v1.models.hateoas.Link
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
-import v1.models.response.listBenefits._
+import v1.models.response.listBenefits.ListBenefitsHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,54 +43,6 @@ class ListBenefitsControllerSpec
     with MockHateoasFactory
     with MockAuditService
     with HateoasLinks {
-
-  private val nino: String = "AA123456B"
-  private val taxYear: String = "2020-21"
-  private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
-
-  val correlationId: String = "X-123"
-
-  val rawData: ListBenefitsRawData = ListBenefitsRawData(
-    nino = nino,
-    taxYear = taxYear,
-    benefitId = benefitId
-  )
-
-  val requestData: ListBenefitsRequest = ListBenefitsRequest(
-    nino = Nino(nino),
-    taxYear = taxYear,
-    benefitId = benefitId
-  )
-
-  val responseData: ListBenefitsResponse[StateBenefit] = ListBenefitsResponse(
-    stateBenefits = Some(
-      Seq(
-        StateBenefit(
-          benefitType = "incapacityBenefit",
-          dateIgnored = Some("2019-04-04T01:01:01Z"),
-          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-          startDate = "2020-01-01",
-          endDate = Some("2020-04-01"),
-          amount = Some(2000.00),
-          taxPaid = Some(2132.22),
-          submittedOn = None
-        )
-      )
-    ),
-    customerAddedStateBenefits = Some(
-      Seq(
-        StateBenefit(
-          benefitType = "incapacityBenefit",
-          benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-          startDate = "2020-01-01",
-          endDate = Some("2020-04-01"),
-          amount = Some(2000.00),
-          taxPaid = Some(2132.22),
-          submittedOn = Some("2019-04-04T01:01:01Z")
-        )
-      )
-    )
-  )
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
@@ -117,108 +67,8 @@ class ListBenefitsControllerSpec
     )
   }
 
-  val hateosJson: JsValue = Json.parse(
-    s"""
-       |{
-       |  "links": [
-       |    {
-       |      "href": "/individuals/state-benefits/$nino/$taxYear",
-       |      "method": "GET",
-       |      "rel": "self"
-       |    },
-       |    {
-       |      "href": "/individuals/state-benefits/$nino/$taxYear",
-       |      "method": "POST",
-       |      "rel": "create-state-benefit"
-       |    }
-       |  ]
-       |}
-    """.stripMargin
-  )
-
-  val responseBody: JsValue = Json.parse(
-    """
-      |{
-      |	"stateBenefits": [{
-      |		"benefitType": "incapacityBenefit",
-      |		"dateIgnored": "2019-04-04T01:01:01Z",
-      |		"benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |		"startDate": "2020-01-01",
-      |		"endDate": "2020-04-01",
-      |		"amount": 2000,
-      |		"taxPaid": 2132.22,
-      |		"links": [{
-      |			"href": "/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",
-      |			"method": "GET",
-      |			"rel": "self"
-      |		}]
-      |	}],
-      |	"customerAddedStateBenefits": [{
-      |		"benefitType": "incapacityBenefit",
-      |		"submittedOn": "2019-04-04T01:01:01Z",
-      |		"benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |		"startDate": "2020-01-01",
-      |		"endDate": "2020-04-01",
-      |		"amount": 2000,
-      |		"taxPaid": 2132.22,
-      |		"links": [{
-      |			"href": "/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",
-      |			"method": "GET",
-      |			"rel": "self"
-      |		}]
-      |	}],
-      |	"links": [{
-      |		"href": "/context/AA123456A/2020-21",
-      |		"method": "POST",
-      |		"rel": "create-state-benefit"
-      |	}, {
-      |		"href": "/context/AA123456A/2020-21",
-      |		"method": "GET",
-      |		"rel": "self"
-      |	}]
-      |}""".stripMargin)
-
-  val stateBenefits: StateBenefit = StateBenefit(
-    benefitType = "incapacityBenefit",
-    dateIgnored = Some("2019-04-04T01:01:01Z"),
-    benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-    startDate = "2020-01-01",
-    endDate = Some("2020-04-01"),
-    amount = Some(2000.00),
-    taxPaid = Some(2132.22),
-    submittedOn = None
-  )
-
-  val customerAddedStateBenefits: StateBenefit = StateBenefit(
-    benefitType = "incapacityBenefit",
-    benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-    startDate = "2020-01-01",
-    endDate = Some("2020-04-01"),
-    amount = Some(2000.00),
-    taxPaid = Some(2132.22),
-    submittedOn = Some("2019-04-04T01:01:01Z")
-  )
-
-  val stateBenefitsLink: Link = Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self")
-  val customerStateBenefitsLink: Link = Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self")
-  val listBenefitsLink: Seq[Link] = List(Link("/context/AA123456A/2020-21",POST,"create-state-benefit"), Link("/context/AA123456A/2020-21",GET,"self"))
-
-  val listBenefitsResponse: ListBenefitsResponse[StateBenefit] = ListBenefitsResponse(
-    stateBenefits = Some(Seq(stateBenefits)),
-    customerAddedStateBenefits = Some(Seq(customerAddedStateBenefits)
-    )
-  )
-
-  val hateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
-    ListBenefitsResponse(
-      Some(List(HateoasWrapper(stateBenefits,List(stateBenefitsLink)))),
-      Some(List(HateoasWrapper(customerAddedStateBenefits, List(customerStateBenefitsLink))))),
-    listBenefitsLink)
-
-  //Json.toJson(responseData).as[JsObject].++(hateosJson.as[JsObject]).as[JsValue]
-
   "ListBenefitsController" should {
-    "return OK" when {
+    "return OK with full HATEOAS" when {
       "happy path" in new Test {
 
         MockListBenefitsRequestParser
@@ -233,11 +83,102 @@ class ListBenefitsControllerSpec
           .wrapList(responseData, ListBenefitsHateoasData(nino, taxYear))
           .returns(hateoasResponse)
 
-        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId
-        )(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
+      }
+    }
+
+    "return OK with no delete amount HATEOAS" when {
+      "state benefits has no amount properties" in new Test {
+
+        MockListBenefitsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
+
+        MockListBenefitsService
+          .listBenefits(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseDataWithNoAmounts))))
+
+        MockHateoasFactory
+          .wrapList(responseDataWithNoAmounts, ListBenefitsHateoasData(nino, taxYear))
+          .returns(hateoasResponseWithOutAmounts)
+
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+
+        status(result) shouldBe OK
+        contentAsJson(result) shouldBe responseBodyWithNoAmounts
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
+      }
+    }
+
+    "return OK with only HMRC state benefit HATEOAS" when {
+      "only HMRC state benefits returned" in new Test {
+
+        MockListBenefitsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
+
+        MockListBenefitsService
+          .listBenefits(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(customerAddedStateBenefits = None)))))
+
+        MockHateoasFactory
+          .wrapList(responseData.copy(customerAddedStateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
+          .returns(hmrcOnlyHateoasResponse)
+
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+
+        status(result) shouldBe OK
+        contentAsJson(result) shouldBe responseBody.as[JsObject] - "customerAddedStateBenefits"
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
+      }
+    }
+
+    "return OK with only CUSTOM state benefit HATEOAS" when {
+      "only CUSTOM state benefits returned" in new Test {
+
+        MockListBenefitsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
+
+        MockListBenefitsService
+          .listBenefits(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
+
+        MockHateoasFactory
+          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
+          .returns(customOnlyHateoasResponse)
+
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+
+        status(result) shouldBe OK
+        contentAsJson(result) shouldBe responseBody.as[JsObject] - "stateBenefits"
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
+      }
+    }
+
+    "return OK with single state benefit with HATEOAS" when {
+      "benefitId is passed for single retrieval" in new Test {
+
+        MockListBenefitsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
+
+        MockListBenefitsService
+          .listBenefits(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
+
+        MockHateoasFactory
+          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
+          .returns(customOnlyHateoasResponse)
+
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+
+        status(result) shouldBe OK
+        contentAsJson(result) shouldBe responseBody.as[JsObject] - "stateBenefits"
         header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
     }
@@ -264,6 +205,7 @@ class ListBenefitsControllerSpec
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
+          (BenefitIdFormatError, BAD_REQUEST),
           (RuleTaxYearNotSupportedError, BAD_REQUEST),
           (RuleTaxYearRangeInvalidError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),

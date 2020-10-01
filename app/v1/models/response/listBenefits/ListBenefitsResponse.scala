@@ -32,9 +32,25 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
     override def itemLinks(appConfig: AppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit): Seq[Link] = {
       import data._
-      Seq(
-        retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-      )
+
+      val commonLinks = if(stateBenefit.hasAmounts) {
+        Seq(
+          retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
+          updateBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId),
+          deleteBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
+        )
+      }else {
+        Seq(
+          retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
+          updateBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
+        )
+      }
+
+      stateBenefit.createdBy match {
+        case Some("CUSTOM") => commonLinks ++ Seq(deleteBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
+          updateBenefit(appConfig, nino, taxYear, stateBenefit.benefitId))
+        case _ => commonLinks :+ ignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
+      }
     }
 
     override def links(appConfig: AppConfig, data: ListBenefitsHateoasData): Seq[Link] = {
@@ -52,12 +68,9 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
         fa.stateBenefits.map(x => x.map(f)), fa.customerAddedStateBenefits.map(y => y.map(f)))
   }
 
-  implicit def writes[B: Writes]: OWrites[ListBenefitsResponse[B]] = (response: ListBenefitsResponse[B]) => Json.obj(
-    "stateBenefits" -> response.stateBenefits,
-    "customerAddedStateBenefits" -> response.customerAddedStateBenefits
-  )
+  implicit def writes[B: Writes]: OWrites[ListBenefitsResponse[B]] = Json.writes[ListBenefitsResponse[B]]
 
-  def readJson[T]()(implicit rds: Reads[Seq[T]]): Reads[Seq[T]] = (json: JsValue) => {
+  def readJson[T](createdBy: String)(implicit rds: Reads[Seq[T]]): Reads[Seq[T]] = (json: JsValue) => {
     json
       .validate[JsValue]
       .flatMap(
@@ -66,17 +79,17 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
             case (field, arr: JsArray) =>
               arr.value.map {
                 element =>
-                  element.as[JsObject] + ("benefitType" -> Json.toJson(field))
+                  element.as[JsObject] + ("benefitType" -> Json.toJson(field)) + ("createdBy" -> Json.toJson(createdBy))
               }
             case (field, obj: JsObject) =>
-              Seq(obj.as[JsObject] + ("benefitType" -> Json.toJson(field)))
+              Seq(obj.as[JsObject] + ("benefitType" -> Json.toJson(field)) + ("createdBy" -> Json.toJson(createdBy)))
             case (_, _) => Seq.empty
           }).validate[Seq[T]]})
   }
 
   implicit def reads[B: Reads]: Reads[ListBenefitsResponse[B]] = for {
-    stateBenefits <- (__ \ "stateBenefits").readNullable(readJson[B]())
-    customerAddedStateBenefits <- (__ \ "customerAddedStateBenefits").readNullable(readJson[B]())
+    stateBenefits <- (__ \ "stateBenefits").readNullable(readJson[B](createdBy = "HMRC")).mapEmptySeqToNone
+    customerAddedStateBenefits <- (__ \ "customerAddedStateBenefits").readNullable(readJson[B](createdBy = "CUSTOM")).mapEmptySeqToNone
   } yield ListBenefitsResponse[B](stateBenefits, customerAddedStateBenefits)
 
 }

@@ -64,12 +64,22 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
     endDate = Some("2020-04-01"),
     amount = Some(2000.00),
     taxPaid = Some(2132.22),
-    submittedOn = Some("2019-04-04T01:01:01Z")
+    submittedOn = Some("2019-04-04T01:01:01Z"),
+    createdBy = Some("CUSTOM")
   )
 
-  val stateBenefitsLink = Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self")
-  val customerStateBenefitsLink = Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self")
-  val listBenefitsLink = List(Link("/context/AA123456A/2020-21",POST,"create-state-benefit"), Link("/context/AA123456A/2020-21",GET,"self"))
+  val stateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", DELETE, "delete-state-benefit-amounts"),
+  Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore", PUT, "ignore-state-benefit"))
+
+  val customerStateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", DELETE, "delete-state-benefit-amounts"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f", DELETE, "delete-state-benefit"),
+    Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f", PUT, "amend-state-benefit"))
+
+  val listBenefitsLink: Seq[Link] = List(Link("/context/AA123456A/2020-21",POST,"create-state-benefit"), Link("/context/AA123456A/2020-21",GET,"self"))
 
   val listBenefitsResponse: ListBenefitsResponse[StateBenefit] = ListBenefitsResponse(
     stateBenefits = Some(Seq(stateBenefits)),
@@ -77,10 +87,10 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
     )
   )
 
-  val hateoasResponse = HateoasWrapper(
+  val hateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
     ListBenefitsResponse(
-      Some(List(HateoasWrapper(stateBenefits,List(stateBenefitsLink)))),
-      Some(List(HateoasWrapper(customerAddedStateBenefits, List(customerStateBenefitsLink))))),
+      Some(List(HateoasWrapper(stateBenefits, stateBenefitsLinks))),
+      Some(List(HateoasWrapper(customerAddedStateBenefits, customerStateBenefitsLinks)))),
     listBenefitsLink)
 
   class Test {
