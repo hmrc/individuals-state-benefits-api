@@ -68,12 +68,12 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
     createdBy = Some("CUSTOM")
   )
 
-  val stateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self"),
+  val stateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"),
     Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
     Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", DELETE, "delete-state-benefit-amounts"),
   Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore", PUT, "ignore-state-benefit"))
 
-  val customerStateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=\"f0d83ac0-a10a-4d57-9e41-6d033832779f\"",GET,"self"),
+  val customerStateBenefitsLinks: Seq[Link] = List(Link("/context/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"),
     Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
     Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", DELETE, "delete-state-benefit-amounts"),
     Link("/context/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f", DELETE, "delete-state-benefit"),
