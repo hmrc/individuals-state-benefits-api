@@ -72,18 +72,18 @@ class ListBenefitsControllerSpec
       "happy path" in new Test {
 
         MockListBenefitsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+          .parse(rawData(None))
+          .returns(Right(requestData(None)))
 
         MockListBenefitsService
-          .listBenefits(requestData)
+          .listBenefits(requestData(None))
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
 
         MockHateoasFactory
-          .wrapList(responseData, ListBenefitsHateoasData(nino, taxYear))
+          .wrapList(responseData, ListBenefitsHateoasData(nino, taxYear, None))
           .returns(hateoasResponse)
 
-        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, None)(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody
@@ -95,15 +95,15 @@ class ListBenefitsControllerSpec
       "state benefits has no amount properties" in new Test {
 
         MockListBenefitsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+          .parse(rawData(benefitId))
+          .returns(Right(requestData(benefitId)))
 
         MockListBenefitsService
-          .listBenefits(requestData)
+          .listBenefits(requestData(benefitId))
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseDataWithNoAmounts))))
 
         MockHateoasFactory
-          .wrapList(responseDataWithNoAmounts, ListBenefitsHateoasData(nino, taxYear))
+          .wrapList(responseDataWithNoAmounts, ListBenefitsHateoasData(nino, taxYear, benefitId))
           .returns(hateoasResponseWithOutAmounts)
 
         val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
@@ -118,18 +118,18 @@ class ListBenefitsControllerSpec
       "only HMRC state benefits returned" in new Test {
 
         MockListBenefitsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+          .parse(rawData(None))
+          .returns(Right(requestData(None)))
 
         MockListBenefitsService
-          .listBenefits(requestData)
+          .listBenefits(requestData(None))
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(customerAddedStateBenefits = None)))))
 
         MockHateoasFactory
-          .wrapList(responseData.copy(customerAddedStateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
+          .wrapList(responseData.copy(customerAddedStateBenefits = None), ListBenefitsHateoasData(nino, taxYear, None))
           .returns(hmrcOnlyHateoasResponse)
 
-        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, None)(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody.as[JsObject] - "customerAddedStateBenefits"
@@ -141,18 +141,18 @@ class ListBenefitsControllerSpec
       "only CUSTOM state benefits returned" in new Test {
 
         MockListBenefitsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+          .parse(rawData(None))
+          .returns(Right(requestData(None)))
 
         MockListBenefitsService
-          .listBenefits(requestData)
+          .listBenefits(requestData(None))
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
 
         MockHateoasFactory
-          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
+          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear, None))
           .returns(customOnlyHateoasResponse)
 
-        val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
+        val result: Future[Result] = controller.listBenefits(nino, taxYear, None)(fakeGetRequest)
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe responseBody.as[JsObject] - "stateBenefits"
@@ -164,21 +164,21 @@ class ListBenefitsControllerSpec
       "benefitId is passed for single retrieval" in new Test {
 
         MockListBenefitsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+          .parse(rawData(benefitId))
+          .returns(Right(requestData(benefitId)))
 
         MockListBenefitsService
-          .listBenefits(requestData)
+          .listBenefits(requestData(benefitId))
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
 
         MockHateoasFactory
-          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear))
-          .returns(customOnlyHateoasResponse)
+          .wrapList(responseData.copy(stateBenefits = None), ListBenefitsHateoasData(nino, taxYear, benefitId))
+          .returns(singleCustomOnlyHateoasResponse)
 
         val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 
         status(result) shouldBe OK
-        contentAsJson(result) shouldBe responseBody.as[JsObject] - "stateBenefits"
+        contentAsJson(result) shouldBe singleRetrieveWithAmounts
         header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
     }
@@ -189,7 +189,7 @@ class ListBenefitsControllerSpec
           s"a ${error.code} error is returned from the parser" in new Test {
 
             MockListBenefitsRequestParser
-              .parse(rawData)
+              .parse(rawData(benefitId))
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
             val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
@@ -220,11 +220,11 @@ class ListBenefitsControllerSpec
           s"a $mtdError error is returned from the service" in new Test {
 
             MockListBenefitsRequestParser
-              .parse(rawData)
-              .returns(Right(requestData))
+              .parse(rawData(benefitId))
+              .returns(Right(requestData(benefitId)))
 
             MockListBenefitsService
-              .listBenefits(requestData)
+              .listBenefits(requestData(benefitId))
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
             val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)

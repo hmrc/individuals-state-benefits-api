@@ -33,23 +33,28 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     override def itemLinks(appConfig: AppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit): Seq[Link] = {
       import data._
 
-      val commonLinks = if(stateBenefit.hasAmounts) {
+      val commonLinks = if (stateBenefit.hasAmounts) {
         Seq(
           retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
           updateBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId),
           deleteBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
         )
-      }else {
+      } else {
         Seq(
           retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
           updateBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
         )
       }
 
-      stateBenefit.createdBy match {
+      val links = stateBenefit.createdBy match {
         case Some("CUSTOM") => commonLinks ++ Seq(deleteBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
           updateBenefit(appConfig, nino, taxYear, stateBenefit.benefitId))
         case _ => commonLinks :+ ignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
+      }
+
+      data.benefitId match {
+        case None => Seq(retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId))
+        case _ => links
       }
     }
 
@@ -94,4 +99,4 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
 }
 
-case class ListBenefitsHateoasData(nino: String, taxYear: String) extends HateoasData
+case class ListBenefitsHateoasData(nino: String, taxYear: String, benefitId: Option[String]) extends HateoasData

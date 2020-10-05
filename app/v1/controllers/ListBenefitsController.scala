@@ -66,7 +66,7 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
             hateoasFactory
               .wrapList(
                 serviceResponse.responseData,
-                ListBenefitsHateoasData(nino, taxYear)
+                ListBenefitsHateoasData(nino, taxYear, benefitId)
               )
               .asRight[ErrorWrapper])
         } yield {

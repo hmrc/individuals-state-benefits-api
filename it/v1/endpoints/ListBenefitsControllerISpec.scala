@@ -64,26 +64,26 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           DesStub.onSuccess(DesStub.GET, desUri, OK, desJson)
         }
 
-        val response: WSResponse = await(request(benefitId).get())
+        val response: WSResponse = await(request(None).get())
         response.status shouldBe OK
         response.json shouldBe mtdJson
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
-    "return a 200 status code with benefits without amounts" when {
-      "a valid request is made" in new Test {
+    "return a 200 status code with single state benefit" when {
+      "any valid request is made" in new Test {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, OK, desJsonWithNoAmounts)
+          DesStub.onSuccess(DesStub.GET, desUri, OK, singleStateBenefitDesJson)
         }
 
-        val response: WSResponse = await(request(benefitId).get())
+        val response: WSResponse = await(request(None).get())
         response.status shouldBe OK
-        response.json shouldBe responseBodyWithNoAmounts
+        response.json shouldBe hmrcOnlyResponseBody
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
@@ -95,12 +95,29 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, singleStateBenefitDesJson)
+          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, singleCustomerStateBenefitDesJson)
         }
 
         val response: WSResponse = await(request(benefitId).get())
         response.status shouldBe OK
-        response.json shouldBe hmrcOnlyResponseBody
+        response.json shouldBe singleRetrieveWithAmounts
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+    }
+
+    "return a 200 status code with single state benefit without amounts" when {
+      "a valid request is made" in new Test {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, desJsonWithNoAmounts)
+        }
+
+        val response: WSResponse = await(request(benefitId).get())
+        response.status shouldBe OK
+        response.json shouldBe responseBodyWithNoAmounts
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }

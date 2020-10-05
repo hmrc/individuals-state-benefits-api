@@ -18,8 +18,8 @@ package v1.fixtures
 
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
-import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
+import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 import v1.models.response.listBenefits.{ListBenefitsResponse, StateBenefit}
 
@@ -31,16 +31,16 @@ object ListBenefitsFixture {
 
   val correlationId: String = "X-123"
 
-  val rawData: ListBenefitsRawData = ListBenefitsRawData(
+  val rawData: Option[String] => ListBenefitsRawData = reqBenefitId => ListBenefitsRawData(
     nino = nino,
     taxYear = taxYear,
-    benefitId = benefitId
+    benefitId = reqBenefitId
   )
 
-  val requestData: ListBenefitsRequest = ListBenefitsRequest(
+  val requestData: Option[String] => ListBenefitsRequest = reqBenefitId => ListBenefitsRequest(
     nino = Nino(nino),
     taxYear = taxYear,
-    benefitId = benefitId
+    benefitId = reqBenefitId
   )
 
   val hateosJson: JsValue = Json.parse(
@@ -77,20 +77,36 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
       |		}]
       |	}],
+      |	"customerAddedStateBenefits": [{
+      |		"benefitType": "incapacityBenefit",
+      |		"submittedOn": "2019-04-04T01:01:01Z",
+      |		"benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |		"startDate": "2020-01-01",
+      |		"endDate": "2020-04-01",
+      |		"amount": 2000,
+      |		"taxPaid": 2132.22,
+      |		"links": [{
+      |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |			"method": "GET",
+      |			"rel": "self"
+      |		}]
+      |	}],
+      |	"links": [{
+      |		"href": "/individuals/state-benefits/AA123456A/2020-21",
+      |		"method": "POST",
+      |		"rel": "create-state-benefit"
+      |	}, {
+      |		"href": "/individuals/state-benefits/AA123456A/2020-21",
+      |		"method": "GET",
+      |		"rel": "self"
+      |	}]
+      |}""".stripMargin)
+
+  val singleRetrieveWithAmounts: JsValue = Json.parse(
+    """
+      |{
       |	"customerAddedStateBenefits": [{
       |		"benefitType": "incapacityBenefit",
       |		"submittedOn": "2019-04-04T01:01:01Z",
@@ -108,6 +124,10 @@ object ListBenefitsFixture {
       |			"method": "PUT",
       |			"rel": "amend-state-benefit-amounts"
       |		}, {
+      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
+      |			"method": "DELETE",
+      |			"rel": "delete-state-benefit-amounts"
+      |		}, {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "DELETE",
       |			"rel": "delete-state-benefit"
@@ -115,10 +135,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "PUT",
       |			"rel": "amend-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
       |		}]
       |	}],
       |	"links": [{
@@ -155,30 +171,6 @@ object ListBenefitsFixture {
       |			"rel": "ignore-state-benefit"
       |		}]
       |	}],
-      |	"customerAddedStateBenefits": [{
-      |		"benefitType": "incapacityBenefit",
-      |		"submittedOn": "2019-04-04T01:01:01Z",
-      |		"benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |		"startDate": "2020-01-01",
-      |		"endDate": "2020-04-01",
-      |		"links": [{
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "GET",
-      |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
-      |		}]
-      |	}],
       |	"links": [{
       |		"href": "/individuals/state-benefits/AA123456A/2020-21",
       |		"method": "POST",
@@ -205,18 +197,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}],
       |	"links": [{
@@ -246,6 +226,22 @@ object ListBenefitsFixture {
       |   }
       |}""".stripMargin)
 
+  val singleCustomerStateBenefitDesJson: JsValue = Json.parse(
+    """
+      |{
+      |  "customerAddedStateBenefits": {
+      |    "incapacityBenefit": [
+      |    {
+      |      "submittedOn": "2019-04-04T01:01:01Z",
+      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
+      |        "startDate": "2020-01-01",
+      |        "endDate": "2020-04-01",
+      |        "amount": 2000.00,
+      |        "taxPaid": 2132.22
+      |     }]
+      |   }
+      |}""".stripMargin)
+
   val desJsonWithNoAmounts: JsValue = Json.parse(
     """
       |{
@@ -257,15 +253,6 @@ object ListBenefitsFixture {
       |      "startDate": "2020-01-01",
       |      "endDate": "2020-04-01"
       |     }]
-      |   },
-      |   "customerAddedStateBenefits": {
-      |    "incapacityBenefit": [
-      |      {
-      |        "submittedOn": "2019-04-04T01:01:01Z",
-      |        "benefitId": "f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |        "startDate": "2020-01-01",
-      |        "endDate": "2020-04-01"
-      |      }]
       |   }
       |}""".stripMargin)
 
@@ -431,18 +418,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "incapacityBenefit",
@@ -455,18 +430,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779g",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "statePension",
@@ -477,18 +440,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "statePensionLumpSum",
@@ -501,18 +452,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "employmentSupportAllowance",
@@ -525,18 +464,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "employmentSupportAllowance",
@@ -548,18 +475,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779g",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "jobSeekersAllowance",
@@ -572,18 +487,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "jobSeekersAllowance",
@@ -595,18 +498,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779g",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "bereavementAllowance",
@@ -618,18 +509,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "otherStateBenefits",
@@ -641,18 +520,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore",
-      |			"method": "PUT",
-      |			"rel": "ignore-state-benefit"
       |		}]
       |	}],
       |	"customerAddedStateBenefits": [{
@@ -667,22 +534,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "incapacityBenefit",
@@ -695,22 +546,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779g",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779g",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "statePension",
@@ -722,22 +557,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "statePensionLumpSum",
@@ -751,22 +570,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "employmentSupportAllowance",
@@ -780,22 +583,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "jobSeekersAllowance",
@@ -809,22 +596,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "bereavementAllowance",
@@ -837,22 +608,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}, {
       |		"benefitType": "otherStateBenefits",
@@ -865,22 +620,6 @@ object ListBenefitsFixture {
       |			"href": "/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",
       |			"method": "GET",
       |			"rel": "self"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit-amounts"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "DELETE",
-      |			"rel": "delete-state-benefit"
-      |		}, {
-      |			"href": "/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f",
-      |			"method": "PUT",
-      |			"rel": "amend-state-benefit"
       |		}]
       |	}],
       |	"links": [{
@@ -926,16 +665,25 @@ object ListBenefitsFixture {
     customerAddedStateBenefits = Some(Seq(customerAddedStateBenefits.copy(amount = None, taxPaid = None)))
   )
 
-  val stateBenefitsLinks: Seq[Link] = List(Link("/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"),
+  val stateBenefitsLinks: Seq[Link] = List(Link("/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"))
+
+  val singleStateBenefitsLinks: Seq[Link] = List(
+    Link("/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"),
     Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
     Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/ignore", PUT, "ignore-state-benefit"))
+
 
   val amountsLink: Link = Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
     DELETE, "delete-state-benefit-amounts")
 
   val customerStateBenefitsLinks: Seq[Link] = List(
+    Link("/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"))
+
+  val singleCustomerStateBenefitsLinks: Seq[Link] = List(
     Link("/individuals/state-benefits/AA123456A/2020-21?benefitId=f0d83ac0-a10a-4d57-9e41-6d033832779f",GET,"self"),
     Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts", PUT, "amend-state-benefit-amounts"),
+    Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f/amounts",
+      DELETE, "delete-state-benefit-amounts"),
     Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f", DELETE, "delete-state-benefit"),
     Link("/individuals/state-benefits/AA123456A/2020-21/f0d83ac0-a10a-4d57-9e41-6d033832779f", PUT, "amend-state-benefit"))
 
@@ -950,25 +698,32 @@ object ListBenefitsFixture {
 
   val hateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
     ListBenefitsResponse(
-      Some(List(HateoasWrapper(stateBenefits, stateBenefitsLinks :+ amountsLink))),
-      Some(List(HateoasWrapper(customerAddedStateBenefits, customerStateBenefitsLinks :+ amountsLink)))),
+      Some(List(HateoasWrapper(stateBenefits, stateBenefitsLinks))),
+      Some(List(HateoasWrapper(customerAddedStateBenefits, customerStateBenefitsLinks)))),
     listBenefitsLink)
 
   val hmrcOnlyHateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
     ListBenefitsResponse(
-      Some(List(HateoasWrapper(stateBenefits, stateBenefitsLinks :+ amountsLink))),
+      Some(List(HateoasWrapper(stateBenefits, stateBenefitsLinks))),
       None),
     listBenefitsLink)
 
   val customOnlyHateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
     ListBenefitsResponse(
       None,
-      Some(List(HateoasWrapper(customerAddedStateBenefits, customerStateBenefitsLinks :+ amountsLink)))),
+      Some(List(HateoasWrapper(customerAddedStateBenefits, customerStateBenefitsLinks)))),
     listBenefitsLink)
+
+  val singleCustomOnlyHateoasResponse: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
+    ListBenefitsResponse(
+      None,
+      Some(List(HateoasWrapper(customerAddedStateBenefits, singleCustomerStateBenefitsLinks)))),
+    listBenefitsLink)
+
 
   val hateoasResponseWithOutAmounts: HateoasWrapper[ListBenefitsResponse[HateoasWrapper[StateBenefit]]] = HateoasWrapper(
     ListBenefitsResponse(
-      Some(List(HateoasWrapper(stateBenefits.copy(amount = None, taxPaid = None), stateBenefitsLinks))),
-      Some(List(HateoasWrapper(customerAddedStateBenefits.copy(amount = None, taxPaid = None), customerStateBenefitsLinks)))),
+      Some(List(HateoasWrapper(stateBenefits.copy(amount = None, taxPaid = None), singleStateBenefitsLinks))),
+      None),
     listBenefitsLink)
 }
