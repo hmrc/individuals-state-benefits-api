@@ -33,6 +33,7 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     override def itemLinks(appConfig: AppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit): Seq[Link] = {
       import data._
 
+      // Common links for both HMRC and CUSTOM created state benefits
       val commonLinks = if (stateBenefit.hasAmounts) {
         Seq(
           retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
@@ -46,12 +47,15 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
         )
       }
 
+      // Links specific to the type (HMRC/CUSTOM) state benefit
       val links = stateBenefit.createdBy match {
         case Some("CUSTOM") => commonLinks ++ Seq(deleteBenefit(appConfig, nino, taxYear, stateBenefit.benefitId),
           updateBenefit(appConfig, nino, taxYear, stateBenefit.benefitId))
         case _ => commonLinks :+ ignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
       }
 
+      // Differentiate the links based on the call list/single by benefitId passed in the request
+      // for list only retrieve (self)
       data.benefitId match {
         case None => Seq(retrieveSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId))
         case _ => links
@@ -75,6 +79,8 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
   implicit def writes[B: Writes]: OWrites[ListBenefitsResponse[B]] = Json.writes[ListBenefitsResponse[B]]
 
+  // Added temporary field "createdBy" to identify the type of state benefits
+  // Only used in json reads
   def readJson[T](createdBy: String)(implicit rds: Reads[Seq[T]]): Reads[Seq[T]] = (json: JsValue) => {
     json
       .validate[JsValue]
