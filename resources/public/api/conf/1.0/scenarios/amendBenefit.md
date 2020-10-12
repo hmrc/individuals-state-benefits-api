@@ -21,7 +21,7 @@
         </tr>
         <tr>
             <td><p>TAX_YEAR_NOT_ENDED</p></td>
-            <td><p>Simulates the scenario in which a benefit is updated before the tax year end data.</p></td>
+            <td><p>Simulates the error returned when a benefit that is not employmentSupportAllowance or jobSeekersAllowance is amended in year.</p></td>
         </tr>
     </tbody>
 </table>
