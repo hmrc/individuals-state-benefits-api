@@ -19,5 +19,9 @@
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulates the scenario where no data is found.</p></td>
         </tr>
+        <tr>
+            <td><p>TAX_YEAR_NOT_ENDED</p></td>
+            <td><p>Simulates the scenario in which a benefit is updated before the tax year end data.</p></td>
+        </tr>
     </tbody>
 </table>
