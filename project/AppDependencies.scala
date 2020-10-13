@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.timushev.sbt.updates.UpdatesPlugin.autoImport.{dependencyUpdatesFailBuild, dependencyUpdatesFilter}
 import play.core.PlayVersion
 import play.sbt.PlayImport._
 import sbt._
