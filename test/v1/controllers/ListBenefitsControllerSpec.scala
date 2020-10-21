@@ -22,6 +22,7 @@ import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.fixtures.ListBenefitsFixture._
 import v1.hateoas.HateoasLinks
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListBenefitsRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListBenefitsService, MockMtdIdLookupService}
@@ -42,7 +43,8 @@ class ListBenefitsControllerSpec
     with MockListBenefitsRequestParser
     with MockHateoasFactory
     with MockAuditService
-    with HateoasLinks {
+    with HateoasLinks
+    with MockIdGenerator {
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
@@ -54,12 +56,14 @@ class ListBenefitsControllerSpec
       requestParser = mockListBenefitsRequestParser,
       service = mockListBenefitsService,
       hateoasFactory = mockHateoasFactory,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
+    MockIdGenerator.getCorrelationId.returns(correlationId)
 
     val links: List[Link] = List(
       listBenefits(mockAppConfig, nino, taxYear),

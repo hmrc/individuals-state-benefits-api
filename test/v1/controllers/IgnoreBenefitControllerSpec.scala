@@ -21,6 +21,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsJson, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.requestParsers.MockIgnoreBenefitRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreBenefitService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
@@ -38,7 +39,8 @@ class IgnoreBenefitControllerSpec
     with MockAppConfig
     with MockIgnoreBenefitService
     with MockIgnoreBenefitRequestParser
-    with MockAuditService {
+    with MockAuditService
+    with MockIdGenerator {
 
   trait Test {
     val hc = HeaderCarrier()
@@ -50,12 +52,14 @@ class IgnoreBenefitControllerSpec
       requestParser = mockIgnoreBenefitRequestParser,
       service = mockIgnoreBenefitService,
       auditService = mockAuditService,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockedAppConfig.apiGatewayContext.returns("baseUrl").anyNumberOfTimes()
+    MockIdGenerator.getCorrelationId.returns(correlationId)
   }
 
   val nino: String = "AA123456A"
