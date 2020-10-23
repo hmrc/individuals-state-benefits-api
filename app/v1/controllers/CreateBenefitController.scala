@@ -56,7 +56,7 @@ class CreateBenefitController @Inject()(val authService: EnrolmentsAuthService,
   def createStateBenefit(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
 
-      implicit val correlationId = idGenerator.getCorrelationId
+      implicit val correlationId: String = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
       val rawData: CreateBenefitRawData = CreateBenefitRawData(
@@ -89,7 +89,7 @@ class CreateBenefitController @Inject()(val authService: EnrolmentsAuthService,
             .as(MimeTypes.JSON)
         }
       result.leftMap { errorWrapper =>
-        val resCorrelationId = errorWrapper.correlationId.getOrElse(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
         val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.info(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +

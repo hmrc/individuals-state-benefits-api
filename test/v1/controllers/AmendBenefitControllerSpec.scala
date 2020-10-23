@@ -170,7 +170,7 @@ class AmendBenefitControllerSpec
 
             MockUpdateBenefitRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.amend(nino, taxYear, benefitId)(
               fakePutRequest(requestBodyJson)
@@ -217,7 +217,7 @@ class AmendBenefitControllerSpec
 
             MockUpdateBenefitService
               .updateBenefit(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.amend(nino, taxYear, benefitId)(
               fakePutRequest(requestBodyJson)

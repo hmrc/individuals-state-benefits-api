@@ -89,7 +89,7 @@ class AmendBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSer
         }
 
       result.leftMap { errorWrapper =>
-        val resCorrelationId = errorWrapper.correlationId.getOrElse(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
         val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.info(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +

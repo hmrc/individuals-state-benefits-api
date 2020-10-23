@@ -72,7 +72,7 @@ class DeleteBenefitControllerSpec
     )
 
   trait Test {
-    val hc = HeaderCarrier()
+    val hc: HeaderCarrier = HeaderCarrier()
 
     val controller = new DeleteBenefitController(
       authService = mockEnrolmentsAuthService,
@@ -119,7 +119,7 @@ class DeleteBenefitControllerSpec
 
             MockDeleteBenefitRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.deleteBenefit(nino, taxYear, benefitId)(fakeDeleteRequest)
 
@@ -154,7 +154,7 @@ class DeleteBenefitControllerSpec
 
             MockDeleteRetrieveService
               .delete()
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.deleteBenefit(nino, taxYear, benefitId)(fakeDeleteRequest)
 

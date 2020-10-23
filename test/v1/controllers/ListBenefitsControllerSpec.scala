@@ -194,7 +194,7 @@ class ListBenefitsControllerSpec
 
             MockListBenefitsRequestParser
               .parse(rawData(benefitId))
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 
@@ -229,7 +229,7 @@ class ListBenefitsControllerSpec
 
             MockListBenefitsService
               .listBenefits(requestData(benefitId))
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.listBenefits(nino, taxYear, benefitId)(fakeGetRequest)
 

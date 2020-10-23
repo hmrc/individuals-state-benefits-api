@@ -50,8 +50,15 @@ class CreateBenefitControllerSpec
     with HateoasLinks
     with MockIdGenerator {
 
+  val nino: String = "AA123456A"
+  val taxYear: String = "2019-20"
+  val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val startDate = "2020-08-03"
+  val endDate = "2020-12-03"
+
   trait Test {
-    val hc = HeaderCarrier()
+    val hc: HeaderCarrier = HeaderCarrier()
 
     val controller = new CreateBenefitController(
       authService = mockEnrolmentsAuthService,
@@ -75,13 +82,6 @@ class CreateBenefitControllerSpec
       deleteBenefit(mockAppConfig, nino, taxYear, benefitId)
     )
   }
-
-  val nino: String = "AA123456A"
-  val taxYear: String = "2019-20"
-  val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val startDate = "2020-08-03"
-  val endDate = "2020-12-03"
 
   val requestBodyJson: JsValue = Json.parse(
     s"""
@@ -186,7 +186,7 @@ class CreateBenefitControllerSpec
 
             MockAddBenefitRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.createStateBenefit(nino, taxYear)(fakePostRequest(requestBodyJson))
 
@@ -228,7 +228,7 @@ class CreateBenefitControllerSpec
 
             MockCreateStateBenefitService
               .createStateBenefit(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.createStateBenefit(nino, taxYear)(fakePostRequest(requestBodyJson))
 
