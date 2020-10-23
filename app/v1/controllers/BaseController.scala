@@ -17,7 +17,6 @@
 package v1.controllers
 
 import play.api.mvc.Result
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 
 trait BaseController {
@@ -36,10 +35,6 @@ trait BaseController {
       result.copy(header = result.header.copy(headers = result.header.headers ++ newHeaders))
     }
   }
-
-  protected def addCorrelationId(correlationId: String)(implicit hc: HeaderCarrier): HeaderCarrier =
-    hc.withExtraHeaders(("CorrelationId", correlationId))
-
 }
 
 
