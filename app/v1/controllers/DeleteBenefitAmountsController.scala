@@ -53,7 +53,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
   def deleteBenefitAmounts(nino: String, taxYear: String, benefitId: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
 
-      val correlationId = idGenerator.getCorrelationId
+      implicit val correlationId = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
       val rawData: DeleteBenefitRawData = DeleteBenefitRawData(
@@ -67,7 +67,7 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
       val result =
         for {
           _ <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.delete(desErrorMap)(addCorrelationId(correlationId), ec, endpointLogContext, desUri))
+          serviceResponse <- EitherT(service.delete(desErrorMap))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +

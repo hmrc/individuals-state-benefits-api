@@ -53,7 +53,7 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
   def listBenefits(nino: String, taxYear: String, benefitId: Option[String]): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
 
-      val correlationId = idGenerator.getCorrelationId
+      implicit val correlationId = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
       val rawData = ListBenefitsRawData(
@@ -65,7 +65,7 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.listBenefits(parsedRequest)(addCorrelationId(correlationId), ec, endpointLogContext))
+          serviceResponse <- EitherT(service.listBenefits(parsedRequest))
           hateoasResponse <- EitherT.fromEither[Future](
             hateoasFactory
               .wrapList(

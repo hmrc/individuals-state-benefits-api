@@ -55,7 +55,7 @@ class IgnoreBenefitController @Inject()(val authService: EnrolmentsAuthService,
   def ignoreBenefit(nino: String, taxYear: String, benefitId: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
 
-      val correlationId = idGenerator.getCorrelationId
+      implicit val correlationId: String = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
       val rawData: IgnoreBenefitRawData = IgnoreBenefitRawData(
@@ -68,7 +68,7 @@ class IgnoreBenefitController @Inject()(val authService: EnrolmentsAuthService,
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.ignoreBenefit(parsedRequest)(addCorrelationId(correlationId), ec, endpointLogContext))
+          serviceResponse <- EitherT(service.ignoreBenefit(parsedRequest))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +

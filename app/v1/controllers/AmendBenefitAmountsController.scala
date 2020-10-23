@@ -55,7 +55,7 @@ class AmendBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSer
   def amendBenefitAmounts(nino: String, taxYear: String, benefitId: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
 
-      val correlationId = idGenerator.getCorrelationId
+      implicit val correlationId: String = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
@@ -69,7 +69,7 @@ class AmendBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSer
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](requestParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.updateBenefitAmounts(parsedRequest)(addCorrelationId(correlationId), ec, endpointLogContext))
+          serviceResponse <- EitherT(service.updateBenefitAmounts(parsedRequest))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
