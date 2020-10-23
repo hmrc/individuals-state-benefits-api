@@ -16,9 +16,11 @@
 
 package v1.controllers.requestParsers.validators
 
+import com.typesafe.config.ConfigFactory
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import play.api.Configuration
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.AnyContentAsJson
 import support.UnitSpec
@@ -88,6 +90,11 @@ class AmendBenefitAmountsValidatorSpec extends UnitSpec with ValueFormatErrorMes
 
     MockedAppConfig.minimumPermittedTaxYear
       .returns(2021)
+
+    MockedAppConfig.featureSwitch.returns(Some(Configuration(ConfigFactory.parseString(
+      """
+        |taxYearNotEndedRule.enabled = true
+      """.stripMargin))))
   }
 
   "UpdateBenefitAmountsValidator" when {
