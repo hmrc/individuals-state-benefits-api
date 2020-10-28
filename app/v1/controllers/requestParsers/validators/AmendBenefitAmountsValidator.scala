@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 import javax.inject.Inject
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.MtdError
