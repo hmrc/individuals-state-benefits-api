@@ -106,7 +106,7 @@ class CreateBenefitController @Inject()(val authService: EnrolmentsAuthService,
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case BadRequestError | NinoFormatError | TaxYearFormatError | RuleTaxYearRangeInvalidError |
+      case BadRequestError | NinoFormatError | CustomMtdError(TaxYearFormatError.code) | RuleTaxYearRangeInvalidError |
            RuleTaxYearNotSupportedError | RuleTaxYearNotEndedError | BenefitTypeFormatError |
            StartDateFormatError | EndDateFormatError | RuleEndDateBeforeStartDateError |
            RuleStartDateAfterTaxYearEndError | RuleEndDateBeforeTaxYearStartError |

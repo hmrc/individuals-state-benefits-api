@@ -103,7 +103,7 @@ class AmendBenefitController @Inject()(val authService: EnrolmentsAuthService,
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case BadRequestError | NinoFormatError | TaxYearFormatError | BenefitIdFormatError |
+      case BadRequestError | NinoFormatError | CustomMtdError(TaxYearFormatError.code) | BenefitIdFormatError |
            RuleTaxYearNotSupportedError | RuleTaxYearRangeInvalidError | RuleTaxYearNotEndedError |
            CustomMtdError(RuleIncorrectOrEmptyBodyError.code) | StartDateFormatError | EndDateFormatError |
            RuleEndDateBeforeStartDateError | RuleStartDateAfterTaxYearEndError |
