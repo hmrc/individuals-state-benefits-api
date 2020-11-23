@@ -30,6 +30,7 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
   implicit object ListBenefitsLinksFactory extends HateoasListLinksFactory[ListBenefitsResponse, StateBenefit, ListBenefitsHateoasData] {
 
+    //noinspection ScalaStyle
     override def itemLinks(appConfig: AppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit): Seq[Link] = {
       import data._
 
@@ -40,16 +41,19 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
       val updateLink = updateBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
       val ignoreLink = ignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
 
-      val commonLinks = if (stateBenefit.hasAmounts) {
+      // Common Custom links
+      val customCommonLinks = if (stateBenefit.hasAmounts) {
         Seq(retrieveLink, updateAmountsLink, deleteAmountsLink)
       } else {
         Seq(retrieveLink, updateAmountsLink)
       }
 
-      // Links specific to the type (HMRC/CUSTOM) state benefit
-      val links = stateBenefit.createdBy match {
-        case Some("CUSTOM") => commonLinks ++ Seq(deleteLink, updateLink)
-        case _ => commonLinks :+ ignoreLink
+      // Pattern matching based on benefit amounts, duplicate/common benefit on both HMRC and CUSTOM
+      val links = (stateBenefit.hasAmounts, stateBenefit.isCommon, stateBenefit.createdBy) match {
+        case (true, false, "HMRC") => Seq(retrieveLink, updateAmountsLink, ignoreLink, deleteAmountsLink)
+        case (_, _, "HMRC") => Seq(retrieveLink, updateAmountsLink, ignoreLink)
+        case (_, true, "CUSTOM") => customCommonLinks
+        case (_, false, "CUSTOM") => customCommonLinks ++ Seq(deleteLink, updateLink)
       }
 
       // Differentiate the links based on the call list/single by benefitId passed in the request
@@ -100,7 +104,9 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
   implicit def reads[B: Reads]: Reads[ListBenefitsResponse[B]] = for {
     stateBenefits <- (__ \ "stateBenefits").readNullable(readJson[B](createdBy = "HMRC")).mapEmptySeqToNone
     customerAddedStateBenefits <- (__ \ "customerAddedStateBenefits").readNullable(readJson[B](createdBy = "CUSTOM")).mapEmptySeqToNone
-  } yield ListBenefitsResponse[B](stateBenefits, customerAddedStateBenefits)
+  } yield {
+    ListBenefitsResponse[B](stateBenefits, customerAddedStateBenefits)
+  }
 
 }
 
