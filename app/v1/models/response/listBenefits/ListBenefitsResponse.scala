@@ -50,7 +50,7 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
 
       // Pattern matching based on benefit amounts, duplicate/common benefit on both HMRC and CUSTOM
       val links = (stateBenefit.hasAmounts, stateBenefit.isCommon, stateBenefit.createdBy) match {
-        case (true, false, "HMRC") => Seq(retrieveLink, updateAmountsLink, ignoreLink, deleteAmountsLink)
+        case (true, false, "HMRC") => Seq(retrieveLink, updateAmountsLink, deleteAmountsLink, ignoreLink)
         case (_, _, "HMRC") => Seq(retrieveLink, updateAmountsLink, ignoreLink)
         case (_, true, "CUSTOM") => customCommonLinks
         case (_, false, "CUSTOM") => customCommonLinks ++ Seq(deleteLink, updateLink)

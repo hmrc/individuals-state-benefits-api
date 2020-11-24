@@ -69,7 +69,7 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
           hateoasResponse <- EitherT.fromEither[Future](
             hateoasFactory
               .wrapList(
-                process(serviceResponse.responseData, benefitId),
+                findAndUpdateCommonBenefits(serviceResponse.responseData, benefitId),
                 ListBenefitsHateoasData(nino, taxYear, benefitId)
               )
               .asRight[ErrorWrapper])
@@ -104,18 +104,18 @@ class ListBenefitsController @Inject()(val authService: EnrolmentsAuthService,
     }
   }
 
-  private def process(response: ListBenefitsResponse[StateBenefit], benefitId: Option[String]): ListBenefitsResponse[StateBenefit] = {
+  private def findAndUpdateCommonBenefits(response: ListBenefitsResponse[StateBenefit], benefitId: Option[String]): ListBenefitsResponse[StateBenefit] = {
 
     benefitId match {
       case None => response
       case _ => (response.stateBenefits, response.customerAddedStateBenefits) match {
-        case (Some(hmrc), Some(custom)) if hasCommon(hmrc, custom) != Nil =>
+        case (Some(hmrc), Some(custom)) if hasCommon(hmrc, custom) =>
           response.copy(Some(hmrc.map(_.copy(isCommon = true))), Some(custom.map(_.copy(isCommon = true))))
         case (_, _) => response
       }
     }
   }
 
-  private def hasCommon(hmrcB: Seq[StateBenefit], customB: Seq[StateBenefit]): List[StateBenefit] =
-    (hmrcB ++ customB).toList.groupBy(_.benefitId).values.filter(_.length > 1).flatten.toList
+  private def hasCommon(hmrcB: Seq[StateBenefit], customB: Seq[StateBenefit]): Boolean =
+    (hmrcB ++ customB).toList.groupBy(_.benefitId).values.exists(_.length > 1)
 }
