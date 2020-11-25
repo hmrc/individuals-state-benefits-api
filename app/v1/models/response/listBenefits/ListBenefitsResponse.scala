@@ -48,7 +48,6 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
         case (true, true) if stateBenefit.createdBy == "CUSTOM" => commonLinks :+ deleteAmountsLink
         case (true, false) if stateBenefit.createdBy == "CUSTOM" => commonLinks ++ Seq(deleteAmountsLink, deleteLink, updateLink)
         case (false, false) if stateBenefit.createdBy == "CUSTOM" => commonLinks ++ Seq(deleteLink, updateLink)
-        case (true, false) if stateBenefit.createdBy == "HMRC" => commonLinks ++ Seq(deleteAmountsLink, ignoreLink)
         case (_, _) if stateBenefit.createdBy == "HMRC" => commonLinks :+ ignoreLink
       }
 
