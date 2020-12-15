@@ -68,7 +68,6 @@ class UnIgnoreBenefitServiceSpec extends ServiceSpec {
           ("INVALID_TAX_YEAR", TaxYearFormatError),
           ("INVALID_BENEFIT_ID", NotFoundError),
           ("INVALID_CORRELATIONID", DownstreamError),
-          ("INVALID_PAYLOAD", DownstreamError),
           ("UNIGNORE_FORBIDDEN", RuleUnIgnoreForbiddenError),
           ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
           ("SERVER_ERROR", DownstreamError),

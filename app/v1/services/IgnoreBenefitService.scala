@@ -52,7 +52,6 @@ class IgnoreBenefitService @Inject()(connector: IgnoreBenefitConnector)
     ("INVALID_TAX_YEAR", TaxYearFormatError),
     ("INVALID_BENEFIT_ID", NotFoundError),
     ("INVALID_CORRELATIONID", DownstreamError),
-    ("INVALID_PAYLOAD", DownstreamError),
     ("IGNORE_FORBIDDEN", RuleIgnoreForbiddenError),
     ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
     ("SERVICE_ERROR", DownstreamError),
