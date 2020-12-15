@@ -54,7 +54,6 @@ class UnIgnoreBenefitService @Inject()(connector: UnIgnoreBenefitConnector)
     ("INVALID_CORRELATIONID", DownstreamError),
     ("INVALID_PAYLOAD", DownstreamError),
     ("UNIGNORE_FORBIDDEN", RuleUnIgnoreForbiddenError),
-    ("MATCHING_RESOURCE_NOT_FOUND", NotFoundError),
     ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
     ("SERVICE_ERROR", DownstreamError),
     ("SERVICE_UNAVAILABLE", DownstreamError)
