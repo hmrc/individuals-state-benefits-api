@@ -59,6 +59,7 @@ class AmendBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSer
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
+
       val rawData: AmendBenefitAmountsRawData = AmendBenefitAmountsRawData(
         nino = nino,
         taxYear = taxYear,
@@ -91,7 +92,7 @@ class AmendBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSer
       result.leftMap { errorWrapper =>
         val resCorrelationId = errorWrapper.correlationId
         val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
-        logger.info(
+        logger.warn(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")
         auditSubmission(
