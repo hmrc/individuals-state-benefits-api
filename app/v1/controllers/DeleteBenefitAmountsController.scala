@@ -57,9 +57,6 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
-        s"Request payload: ${request.body} with correlationId: $correlationId")
-
       val rawData: DeleteBenefitRawData = DeleteBenefitRawData(
         nino = nino,
         taxYear = taxYear,
@@ -76,9 +73,6 @@ class DeleteBenefitAmountsController @Inject()(val authService: EnrolmentsAuthSe
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
-
-          logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
-            s"Request payload: ${request.body} with correlationId: $correlationId")
 
           auditSubmission(
             GenericAuditDetail(
