@@ -59,7 +59,6 @@ class AmendBenefitController @Inject()(val authService: EnrolmentsAuthService,
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-
       val rawData = AmendBenefitRawData(
         nino = nino,
         taxYear = taxYear,
