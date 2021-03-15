@@ -16,4 +16,9 @@
 
 package v1.connectors
 
-case class DesUri[Resp](value: String)
+trait BackendUri[Resp] {
+  val value: String
+}
+
+case class DesUri[Resp](value: String) extends BackendUri[Resp]
+case class IfsUri[Resp](value: String) extends BackendUri[Resp]
