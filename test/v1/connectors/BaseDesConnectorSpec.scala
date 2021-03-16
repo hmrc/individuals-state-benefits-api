@@ -19,6 +19,7 @@ package v1.connectors
 import config.AppConfig
 import mocks.MockAppConfig
 import uk.gov.hmrc.http.{HttpClient, HttpReads}
+import v1.connectors.DownstreamUri.{DesUri, IfsUri}
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 
@@ -37,7 +38,7 @@ class BaseDesConnectorSpec extends ConnectorSpec {
   val url = "some/url?param=value"
   val absoluteUrl = s"$baseUrl/$url"
 
-  implicit val httpReads: HttpReads[DesOutcome[Result]] = mock[HttpReads[DesOutcome[Result]]]
+  implicit val httpReads: HttpReads[DownstreamOutcome[Result]] = mock[HttpReads[DownstreamOutcome[Result]]]
 
   class DesTest extends MockHttpClient with MockAppConfig {
     val connector: BaseDesConnector = new BaseDesConnector {
