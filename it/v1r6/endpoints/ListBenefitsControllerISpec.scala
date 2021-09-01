@@ -24,7 +24,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationBaseSpec
 import v1r6.fixtures.ListBenefitsFixture._
 import v1r6.models.errors._
-import v1r6.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class ListBenefitsControllerISpec extends IntegrationBaseSpec {
 
@@ -36,7 +36,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
 
     def uri: String = s"/$nino/$taxYear"
 
-    def desUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear"
+    def ifsUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -61,7 +61,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, OK, desJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, OK, desJson)
         }
 
         val response: WSResponse = await(request(None).get())
@@ -78,7 +78,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, OK, singleStateBenefitDesJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, OK, singleStateBenefitDesJson)
         }
 
         val response: WSResponse = await(request(None).get())
@@ -95,7 +95,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, singleStateBenefitDesJsonWithDuplicateId)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("benefitId" -> benefitId.get), OK, singleStateBenefitDesJsonWithDuplicateId)
         }
 
         val response: WSResponse = await(request(benefitId).get())
@@ -112,7 +112,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, singleCustomerStateBenefitDesJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("benefitId" -> benefitId.get), OK, singleCustomerStateBenefitDesJson)
         }
 
         val response: WSResponse = await(request(benefitId).get())
@@ -129,7 +129,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, desJsonWithNoAmounts)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("benefitId" -> benefitId.get), OK, desJsonWithNoAmounts)
         }
 
         val response: WSResponse = await(request(benefitId).get())
@@ -146,7 +146,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("benefitId" -> benefitId.get), OK, desJsonWithNoDateIgnored)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("benefitId" -> benefitId.get), OK, desJsonWithNoDateIgnored)
         }
 
         val response: WSResponse = await(request(benefitId).get())
@@ -190,15 +190,15 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
 
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new Test {
+      "ifs service error" when {
+        def serviceErrorTest(ifsStatus: Int, ifsCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"ifs returns an $ifsCode error and status $ifsStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, ifsUri, ifsStatus, errorBody(ifsCode))
             }
 
             val response: WSResponse = await(request(None).get())
@@ -211,7 +211,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
           s"""
              |{
              |  "code": "$code",
-             |  "reason": "des message"
+             |  "reason": "ifs message"
              |}
             """.stripMargin
 
