@@ -26,7 +26,7 @@ import v1r6.fixtures.ListBenefitsFixture._
 import v1r6.models.errors._
 import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class ListBenefitsControllerISpecIntegrationBaseSpec extends V1R6IntegrationBaseSpec {
+class ListBenefitsControllerISpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 

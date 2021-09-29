@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v1r6.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.joda.time.format.DateTimeFormat
@@ -23,12 +23,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationBaseSpec
-import v1.models.errors._
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import support.V1R6IntegrationBaseSpec
+import v1r6.models.errors._
+import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSpec {
-
+class AmendBenefitControllerISpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 
@@ -48,7 +47,7 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
 
     def uri: String = s"/$nino/$taxYear/$benefitId"
 
-    def desUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId"
+    def ifsUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId"
 
     def setupStubs(): StubMapping
 
@@ -96,7 +95,7 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.PUT, desUri, CREATED)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, ifsUri, CREATED)
         }
 
         val response: WSResponse = await(request().put(requestJson))
@@ -114,14 +113,14 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
         DateTimeFormat.forPattern("yyyy-MM-dd")
       )
 
-      def fromDesIntToString(taxYear: Int): String =
+      def fromIfsIntToString(taxYear: Int): String =
         (taxYear - 1) + "-" + taxYear.toString.drop(2)
 
       if (currentDate.isBefore(taxYearStartDate)){
-        fromDesIntToString(currentDate.getYear)
+        fromIfsIntToString(currentDate.getYear)
       }
       else {
-        fromDesIntToString(currentDate.getYear + 1)
+        fromIfsIntToString(currentDate.getYear + 1)
       }
     }
 
@@ -233,15 +232,15 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
 
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new Test {
+      "ifs service error" when {
+        def serviceErrorTest(ifsStatus: Int, ifsCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"ifs returns an $ifsCode error and status $ifsStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.PUT, ifsUri, ifsStatus, errorBody(ifsCode))
             }
 
             val response: WSResponse = await(request().put(requestJson))
@@ -254,7 +253,7 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
           s"""
              |{
              |  "code": "$code",
-             |  "reason": "des message"
+             |  "reason": "ifs message"
              |}
             """.stripMargin
 
@@ -268,7 +267,6 @@ class AmendBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSp
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))

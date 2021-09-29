@@ -17,5 +17,5 @@
 package support
 
 trait V1IntegrationBaseSpec extends IntegrationBaseSpec {
-  override val release6Enabled = false //sets release6Enabled to be false for all V1 integration tests
+  override val release6Enabled = false
 }

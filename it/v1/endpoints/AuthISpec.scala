@@ -23,7 +23,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import support.V1IntegrationBaseSpec
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class AuthISpecIntegrationBaseSpec extends V1IntegrationBaseSpec {
+class AuthISpec extends V1IntegrationBaseSpec {
 
   private trait Test {
     val nino: String = "AA123456A"

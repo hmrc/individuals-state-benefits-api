@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v1r6.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.joda.time.format.DateTimeFormat
@@ -23,11 +23,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationBaseSpec
-import v1.models.errors._
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import support.V1R6IntegrationBaseSpec
+import v1r6.models.errors._
+import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class UnignoreBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSpec {
+class UnignoreBenefitControllerISpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 
@@ -76,7 +76,7 @@ class UnignoreBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBas
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.DELETE, desUri, NO_CONTENT)
+          DownstreamStub.onSuccess(DownstreamStub.DELETE, desUri, NO_CONTENT)
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
@@ -148,7 +148,7 @@ class UnignoreBenefitControllerISpecIntegrationBaseSpec extends V1IntegrationBas
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.DELETE, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.DELETE, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().post(JsObject.empty))

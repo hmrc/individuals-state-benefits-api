@@ -27,7 +27,7 @@ import support.V1R6IntegrationBaseSpec
 import v1r6.models.errors._
 import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class CreateBenefitControllerISpecIntegrationBaseSpec extends V1R6IntegrationBaseSpec {
+class CreateBenefitControllerISpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 
