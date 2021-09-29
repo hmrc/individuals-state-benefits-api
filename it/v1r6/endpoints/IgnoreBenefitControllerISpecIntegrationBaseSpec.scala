@@ -14,31 +14,50 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v1r6.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.format.DateTimeFormat
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
-import v1.models.errors._
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import support.V1R6IntegrationBaseSpec
+import v1r6.models.errors._
+import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
-
-  override lazy val release6Enabled = false
+class IgnoreBenefitControllerISpecIntegrationBaseSpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 
     val nino: String = "AA123456A"
     val taxYear: String = "2019-20"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-    val correlationId: String = "X-123"
+    val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-    def uri: String = s"/$nino/$taxYear/$benefitId"
+    val hateoasResponse: JsValue = Json.parse(
+      s"""
+         |{
+         |   "links":[
+         |      {
+         |         "href":"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
+         |         "rel":"self",
+         |         "method":"GET"
+         |      },
+         |      {
+         |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/unignore",
+         |         "rel":"unignore-state-benefit",
+         |         "method":"POST"
+         |      }
+         |   ]
+         |}
+       """.stripMargin
+    )
 
-    def desUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId"
+    def uri: String = s"/$nino/$taxYear/$benefitId/ignore"
+
+    def desUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/ignore/$benefitId"
 
     def setupStubs(): StubMapping
 
@@ -49,29 +68,49 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
     }
   }
 
-  "Calling the 'delete state benefit' endpoint" should {
-    "return a 204 status code" when {
+  "Calling the 'ignore benefit' endpoint" should {
+    "return a 200 status code" when {
       "any valid request is made" in new Test {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.DELETE, desUri, NO_CONTENT)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, desUri, CREATED)
         }
 
-        val response: WSResponse = await(request().delete)
-        response.status shouldBe NO_CONTENT
-        response.body shouldBe ""
+        val response: WSResponse = await(request().post(JsObject.empty))
+        response.status shouldBe OK
+        response.body[JsValue] shouldBe hateoasResponse
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
     "return error according to spec" when {
 
+      def getCurrentTaxYear: String = {
+        val currentDate = DateTime.now(DateTimeZone.UTC)
+
+        val taxYearStartDate: DateTime = DateTime.parse(
+          currentDate.getYear + "-04-06",
+          DateTimeFormat.forPattern("yyyy-MM-dd")
+        )
+
+        def fromDesIntToString(taxYear: Int): String =
+          (taxYear - 1) + "-" + taxYear.toString.drop(2)
+
+        if (currentDate.isBefore(taxYearStartDate)){
+          fromDesIntToString(currentDate.getYear)
+        }
+        else {
+          fromDesIntToString(currentDate.getYear + 1)
+        }
+      }
+
       "validation error" when {
-        def validationErrorTest(requestNino: String, requestTaxYear: String, requestBenefitId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"validation fails with ${expectedBody.code} error" in new Test {
+        def validationErrorTest(requestNino: String, requestTaxYear: String, requestBenefitId: String,
+                                expectedStatus: Int, expectedBody: MtdError, scenario: Option[String]): Unit = {
+          s"validation fails with ${expectedBody.code} error ${scenario.getOrElse("")}" in new Test {
 
             override val nino: String = requestNino
             override val taxYear: String = requestTaxYear
@@ -83,19 +122,20 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(nino)
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().post(JsObject.empty))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
-            response.header("Content-Type") shouldBe Some("application/json")
           }
         }
 
         val input = Seq(
-          ("AA1123A", "2019-20", "b1e8057e-fbbc-47a8-a8b4-78d9f015c253", BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "20199", "78d9f015-a8b4-57b9-8bbc-c253a1e8057e", BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2019-20", "ABCDE12345FG", BAD_REQUEST, BenefitIdFormatError),
-          ("AA123456A", "2018-19", "b1e8057e-fbbc-47a8-a8b4-78d9f015c253", BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2019-21", "78d9f015-a8b4-57b9-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearRangeInvalidError))
+          ("AA1123A", "2019-20", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", BAD_REQUEST, NinoFormatError, None),
+          ("AA123456A", "20199", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e",  BAD_REQUEST, TaxYearFormatError, None),
+          ("AA123456A", "2019-20", "ABCDE12345FG", BAD_REQUEST, BenefitIdFormatError, None),
+          ("AA123456A", "2018-19", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearNotSupportedError, None),
+          ("AA123456A", "2019-21", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", BAD_REQUEST, RuleTaxYearRangeInvalidError, None),
+          ("AA123456A", getCurrentTaxYear, "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearNotEndedError, None)
+        )
 
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
@@ -108,13 +148,12 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.DELETE, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().post(JsObject.empty))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
-            response.header("Content-Type") shouldBe Some("application/json")
           }
         }
 
@@ -131,7 +170,8 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
-          (FORBIDDEN, "DELETE_FORBIDDEN", FORBIDDEN, RuleDeleteForbiddenError),
+          (FORBIDDEN, "IGNORE_FORBIDDEN", FORBIDDEN, RuleIgnoreForbiddenError),
+          (UNPROCESSABLE_ENTITY, "NOT_SUPPORTED_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))

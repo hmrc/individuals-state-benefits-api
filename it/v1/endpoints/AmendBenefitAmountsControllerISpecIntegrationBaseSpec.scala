@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package v1r6.endpoints
+package v1.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
-import v1r6.models.errors._
-import v1r6.stubs._
+import support.V1IntegrationBaseSpec
+import v1.models.errors._
+import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
+class AmendBenefitAmountsControllerISpecIntegrationBaseSpec extends V1IntegrationBaseSpec {
+
 
   private trait Test {
 
@@ -45,7 +46,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
     def uri: String = s"/$nino/$taxYear/$benefitId/amounts"
 
-    def IfsUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/$benefitId"
+    def desUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/$benefitId"
 
     def setupStubs(): StubMapping
 
@@ -64,7 +65,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, IfsUri, NO_CONTENT)
+          DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT)
         }
 
         val hateoasResponse: JsValue = Json.parse(
@@ -196,15 +197,15 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
 
-      "ifs service error" when {
-        def serviceErrorTest(ifsStatus: Int, ifsCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"ifs returns an $ifsCode error and status $ifsStatus" in new Test {
+      "des service error" when {
+        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"des returns an $desCode error and status $desStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.PUT, IfsUri, ifsStatus, errorBody(ifsCode))
+              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().put(requestBodyJson))
@@ -217,15 +218,14 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
           s"""
              |{
              |   "code": "$code",
-             |   "reason": "ifs message"
+             |   "reason": "des message"
              |}
             """.stripMargin
 
         val input = Seq(
-          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
+          (BAD_REQUEST, "INVALID_BENEFIT_ID", NOT_FOUND, NotFoundError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
           (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),

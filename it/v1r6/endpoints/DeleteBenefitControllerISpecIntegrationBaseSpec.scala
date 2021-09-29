@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
+import support.V1R6IntegrationBaseSpec
 import v1r6.models.errors._
 import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
+class DeleteBenefitControllerISpecIntegrationBaseSpec extends V1R6IntegrationBaseSpec {
 
   private trait Test {
 
@@ -34,9 +34,9 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
     val correlationId: String = "X-123"
 
-    def uri: String = s"/$nino/$taxYear/$benefitId/amounts"
+    def uri: String = s"/$nino/$taxYear/$benefitId"
 
-    def ifsUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/$benefitId"
+    def ifsUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId"
 
     def setupStubs(): StubMapping
 
@@ -47,7 +47,7 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
     }
   }
 
-  "Calling the 'delete state benefit amounts' endpoint" should {
+  "Calling the 'delete state benefit' endpoint" should {
     "return a 204 status code" when {
       "any valid request is made" in new Test {
 
@@ -129,6 +129,7 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
+          (FORBIDDEN, "DELETE_FORBIDDEN", FORBIDDEN, RuleDeleteForbiddenError),
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))
