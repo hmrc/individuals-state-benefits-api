@@ -34,15 +34,15 @@ trait MockDeleteRetrieveService extends MockFactory {
 
   object MockDeleteRetrieveService {
 
-    val defaultDesMap: Map[String, MtdError] = Map.empty[String, MtdError]
+    val defaultDownstreamMap: Map[String, MtdError] = Map.empty[String, MtdError]
 
-    def delete(desErrorMap: Map[String, MtdError] = defaultDesMap): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def delete(downstreamErrorMap: Map[String, MtdError] = defaultDownstreamMap): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockDeleteRetrieveService
         .delete(_: Map[String, MtdError])(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: DownstreamUri[Unit], _: String))
         .expects(*, *, *, *, *, *)
     }
 
-    def retrieve[Resp: Reads](desErrorMap: Map[String, MtdError] = defaultDesMap): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Resp]]]] = {
+    def retrieve[Resp: Reads](downstreamErrorMap: Map[String, MtdError] = defaultDownstreamMap): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Resp]]]] = {
       (mockDeleteRetrieveService
         .retrieve[Resp](_: Map[String, MtdError])(_: Format[Resp], _: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: DownstreamUri[Resp], _: String))
         .expects(*, *, *, *, *, *, *)
