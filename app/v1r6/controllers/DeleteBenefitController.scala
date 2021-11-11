@@ -25,7 +25,7 @@ import play.mvc.Http.MimeTypes
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
-import v1r6.connectors.DownstreamUri.{IfsUri, Release7Uri}
+import v1r6.connectors.DownstreamUri.{IfsUri, Release6Uri}
 import v1r6.controllers.requestParsers.DeleteBenefitRequestParser
 import v1r6.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import v1r6.models.errors._
@@ -61,7 +61,7 @@ class DeleteBenefitController @Inject()(val authService: EnrolmentsAuthService,
         taxYear = taxYear,
         benefitId = benefitId
       )
-      implicit val desUri: Release7Uri[Unit] = Release7Uri[Unit](
+      implicit val desUri: Release6Uri[Unit] = Release6Uri[Unit](
         s"income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId"
       )
       val result =

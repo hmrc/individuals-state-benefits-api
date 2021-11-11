@@ -19,7 +19,7 @@ package v1r6.connectors
 import config.AppConfig
 import play.api.http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1r6.connectors.DownstreamUri.{Release7Uri}
+import v1r6.connectors.DownstreamUri.{Release6Uri}
 import v1r6.models.request.listBenefits.ListBenefitsRequest
 import v1r6.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsResponse}
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ class ListBenefitsConnector @Inject()(val http: HttpClient,
     val taxYear = request.taxYear
 
     getWithQueryParams(
-      Release7Uri[ListBenefitsResponse[HMRCStateBenefit, CustomerStateBenefit]](s"income-tax/income/state-benefits/$nino/$taxYear"),
+      Release6Uri[ListBenefitsResponse[HMRCStateBenefit, CustomerStateBenefit]](s"income-tax/income/state-benefits/$nino/$taxYear"),
       request.benefitId.map("benefitId" -> _).toSeq
     )
   }

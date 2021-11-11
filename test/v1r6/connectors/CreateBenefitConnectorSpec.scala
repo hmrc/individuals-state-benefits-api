@@ -52,10 +52,10 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.release7BaseUrl returns baseUrl
-    MockAppConfig.release7Token returns "release7-token"
-    MockAppConfig.release7Environment returns "release7-environment"
-    MockAppConfig.release7EnvironmentHeaders returns Some(allowedIfsHeaders)
+    MockAppConfig.release6BaseUrl returns baseUrl
+    MockAppConfig.release6Token returns "release6-token"
+    MockAppConfig.release6Environment returns "release6-environment"
+    MockAppConfig.release6EnvironmentHeaders returns Some(allowedIfsHeaders)
   }
 
   "CreateBenefitConnector" when {
@@ -68,7 +68,7 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
             url = s"$baseUrl/income-tax/income/state-benefits/$nino/$taxYear/custom",
             config = dummyIfsHeaderCarrierConfig,
             body = addBenefitRequestBody,
-            requiredHeaders = requiredRelease7Headers,
+            requiredHeaders = requiredRelease6Headers,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           ).returns(Future.successful(outcome))
 
