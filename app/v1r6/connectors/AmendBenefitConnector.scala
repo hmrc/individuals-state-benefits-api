@@ -21,7 +21,7 @@ import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1r6.connectors.DownstreamUri.IfsUri
+import v1r6.connectors.DownstreamUri.Release7Uri
 import v1r6.models.request.AmendBenefit.AmendBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class AmendBenefitConnector @Inject()(val http: HttpClient,
     val benefitId = request.benefitId
 
     put(request.body,
-      IfsUri[Unit](s"income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId")
+      Release7Uri[Unit](s"income-tax/income/state-benefits/$nino/$taxYear/custom/$benefitId")
     )
   }
 }

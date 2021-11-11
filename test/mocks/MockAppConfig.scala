@@ -38,6 +38,18 @@ trait MockAppConfig extends MockFactory {
     def ifsEnvironment: CallHandler[String] = (mockAppConfig.ifsEnv _).expects()
     def ifsEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.ifsEnvironmentHeaders _).expects()
 
+    //Api1651 Config
+    def api1651BaseUrl: CallHandler[String] = (mockAppConfig.api1651BaseUrl _: () => String).expects()
+    def api1651Token: CallHandler[String] = (mockAppConfig.api1651Token _).expects()
+    def api1651Environment: CallHandler[String] = (mockAppConfig.api1651Env _).expects()
+    def api1651EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.api1651EnvironmentHeaders _).expects()
+
+    //Release7 Config
+    def release7BaseUrl: CallHandler[String] = (mockAppConfig.release7BaseUrl _: () => String).expects()
+    def release7Token: CallHandler[String] = (mockAppConfig.release7Token _).expects()
+    def release7Environment: CallHandler[String] = (mockAppConfig.release7Env _).expects()
+    def release7EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.release7EnvironmentHeaders _).expects()
+
     //MTD IF Lookup Config
     def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()
 

@@ -85,4 +85,12 @@ trait ConnectorSpec extends UnitSpec
     "X-Session-Id"
   )
 
+  val requiredRelease7Headers: Seq[(String, String)] = Seq(
+    "Authorization" -> "Bearer release7-token",
+    "Environment" -> "release7-environment",
+    "User-Agent" -> "self-assessment-accounts-api",
+    "CorrelationId" -> correlationId,
+    "Gov-Test-Scenario" -> "DEFAULT"
+  )
+
 }
