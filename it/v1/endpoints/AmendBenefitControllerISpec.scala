@@ -23,6 +23,7 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.test.Helpers.AUTHORIZATION
 import support.V1IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
@@ -35,7 +36,6 @@ class AmendBenefitControllerISpec extends V1IntegrationBaseSpec {
     val nino: String = "AA123456B"
     val taxYear: String = "2019-20"
     val benefitId = "4557ecb5-fd32-48cc-81f5-e6acd1099f3c"
-    val correlationId: String = "X-123"
 
     val requestJson: JsValue = Json.parse(
       """
@@ -55,7 +55,10 @@ class AmendBenefitControllerISpec extends V1IntegrationBaseSpec {
     def request(): WSRequest = {
       setupStubs()
       buildRequest(uri)
-        .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+      )
     }
   }
 
@@ -229,7 +232,6 @@ class AmendBenefitControllerISpec extends V1IntegrationBaseSpec {
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidStartDateJson, BAD_REQUEST, StartDateFormatError),
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidEndDateJson, BAD_REQUEST, EndDateFormatError)
         )
-
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
 
@@ -270,7 +272,6 @@ class AmendBenefitControllerISpec extends V1IntegrationBaseSpec {
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError)
         )
-
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }

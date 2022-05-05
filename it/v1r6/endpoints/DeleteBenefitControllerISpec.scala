@@ -21,6 +21,7 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.test.Helpers.AUTHORIZATION
 import support.V1R6IntegrationBaseSpec
 import v1r6.models.errors._
 import v1r6.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -32,7 +33,6 @@ class DeleteBenefitControllerISpec extends V1R6IntegrationBaseSpec {
     val nino: String = "AA123456A"
     val taxYear: String = "2019-20"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-    val correlationId: String = "X-123"
 
     def uri: String = s"/$nino/$taxYear/$benefitId"
 
@@ -43,7 +43,10 @@ class DeleteBenefitControllerISpec extends V1R6IntegrationBaseSpec {
     def request(): WSRequest = {
       setupStubs()
       buildRequest(uri)
-        .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+      )
     }
   }
 
@@ -93,8 +96,8 @@ class DeleteBenefitControllerISpec extends V1R6IntegrationBaseSpec {
           ("AA123456A", "20199", "78d9f015-a8b4-57b9-8bbc-c253a1e8057e", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2019-20", "ABCDE12345FG", BAD_REQUEST, BenefitIdFormatError),
           ("AA123456A", "2018-19", "b1e8057e-fbbc-47a8-a8b4-78d9f015c253", BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2019-21", "78d9f015-a8b4-57b9-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearRangeInvalidError))
-
+          ("AA123456A", "2019-21", "78d9f015-a8b4-57b9-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearRangeInvalidError)
+        )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
 
@@ -132,8 +135,8 @@ class DeleteBenefitControllerISpec extends V1R6IntegrationBaseSpec {
           (FORBIDDEN, "DELETE_FORBIDDEN", FORBIDDEN, RuleDeleteForbiddenError),
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))
-
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError)
+        )
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
