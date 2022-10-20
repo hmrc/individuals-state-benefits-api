@@ -102,7 +102,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .parameterGet(absoluteUrl, params, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.getWithQueryParams(DesUri[Result](url), params)) shouldBe outcome
+        await(connector.get(DesUri[Result](url), params)) shouldBe outcome
       }
 
       "POST" in new DesTest(desEnvironmentHeaders) {
@@ -211,7 +211,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
             .parameterGet(absoluteUrl, params, config, requiredHeaders, excludedHeaders)
             .returns(Future.successful(outcome))
 
-          await(connector.getWithQueryParams(IfsUri[Result](url), params)) shouldBe outcome
+          await(connector.get(IfsUri[Result](url), params)) shouldBe outcome
         }
 
         "PUT" in new IfsTest(ifsEnvironmentHeaders) {

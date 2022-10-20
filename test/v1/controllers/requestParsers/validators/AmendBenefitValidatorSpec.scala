@@ -16,7 +16,6 @@
 
 package v1.controllers.requestParsers.validators
 
-import com.typesafe.config.ConfigFactory
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
@@ -106,10 +105,7 @@ class AmendBenefitValidatorSpec extends UnitSpec {
     MockAppConfig.minimumPermittedTaxYear
       .returns(2021)
 
-    MockAppConfig.featureSwitch.returns(Some(Configuration(ConfigFactory.parseString(s"""
-         |taxYearNotEndedRule.enabled = $errorFeatureSwitch
-      """.stripMargin))))
-
+    MockAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
   }
 
   "UpdateBenefitValidator" when {
