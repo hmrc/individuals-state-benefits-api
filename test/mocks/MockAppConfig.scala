@@ -25,7 +25,7 @@ trait MockAppConfig extends MockFactory {
 
   val mockAppConfig: AppConfig = mock[AppConfig]
 
-  object MockAppConfig {
+  object MockedAppConfig {
     // DES Config
     def desBaseUrl: CallHandler[String]                         = (mockAppConfig.desBaseUrl _: () => String).expects()
     def desToken: CallHandler[String]                           = (mockAppConfig.desToken _).expects()
@@ -43,6 +43,12 @@ trait MockAppConfig extends MockFactory {
     def api1651Token: CallHandler[String]                           = (mockAppConfig.api1651Token _).expects()
     def api1651Environment: CallHandler[String]                     = (mockAppConfig.api1651Env _).expects()
     def api1651EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.api1651EnvironmentHeaders _).expects()
+
+    // Tax Year Specific IFS Config
+    def tysIfsBaseUrl: CallHandler[String]                         = (mockAppConfig.tysIfsBaseUrl _: () => String).expects()
+    def tysIfsToken: CallHandler[String]                           = (mockAppConfig.tysIfsToken _).expects()
+    def tysIfsEnvironment: CallHandler[String]                     = (mockAppConfig.tysIfsEnv _).expects()
+    def tysIfsEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.tysIfsEnvironmentHeaders _).expects()
 
     // MTD IF Lookup Config
     def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()

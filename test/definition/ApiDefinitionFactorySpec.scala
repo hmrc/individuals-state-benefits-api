@@ -29,7 +29,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
   class Test extends MockHttpClient with MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
-    MockAppConfig.apiGatewayContext returns "individuals/state-benefits"
+    MockedAppConfig.apiGatewayContext returns "individuals/state-benefits"
   }
 
   private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
@@ -37,10 +37,10 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "definition" when {
     "called" should {
       "return a valid Definition case class" in new Test {
-        MockAppConfig.featureSwitches returns Configuration.empty
-        MockAppConfig.apiStatus returns "1.0"
-        MockAppConfig.endpointsEnabled returns true
-        MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
+        MockedAppConfig.featureSwitches returns Configuration.empty
+        MockedAppConfig.apiStatus returns "1.0"
+        MockedAppConfig.endpointsEnabled returns true
+        MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
           definitionEnabled = true,
           authValidationEnabled = true) anyNumberOfTimes ()
 
@@ -89,7 +89,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     ).foreach { case (definitionEnabled, cl) =>
       s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {
         s"return $cl" in new Test {
-          MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
+          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
           apiDefinitionFactory.confidenceLevel shouldBe cl
         }
       }
@@ -99,14 +99,14 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockAppConfig.apiStatus returns "BETA"
+        MockedAppConfig.apiStatus returns "BETA"
         apiDefinitionFactory.buildAPIStatus("1.0") shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockAppConfig.apiStatus returns "ALPHO"
+        MockedAppConfig.apiStatus returns "ALPHO"
         apiDefinitionFactory.buildAPIStatus("1.0") shouldBe ALPHA
       }
     }

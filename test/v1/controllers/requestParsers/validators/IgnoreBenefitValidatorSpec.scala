@@ -47,10 +47,10 @@ class IgnoreBenefitValidatorSpec extends UnitSpec {
       .anyNumberOfTimes()
 
     // noinspection ScalaStyle
-    MockAppConfig.minimumPermittedTaxYear
+    MockedAppConfig.minimumPermittedTaxYear
       .returns(2021)
 
-    MockAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
+    MockedAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
   }
 
   "IgnoreBenefitValidator" when {

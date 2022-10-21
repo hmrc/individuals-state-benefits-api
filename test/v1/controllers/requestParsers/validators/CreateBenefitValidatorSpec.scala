@@ -104,9 +104,9 @@ class CreateBenefitValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2022-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockAppConfig.minimumPermittedTaxYear.returns(2021)
+    MockedAppConfig.minimumPermittedTaxYear.returns(2021)
 
-    MockAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
+    MockedAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
   }
 
   "AddBenefitValidator" when {
