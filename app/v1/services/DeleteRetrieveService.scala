@@ -40,9 +40,7 @@ class DeleteRetrieveService @Inject() (connector: DeleteRetrieveConnector) exten
       downstreamUri: DownstreamUri[Unit],
       correlationId: String): Future[Either[ErrorWrapper, ResponseWrapper[Unit]]] = {
 
-    val result = for {
-      downstreamResponseWrapper <- EitherT(connector.delete()).leftMap(mapDownstreamErrors(downstreamErrorMap))
-    } yield downstreamResponseWrapper
+    val result = EitherT(connector.delete()).leftMap(mapDownstreamErrors(downstreamErrorMap))
 
     result.value
   }
@@ -54,15 +52,12 @@ class DeleteRetrieveService @Inject() (connector: DeleteRetrieveConnector) exten
       downstreamUri: DownstreamUri[Resp],
       correlationId: String): Future[Either[ErrorWrapper, ResponseWrapper[Resp]]] = {
 
-    val result = for {
-      downstreamResponseWrapper <- EitherT(connector.retrieve[Resp]()).leftMap(mapDownstreamErrors(downstreamErrorMap))
-      mtdResponseWrapper        <- EitherT.fromEither[Future](validateRetrieveResponse(downstreamResponseWrapper))
-    } yield mtdResponseWrapper
+    val result = EitherT(connector.retrieve[Resp]()).leftMap(mapDownstreamErrors(downstreamErrorMap))
 
     result.value
   }
 
-  private def defaultDownstreamErrorMap: Map[String, MtdError] = Map(
+  private val defaultDownstreamErrorMap: Map[String, MtdError] = Map(
     "INVALID_NINO"        -> NinoFormatError,
     "INVALID_TAX_YEAR"    -> TaxYearFormatError,
     "NOT_FOUND"           -> NotFoundError,
