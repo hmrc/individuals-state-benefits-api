@@ -16,7 +16,6 @@
 
 package v1.support
 
-import play.api.libs.json.{JsObject, Json, Writes}
 import utils.Logging
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
