@@ -48,6 +48,7 @@ class IgnoreBenefitValidatorSpec extends UnitSpec {
     // noinspection ScalaStyle
     MockedAppConfig.minimumPermittedTaxYear
       .returns(2021)
+
   }
 
   "IgnoreBenefitValidator" when {

@@ -50,6 +50,14 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
     }
   }
 
+  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
+    if (isEnabled("allowTemporalValidationSuspension.enabled")) {
+      request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
+    } else {
+      true
+    }
+  }
+
   private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
