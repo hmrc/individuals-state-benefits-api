@@ -30,7 +30,8 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
       "a valid request is made" in new IfsTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2019-20")
 
-        private val outcome = Right(ResponseWrapper(correlationId, ()))
+        private val outcome: Right[Nothing, ResponseWrapper[Unit]]
+        = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
           url = s"$baseUrl/income-tax/income/state-benefits/$nino/2019-20/ignore/$benefitId", EmptyBody
@@ -45,7 +46,8 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
         "a valid request is made" in new TysIfsTest with Test {
           def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
 
-          private val outcome = Right(ResponseWrapper(correlationId, ()))
+          private val outcome: Right[Nothing, ResponseWrapper[Unit]]
+          = Right(ResponseWrapper(correlationId, ()))
 
           willPut(
             url = s"$baseUrl/income-tax/23-24/income/state-benefits/$nino/ignore/$benefitId", EmptyBody
