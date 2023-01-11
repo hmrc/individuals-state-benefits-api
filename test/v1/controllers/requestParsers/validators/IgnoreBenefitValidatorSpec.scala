@@ -20,7 +20,6 @@ import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import play.api.Configuration
 import support.UnitSpec
 import utils.CurrentDateTime
 import v1.mocks.MockCurrentDateTime
@@ -29,14 +28,14 @@ import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 
 class IgnoreBenefitValidatorSpec extends UnitSpec {
 
-  private val validNino      = "AA123456A"
-  private val validTaxYear   = "2020-21"
+  private val validNino = "AA123456A"
+  private val validTaxYear = "2020-21"
   private val validBenefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  class Test(errorFeatureSwitch: Boolean = true) extends MockCurrentDateTime with MockAppConfig {
+  class Test extends MockCurrentDateTime with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
     implicit val appConfig: AppConfig = mockAppConfig
 
@@ -49,18 +48,12 @@ class IgnoreBenefitValidatorSpec extends UnitSpec {
     // noinspection ScalaStyle
     MockedAppConfig.minimumPermittedTaxYear
       .returns(2021)
-
-    MockedAppConfig.featureSwitches.returns(Configuration("taxYearNotEndedRule.enabled" -> errorFeatureSwitch))
   }
 
   "IgnoreBenefitValidator" when {
     "running a validation" should {
       "return no errors for a valid request" in new Test {
         validator.validate(IgnoreBenefitRawData(validNino, validTaxYear, validBenefitId)) shouldBe Nil
-      }
-
-      "return no errors when config for Tax RuleTaxYearNotEndedError is set to false" in new Test(false) {
-        validator.validate(IgnoreBenefitRawData(validNino, "2022-23", validBenefitId)) shouldBe List()
       }
 
       // parameter format error scenarios
