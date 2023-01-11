@@ -16,7 +16,7 @@
 
 package v1.services
 
-import v1.models.domain.Nino
+import v1.models.domain.{Nino, TaxYear}
 import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockAmendBenefitAmountsConnector
 import v1.models.errors._
@@ -38,7 +38,7 @@ class AmendBenefitAmountsServiceSpec extends ServiceSpec {
 
   val requestData: AmendBenefitAmountsRequest = AmendBenefitAmountsRequest(
     nino = Nino(nino),
-    taxYear = taxYear,
+    taxYear = TaxYear.fromMtd(taxYear),
     benefitId = benefitId,
     body = updateBenefitAmountsRequestBody
   )
