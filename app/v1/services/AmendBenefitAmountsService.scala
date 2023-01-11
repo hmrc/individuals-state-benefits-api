@@ -61,7 +61,6 @@ class AmendBenefitAmountsService @Inject() (connector: AmendBenefitAmountsConnec
     )
 
     errors ++ extraTysErrors
-
   }
 
 }
