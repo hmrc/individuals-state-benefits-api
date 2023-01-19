@@ -16,7 +16,9 @@
 
 package config
 
+import org.apache.commons.lang3.BooleanUtils
 import play.api.Configuration
+import play.api.mvc.Request
 
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
@@ -37,8 +39,15 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
     enabled.getOrElse(false)
   }
 
-  val isTaxYearNotEndedRuleEnabled: Boolean = isEnabled("taxYearNotEndedRule.enabled")
   val isTaxYearSpecificApiEnabled: Boolean  = isEnabled("tys-api.enabled")
+
+  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
+    if (isEnabled("allowTemporalValidationSuspension.enabled")) {
+      request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
+    } else {
+      true
+    }
+  }
 
   private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
