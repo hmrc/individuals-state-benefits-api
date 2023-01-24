@@ -1,10 +1,10 @@
 summary: List State Benefits
 description: |
-  This endpoint allows a developer to retrieve a list of all state benefits.
-  
-  Any HMRC held benefit amounts that have been amended, will result in a duplicate benefit being created within the `customerAddedStateBenefits` array. It will have the same benefit ID.
+  This endpoint allows you to retrieve a list of all state benefits.
   
   A National Insurance number and a tax year that ended must be provided.
+  
+  Any HMRC held benefit amounts that have been amended, will result in a duplicate benefit with the same benefit ID, within the `customerAddedStateBenefits` array.
   
   ### Test data
   <p>Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.</p>
