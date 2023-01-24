@@ -2,7 +2,7 @@ openapi: "3.0.3"
 
 info:
   version: "1.0"
-  title: Individuals Expenses (MTD)
+  title: Individuals State Benefits (MTD)
   description: |
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
@@ -48,19 +48,22 @@ components:
 paths:
   /individuals/state-benefits/{nino}/{taxYear}:
     post:
-      $ref: "./endpoints/create_benefit.yaml"
+      $ref: "./endpoints/benefit_create.yaml"
     get:
-      $ref: "./endpoints/list_benefits.yaml"
+      $ref: "./endpoints/benefits_list.yaml"
   /individuals/state-benefits/{nino}/{taxYear}/{benefitId}:
     put:
-      $ref: "./endpoints/amend_benefit.yaml"
+      $ref: "./endpoints/benefit_amend.yaml"
     delete:
-      $ref: "./endpoints/delete_benefit.yaml"
+      $ref: "./endpoints/benefit_delete.yaml"
   /individuals/state-benefits/{nino}/{taxYear}/{benefitId}/amounts:
     put:
-      $ref: "./endpoints/amend_benefit_amounts.yaml"
+      $ref: "./endpoints/benefit_amounts_amend.yaml"
     delete:
-      $ref: "./endpoints/delete_benefit_amounts.yaml"
+      $ref: "./endpoints/benefit_amounts_delete.yaml"
   /individuals/state-benefits/{nino}/{taxYear}/{benefitId}/ignore:
     post:
-      $ref: "./endpoints/ignore_benefit.yaml"
+      $ref: "./endpoints/benefit_ignore.yaml"
+  /individuals/state-benefits/{nino}/{taxYear}/{benefitId}/unignore:
+    post:
+      $ref: "./endpoints/benefit_unignore.yaml"
