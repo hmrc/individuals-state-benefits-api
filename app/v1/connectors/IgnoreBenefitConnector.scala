@@ -29,20 +29,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreBenefitConnector @Inject()(val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class IgnoreBenefitConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def ignoreBenefit(
-                     request: IgnoreBenefitRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      request: IgnoreBenefitRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     import request._
 
     implicit val successCode: SuccessCode = SuccessCode(Status.CREATED)
 
-    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/ignore/$benefitId")
-    } else {
-      IfsUri[Unit](s"income-tax/income/state-benefits/$nino/${taxYear.asMtd}/ignore/$benefitId")
-    }
+    val downstreamUri = TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/ignore/$benefitId")
 
     put(EmptyBody, downstreamUri)
   }
