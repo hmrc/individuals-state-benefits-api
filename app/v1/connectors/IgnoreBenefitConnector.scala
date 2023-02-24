@@ -21,7 +21,7 @@ import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.request.EmptyBody
 import config.AppConfig
-import play.api.http.Status
+import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
@@ -36,7 +36,7 @@ class IgnoreBenefitConnector @Inject() (val http: HttpClient, val appConfig: App
 
     import request._
 
-    implicit val successCode: SuccessCode = SuccessCode(Status.CREATED)
+    implicit val successCode: SuccessCode = SuccessCode(CREATED)
 
     val downstreamUri = TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/ignore/$benefitId")
 
