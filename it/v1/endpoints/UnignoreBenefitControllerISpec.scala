@@ -136,7 +136,7 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
     val nino: String      = "AA123456A"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-    def taxYear: String = "2019-20"
+    val taxYear: String = "2019-20"
 
     val hateoasResponse: JsValue = Json.parse(
       s"""
@@ -157,8 +157,8 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
        """.stripMargin
     )
 
-    def mtdUri: String = s"/$nino/$taxYear/$benefitId/unignore"
-    def downstreamUri: String = s"/income-tax/19-20/state-benefits/$nino/ignore/$benefitId"
+    lazy val mtdUri: String = s"/$nino/$taxYear/$benefitId/unignore"
+    val downstreamUri: String = s"/income-tax/19-20/state-benefits/$nino/ignore/$benefitId"
 
     def setupStubs(): Unit = {}
 
