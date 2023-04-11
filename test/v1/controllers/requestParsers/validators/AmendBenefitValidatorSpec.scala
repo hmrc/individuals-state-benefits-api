@@ -109,13 +109,7 @@ class AmendBenefitValidatorSpec extends UnitSpec {
       }
 
       "not return RuleTaxYearNotEndedError error for a tax year which hasn't ended but temporal validation is disabled" in new Test {
-        validator.validate(
-          AmendBenefitRawData(
-            validNino,
-            "2022-23",
-            benefitId,
-            requestJson("2022-06-01", "2022-07-01"),
-            temporalValidationEnabled = false)) shouldBe Nil
+        validator.validate(AmendBenefitRawData(validNino, "2022-23", benefitId, requestJson("2022-06-01", "2022-07-01"))) shouldBe Nil
       }
 
       "return RuleIncorrectOrEmptyBodyError error for an empty request body" in new Test {

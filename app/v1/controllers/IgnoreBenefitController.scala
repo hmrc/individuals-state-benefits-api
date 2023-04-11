@@ -53,11 +53,7 @@ class IgnoreBenefitController @Inject() (val authService: EnrolmentsAuthService,
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: IgnoreBenefitRawData = IgnoreBenefitRawData(
-        nino = nino,
-        taxYear = taxYear,
-        benefitId = benefitId
-      )
+      val rawData: IgnoreBenefitRawData = IgnoreBenefitRawData(nino, taxYear, benefitId)
 
       val requestHandler = RequestHandler
         .withParser(parser)
