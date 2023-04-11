@@ -21,7 +21,7 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
+import utils.IdGenerator
 import v1.controllers.requestParsers.IgnoreBenefitRequestParser
 import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 import v1.models.response.ignoreBenefit.IgnoreBenefitHateoasData
@@ -41,8 +41,7 @@ class IgnoreBenefitController @Inject() (val authService: EnrolmentsAuthService,
                                          hateoasFactory: HateoasFactory,
                                          cc: ControllerComponents,
                                          idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(

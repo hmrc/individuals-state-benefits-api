@@ -22,7 +22,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
-import utils.{IdGenerator, Logging}
+import utils.IdGenerator
 import v1.controllers.requestParsers.AmendBenefitRequestParser
 import v1.models.request.AmendBenefit.AmendBenefitRawData
 import v1.models.response.amendBenefit.AmendBenefitHateoasData
@@ -42,8 +42,7 @@ class AmendBenefitController @Inject() (val authService: EnrolmentsAuthService,
                                         hateoasFactory: HateoasFactory,
                                         cc: ControllerComponents,
                                         val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
