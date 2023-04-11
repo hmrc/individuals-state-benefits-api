@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.requestParsers.IgnoreBenefitRequestParser
@@ -56,8 +56,7 @@ class UnignoreBenefitController @Inject() (val authService: EnrolmentsAuthServic
       val rawData: IgnoreBenefitRawData = IgnoreBenefitRawData(
         nino = nino,
         taxYear = taxYear,
-        benefitId = benefitId,
-        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+        benefitId = benefitId
       )
 
       val requestHandler = RequestHandler
