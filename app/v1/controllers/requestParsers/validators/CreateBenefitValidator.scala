@@ -55,7 +55,7 @@ class CreateBenefitValidator @Inject() (implicit appConfig: AppConfig) extends V
     List(
       BenefitTypeValidation.validate(body.benefitType),
       DateFormatValidation.validate(body.startDate, StartDateFormatError),
-      if (body.endDate.isDefined) DateFormatValidation.validate(body.endDate.get, EndDateFormatError) else NoValidationErrors
+      body.endDate.map(DateFormatValidation.validate(_, EndDateFormatError)).getOrElse(NoValidationErrors)
     )
   }
 

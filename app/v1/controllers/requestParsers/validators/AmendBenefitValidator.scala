@@ -59,7 +59,7 @@ class AmendBenefitValidator @Inject() (implicit appConfig: AppConfig) extends Va
 
     List(
       DateFormatValidation.validate(body.startDate, StartDateFormatError),
-      if (body.endDate.isDefined) DateFormatValidation.validate(body.endDate.get, EndDateFormatError) else NoValidationErrors
+      body.endDate.map(DateFormatValidation.validate(_, EndDateFormatError)).getOrElse(NoValidationErrors)
     )
   }
 
