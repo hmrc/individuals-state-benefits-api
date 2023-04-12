@@ -26,23 +26,29 @@ class DateOrderValidationSpec extends UnitSpec {
   private val later   = "2021-10-10"
 
   "DateOrderValidation.validate" should {
-    "return an empty list for a dates in a valid order" when {
-      "valid params are supplied" in {
-        val validStartDate = LocalDate.parse(earlier)
-        val validEndDate   = LocalDate.parse(later)
+    "return an empty list for dates in a valid order" in {
+      val validStartDate = LocalDate.parse(earlier)
+      val validEndDate   = LocalDate.parse(later)
 
-        val result = DateOrderValidation.validate(validStartDate, validEndDate)
-        result shouldBe NoValidationErrors
-      }
+      val result = DateOrderValidation.validate(validStartDate, validEndDate)
+      result shouldBe NoValidationErrors
     }
 
-    "return a List(RuleEndDateBeforeStartDateError) for an dates in an invalid order" in {
+    "return an empty list for two identical dates" in {
+      val date = LocalDate.parse(earlier)
+
+      val result = DateOrderValidation.validate(date, date)
+      result shouldBe NoValidationErrors
+    }
+
+    "return a List(RuleEndDateBeforeStartDateError) for dates in an invalid order" in {
       val invalidStartDate = LocalDate.parse(later)
       val invalidEndDate   = LocalDate.parse(earlier)
 
       val result = DateOrderValidation.validate(invalidStartDate, invalidEndDate)
       result shouldBe List(RuleEndDateBeforeStartDateError)
     }
+
   }
 
 }
