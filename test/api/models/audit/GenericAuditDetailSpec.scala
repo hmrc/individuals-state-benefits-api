@@ -23,12 +23,12 @@ import support.UnitSpec
 
 class GenericAuditDetailSpec extends UnitSpec {
 
-  val nino: String                         = "XX751130C"
-  val taxYear: String                      = "2020-21"
-  val benefitId: String                    = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val userType: String                     = "Agent"
+  val nino                                 = "XX751130C"
+  val taxYear                              = "2020-21"
+  val benefitId                            = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val userType                             = "Agent"
   val agentReferenceNumber: Option[String] = Some("012345678")
-  val correlationId: String                = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val correlationId                        = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   val auditDetailJsonSuccess: JsValue = Json.parse(
     s"""
