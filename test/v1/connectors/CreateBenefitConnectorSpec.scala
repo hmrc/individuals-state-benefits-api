@@ -16,13 +16,13 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.mocks.MockHttpClient
 import api.models.domain.{BenefitType, Nino}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import v1.models.request.createBenefit.{CreateBenefitRequest, CreateBenefitRequestBody}
-import v1.models.response.createBenefit.AddBenefitResponse
+import v1.models.response.createBenefit.CreateBenefitResponse
 
 import scala.concurrent.Future
 
@@ -31,7 +31,7 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
   val nino: String    = "AA111111A"
   val taxYear: String = "2021-22"
 
-  val addBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
+  val createBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
     benefitType = BenefitType.incapacityBenefit.toString,
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
@@ -40,10 +40,10 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
   val request: CreateBenefitRequest = CreateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
-    body = addBenefitRequestBody
+    body = createBenefitRequestBody
   )
 
-  val response = AddBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
+  val response: CreateBenefitResponse = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 
   class Test extends MockHttpClient with MockAppConfig {
 
@@ -61,19 +61,20 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
   "CreateBenefitConnector" when {
     "createBenefit" should {
       "return a 200 status upon HttpClient success" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, response))
+        val outcome: Right[Nothing, ResponseWrapper[CreateBenefitResponse]] = Right(ResponseWrapper(correlationId, response))
 
         MockedHttpClient
           .post(
             url = s"$baseUrl/income-tax/income/state-benefits/$nino/$taxYear/custom",
             config = dummyIfsHeaderCarrierConfig,
-            body = addBenefitRequestBody,
+            body = createBenefitRequestBody,
             requiredHeaders = requiredRelease6Headers,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 
-        await(connector.addBenefit(request)) shouldBe outcome
+        val result: DownstreamOutcome[CreateBenefitResponse] = await(connector.createBenefit(request))
+        result shouldBe outcome
       }
     }
   }

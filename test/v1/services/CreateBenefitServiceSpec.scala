@@ -23,16 +23,16 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.mocks.connectors.MockCreateBenefitConnector
 import v1.models.request.createBenefit.{CreateBenefitRequest, CreateBenefitRequestBody}
-import v1.models.response.createBenefit.AddBenefitResponse
+import v1.models.response.createBenefit.CreateBenefitResponse
 
 import scala.concurrent.Future
 
 class CreateBenefitServiceSpec extends ServiceSpec {
 
-  private val nino = "AA112233A"
+  private val nino    = "AA112233A"
   private val taxYear = "2021-22"
 
-  val addBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
+  val createBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
     benefitType = BenefitType.incapacityBenefit.toString,
     startDate = "2020-08-03",
     endDate = Some("2020-12-03")
@@ -41,30 +41,30 @@ class CreateBenefitServiceSpec extends ServiceSpec {
   val request: CreateBenefitRequest = CreateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
-    body = addBenefitRequestBody
+    body = createBenefitRequestBody
   )
 
-  val response: AddBenefitResponse = AddBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
+  val response: CreateBenefitResponse = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 
   trait Test extends MockCreateBenefitConnector {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     val service: CreateBenefitService = new CreateBenefitService(
-      connector = mockAddBenefitConnector
+      connector = mockCreateBenefitConnector
     )
 
   }
 
-  "AddBenefitService" when {
-    "addBenefit" must {
+  "CreateBenefitService" when {
+    "createBenefit" must {
       "return correct result for a success" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, response))
 
-        MockAddBenefitConnector
-          .addBenefit(request)
+        MockCreateBenefitConnector
+          .createBenefit(request)
           .returns(Future.successful(outcome))
 
-        await(service.addBenefit(request)) shouldBe outcome
+        await(service.createBenefit(request)) shouldBe outcome
       }
 
       "map errors according to spec" when {
@@ -72,11 +72,11 @@ class CreateBenefitServiceSpec extends ServiceSpec {
         def serviceError(desErrorCode: String, error: MtdError): Unit =
           s"a $desErrorCode error is returned from the service" in new Test {
 
-            MockAddBenefitConnector
-              .addBenefit(request)
+            MockCreateBenefitConnector
+              .createBenefit(request)
               .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
-            await(service.addBenefit(request)) shouldBe Left(ErrorWrapper(correlationId, error))
+            await(service.createBenefit(request)) shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
         val input = Seq(

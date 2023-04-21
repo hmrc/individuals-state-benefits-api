@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.CreateBenefitRequestParser
 import v1.models.request.createBenefit.CreateBenefitRawData
-import v1.models.response.createBenefit.AddBenefitHateoasData
+import v1.models.response.createBenefit.CreateBenefitHateoasData
 import v1.services.CreateBenefitService
 
 import javax.inject.{Inject, Singleton}
@@ -63,7 +63,7 @@ class CreateBenefitController @Inject() (val authService: EnrolmentsAuthService,
 
       val requestHandler = RequestHandler
         .withParser(parser)
-        .withService(service.addBenefit)
+        .withService(service.createBenefit)
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "CreateStateBenefit",
@@ -72,7 +72,7 @@ class CreateBenefitController @Inject() (val authService: EnrolmentsAuthService,
           requestBody = Some(request.body),
           includeResponse = true
         ))
-        .withHateoasResultFrom(hateoasFactory)((_, response) => AddBenefitHateoasData(nino, taxYear, response.benefitId))
+        .withHateoasResultFrom(hateoasFactory)((_, response) => CreateBenefitHateoasData(nino, taxYear, response.benefitId))
 
       requestHandler.handleRequest(rawData)
     }

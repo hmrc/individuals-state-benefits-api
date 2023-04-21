@@ -29,11 +29,11 @@ import utils.CurrentDateTime
 import v1.models.request.createBenefit.CreateBenefitRawData
 
 class CreateBenefitValidatorSpec extends UnitSpec {
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2020-21"
 
   val startDate = "2020-08-03"
-  val endDate = "2020-12-03"
+  val endDate   = "2020-12-03"
 
   private def requestJson(benefitType: String = "statePension", startDate: String = startDate, endDate: String = endDate) = AnyContentAsJson(
     Json.parse(
@@ -51,7 +51,7 @@ class CreateBenefitValidatorSpec extends UnitSpec {
   class Test extends MockCurrentDateTime with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
     implicit val appConfig: AppConfig = mockAppConfig
 
@@ -64,7 +64,7 @@ class CreateBenefitValidatorSpec extends UnitSpec {
     MockedAppConfig.minimumPermittedTaxYear.returns(2021)
   }
 
-  "AddBenefitValidator" when {
+  "CreateBenefitValidator" when {
     "running a validation" should {
       "return no errors for a valid request" in new Test {
         validator.validate(CreateBenefitRawData(validNino, validTaxYear, validRawBody)) shouldBe Nil
@@ -116,8 +116,7 @@ class CreateBenefitValidatorSpec extends UnitSpec {
 
       "return RuleIncorrectOrEmptyBodyError error for an incorrect request body" in new Test {
         private val paths: Seq[String] = List("/benefitType", "/startDate", "/endDate")
-        private val body: AnyContentAsJson = AnyContentAsJson(Json.parse(
-          s"""
+        private val body: AnyContentAsJson = AnyContentAsJson(Json.parse(s"""
              |{ 
              |  "benefitType": true, 
              |  "startDate": true, 
