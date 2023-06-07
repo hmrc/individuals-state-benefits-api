@@ -40,7 +40,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
       Seq(
         HMRCStateBenefit(
           benefitType = "incapacityBenefit",
-          dateIgnored = Some(Timestamp("2019-04-04T01:01:01Z")),
+          dateIgnored = Some(Timestamp("2019-04-04T01:01:01.000Z")),
           benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f",
           startDate = "2020-01-01",
           endDate = Some("2020-04-01"),
@@ -59,7 +59,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
           endDate = Some("2020-04-01"),
           amount = Some(2000.00),
           taxPaid = Some(2132.22),
-          submittedOn = Some(Timestamp("2019-04-04T01:01:01Z"))
+          submittedOn = Some(Timestamp("2019-04-04T01:01:01.000Z"))
         )
       )
     )

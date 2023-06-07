@@ -28,7 +28,7 @@ class ListBenefitsHateoasFactorySpec extends UnitSpec with HateoasLinks with Moc
   private val taxYear   = "2020-21"
   private val benefitId = "benefitId"
 
-  private val dateIgnored = Some(Timestamp("2019-04-04T01:01:01Z"))
+  private val dateIgnored = Some(Timestamp("2019-04-04T01:01:01.000Z"))
 
   class Test {
     MockedAppConfig.apiGatewayContext.returns("gatewayContext").anyNumberOfTimes()

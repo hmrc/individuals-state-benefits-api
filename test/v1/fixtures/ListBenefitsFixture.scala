@@ -918,7 +918,7 @@ object ListBenefitsFixture {
 
   val stateBenefits: HMRCStateBenefit = HMRCStateBenefit(
     benefitType = "incapacityBenefit",
-    dateIgnored = Some(Timestamp("2019-04-04T01:01:01Z")),
+    dateIgnored = Some(Timestamp("2019-04-04T01:01:01.000Z")),
     benefitId = s"$benefitId",
     startDate = "2020-01-01",
     endDate = Some("2020-04-01"),
@@ -934,7 +934,7 @@ object ListBenefitsFixture {
     endDate = Some("2020-04-01"),
     amount = Some(2000.00),
     taxPaid = Some(2132.22),
-    submittedOn = Some(Timestamp("2019-04-04T01:01:01Z"))
+    submittedOn = Some(Timestamp("2019-04-04T01:01:01.000Z"))
   )
 
   val responseData: ListBenefitsResponse[HMRCStateBenefit, CustomerStateBenefit] = ListBenefitsResponse(
