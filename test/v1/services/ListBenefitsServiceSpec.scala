@@ -29,8 +29,8 @@ import scala.concurrent.Future
 
 class ListBenefitsServiceSpec extends ServiceSpec {
 
-  private val nino = "AA112233A"
-  private val taxYear = "2019-20"
+  private val nino      = "AA112233A"
+  private val taxYear   = "2019-20"
   private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
   private val requestData = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd(taxYear), benefitId)

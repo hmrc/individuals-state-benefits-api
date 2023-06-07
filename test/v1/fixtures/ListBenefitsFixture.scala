@@ -25,10 +25,10 @@ import v1.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, 
 
 object ListBenefitsFixture {
 
-  val nino: String = "AA123456A"
+  val nino: String    = "AA123456A"
   val taxYear: String = "2020-21"
 
-  val benefitId = "f0d83ac0-a10a-4d57-9e41-6d033832779f"
+  val benefitId                      = "f0d83ac0-a10a-4d57-9e41-6d033832779f"
   val queryBenefitId: Option[String] = Some(benefitId)
 
   val correlationId: String = "X-123"
@@ -66,8 +66,7 @@ object ListBenefitsFixture {
     """.stripMargin
   )
 
-  val responseBody: JsValue = Json.parse(
-    s"""
+  val responseBody: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -108,8 +107,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val singleRetrieveWithAmounts: JsValue = Json.parse(
-    """
+  val singleRetrieveWithAmounts: JsValue = Json.parse("""
       |{
       |	"customerAddedStateBenefits": [{
       |		"benefitType": "incapacityBenefit",
@@ -152,8 +150,7 @@ object ListBenefitsFixture {
       |	}]
       |}""".stripMargin)
 
-  val singleRetrieveWithAmountsBenefitId: JsValue = Json.parse(
-    s"""
+  val singleRetrieveWithAmountsBenefitId: JsValue = Json.parse(s"""
        |{
        |	"customerAddedStateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -196,8 +193,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val singleRetrieveWithDuplicateBenefitId: JsValue = Json.parse(
-    s"""
+  val singleRetrieveWithDuplicateBenefitId: JsValue = Json.parse(s"""
        |{
        |	"customerAddedStateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -240,8 +236,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val responseBodyWithNoAmounts: JsValue = Json.parse(
-    s"""
+  val responseBodyWithNoAmounts: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -274,8 +269,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val responseBodyWithNoAmountsBenefitId: JsValue = Json.parse(
-    s"""
+  val responseBodyWithNoAmountsBenefitId: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -308,8 +302,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val responseBodyWithoutDateIgnored: JsValue = Json.parse(
-    s"""
+  val responseBodyWithoutDateIgnored: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -341,8 +334,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val hmrcOnlyResponseBody: JsValue = Json.parse(
-    s"""
+  val hmrcOnlyResponseBody: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -369,8 +361,7 @@ object ListBenefitsFixture {
        |	}]
        |}""".stripMargin)
 
-  val duplicateIdResponse: JsValue = Json.parse(
-    s"""
+  val duplicateIdResponse: JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",
@@ -428,8 +419,7 @@ object ListBenefitsFixture {
        |}
        |""".stripMargin)
 
-  val singleStateBenefitDesJson: JsValue = Json.parse(
-    s"""
+  val singleStateBenefitDesJson: JsValue = Json.parse(s"""
        |{
        |  "stateBenefits": {
        |    "incapacityBenefit": [
@@ -444,8 +434,7 @@ object ListBenefitsFixture {
        |   }
        |}""".stripMargin)
 
-  val singleStateBenefitDesJsonWithDuplicateId: JsValue = Json.parse(
-    s"""
+  val singleStateBenefitDesJsonWithDuplicateId: JsValue = Json.parse(s"""
        |{
        |  "stateBenefits": {
        |    "incapacityBenefit": [
@@ -471,8 +460,7 @@ object ListBenefitsFixture {
        |   }
        |}""".stripMargin)
 
-  val singleCustomerStateBenefitDesJson: JsValue = Json.parse(
-    s"""
+  val singleCustomerStateBenefitDesJson: JsValue = Json.parse(s"""
        |{
        |  "customerAddedStateBenefits": {
        |    "incapacityBenefit": [
@@ -487,8 +475,7 @@ object ListBenefitsFixture {
        |   }
        |}""".stripMargin)
 
-  val desJsonWithNoAmounts: JsValue = Json.parse(
-    s"""
+  val desJsonWithNoAmounts: JsValue = Json.parse(s"""
        |{
        |  "stateBenefits": {
        |    "incapacityBenefit": [
@@ -501,8 +488,7 @@ object ListBenefitsFixture {
        |   }
        |}""".stripMargin)
 
-  val desJsonWithNoDateIgnored: JsValue = Json.parse(
-    s"""
+  val desJsonWithNoDateIgnored: JsValue = Json.parse(s"""
        |{
        |  "stateBenefits": {
        |    "incapacityBenefit": [
@@ -677,8 +663,7 @@ object ListBenefitsFixture {
        |""".stripMargin
   )
 
-  def mtdJson(taxYear: String): JsValue = Json.parse(
-    s"""
+  def mtdJson(taxYear: String): JsValue = Json.parse(s"""
        |{
        |	"stateBenefits": [{
        |		"benefitType": "incapacityBenefit",

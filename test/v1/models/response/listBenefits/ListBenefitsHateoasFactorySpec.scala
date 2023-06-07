@@ -33,7 +33,6 @@ class ListBenefitsHateoasFactorySpec extends UnitSpec with HateoasLinks with Moc
   class Test {
     MockedAppConfig.apiGatewayContext.returns("gatewayContext").anyNumberOfTimes()
 
-
     val hateoasFactory: HateoasListLinksFactory2[ListBenefitsResponse, HMRCStateBenefit, CustomerStateBenefit, ListBenefitsHateoasData] = implicitly
   }
 
@@ -64,7 +63,7 @@ class ListBenefitsHateoasFactorySpec extends UnitSpec with HateoasLinks with Moc
         )
 
       val benefitNotIgnored = stateBenefit()
-      val benefitIgnored    = stateBenefit(dateIgnored = dateIgnored )
+      val benefitIgnored    = stateBenefit(dateIgnored = dateIgnored)
 
       "query full list" when {
         val hateoasData = ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = false, hmrcBenefitIds = Seq(benefitId))

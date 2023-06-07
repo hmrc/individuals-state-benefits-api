@@ -18,9 +18,9 @@ package api.models.domain
 
 import play.api.libs.json.{JsString, Reads, Writes}
 
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
+import java.time.{ZoneId, ZonedDateTime}
 
 case class Timestamp private (value: String) extends AnyVal {
   override def toString: String = value
@@ -28,10 +28,12 @@ case class Timestamp private (value: String) extends AnyVal {
 
 object Timestamp {
 
-  private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private val formatter =
+    DateTimeFormatter
+      .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+      .withZone(ZoneId.of("UTC"))
 
-  /**
-    * Adds milliseconds to the timestamp string if not already present.
+  /** Adds milliseconds to the timestamp string if not already present.
     */
   def apply(value: String): Timestamp = {
     val ts  = ISO_DATE_TIME.parse(value)
