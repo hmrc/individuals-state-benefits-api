@@ -40,9 +40,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   object ErrorBvr extends MtdError("msg", "bvr", BAD_REQUEST)
 
   val errorCodeMap: PartialFunction[String, MtdError] = {
-    case "ERR1" => Error1
-    case "ERR2" => Error2
-    case "DS"   => StandardDownstreamError
+    case "ERR1"                 => Error1
+    case "ERR2"                 => Error2
+    case "DS"                   => StandardDownstreamError
+    case "UNMATCHED_STUB_ERROR" => RuleIncorrectGovTestScenarioError
   }
 
   case class TestClass(field: Option[String])
@@ -64,6 +65,14 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
         "default to DownstreamError and wrap" in {
           mapping.mapDownstreamErrors(errorCodeMap)(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNKNOWN")))) shouldBe
             ErrorWrapper(correlationId, StandardDownstreamError)
+        }
+      }
+
+      "ifs returns UNMATCHED_STUB_ERROR" must {
+        "return an incorrectGovTestScenario error" in {
+          mapping.mapDownstreamErrors(errorCodeMap)(
+            ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNMATCHED_STUB_ERROR")))) shouldBe
+            ErrorWrapper(correlationId, RuleIncorrectGovTestScenarioError)
         }
       }
     }
