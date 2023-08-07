@@ -213,8 +213,9 @@ class RequestHandlerSpec
               queryParams = None,
               requestBody = requestBody,
               `X-CorrelationId` = correlationId,
-              version = Version1,
-              auditResponse = auditResponse)
+              apiVersion = Version1,
+              auditResponse = auditResponse
+            )
           ))
 
       "a request is successful" when {

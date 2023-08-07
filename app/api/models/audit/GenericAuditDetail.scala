@@ -48,7 +48,7 @@ object GenericAuditDetail {
             queryParams: Option[Map[String, Option[String]]],
             requestBody: Option[JsValue],
             `X-CorrelationId`: String,
-            version: Version,
+            apiVersion: Version,
             auditResponse: AuditResponse): GenericAuditDetail = {
 
     GenericAuditDetail(
@@ -58,7 +58,7 @@ object GenericAuditDetail {
       queryParams = queryParams,
       requestBody = requestBody,
       `X-CorrelationId` = `X-CorrelationId`,
-      versionNumber = version.name,
+      versionNumber = apiVersion.name,
       auditResponse = auditResponse
     )
   }

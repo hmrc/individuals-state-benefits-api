@@ -43,19 +43,19 @@ object AuditHandler {
     queryParams = queryParams,
     requestBody = requestBody,
     responseBodyMap = if (includeResponse) identity else _ => None,
-    version = version
+    apiVersion = version
   )
 
 }
 
-case class AuditHandler(auditService: AuditService,
-                        auditType: String,
-                        transactionName: String,
-                        pathParams: Map[String, String],
-                        queryParams: Option[Map[String, Option[String]]],
-                        requestBody: Option[JsValue],
-                        responseBodyMap: Option[JsValue] => Option[JsValue],
-                        version: Version)
+case class AuditHandler private (auditService: AuditService,
+                                 auditType: String,
+                                 transactionName: String,
+                                 pathParams: Map[String, String],
+                                 queryParams: Option[Map[String, Option[String]]],
+                                 requestBody: Option[JsValue],
+                                 responseBodyMap: Option[JsValue] => Option[JsValue],
+                                 apiVersion: Version)
     extends RequestContextImplicits {
 
   def performAudit(userDetails: UserDetails, httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
@@ -70,7 +70,7 @@ case class AuditHandler(auditService: AuditService,
         queryParams = queryParams,
         requestBody = requestBody,
         `X-CorrelationId` = ctx.correlationId,
-        version = version,
+        apiVersion = apiVersion,
         auditResponse = auditResponse
       )
 
