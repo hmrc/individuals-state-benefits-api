@@ -16,12 +16,12 @@
 
 package v1.controllers.requestParsers
 
+import api.models.domain.Nino
+import api.models.errors._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsJson
 import support.UnitSpec
-import v1.models.domain.Nino
 import v1.mocks.validators.MockCreateBenefitValidator
-import v1.models.errors._
 import v1.models.request.createBenefit._
 
 class CreateBenefitRequestParserSpec extends UnitSpec {
@@ -35,62 +35,62 @@ class CreateBenefitRequestParserSpec extends UnitSpec {
 
   private val validRequestBodyJson: JsValue = Json.parse(
     s"""
-      |{
-      |  "benefitType": "otherStateBenefits",
-      |  "startDate": "$startDate",
-      |  "endDate" : "$endDate"
-      |}
+       |{
+       |  "benefitType": "otherStateBenefits",
+       |  "startDate": "$startDate",
+       |  "endDate" : "$endDate"
+       |}
     """.stripMargin
   )
 
   private val validRawBody = AnyContentAsJson(validRequestBodyJson)
 
-  private val addBenefitRawData = CreateBenefitRawData(
+  private val createBenefitRawData = CreateBenefitRawData(
     nino = nino,
     taxYear = taxYear,
     body = validRawBody
   )
 
-  private val addBenefitBody = CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
+  private val createBenefitBody = CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
 
-  private val addBenefitRequest = CreateBenefitRequest(
+  private val createBenefitRequest = CreateBenefitRequest(
     nino = Nino(nino),
     taxYear = taxYear,
-    body = addBenefitBody
+    body = createBenefitBody
   )
 
   trait Test extends MockCreateBenefitValidator {
 
     lazy val parser: CreateBenefitRequestParser = new CreateBenefitRequestParser(
-      validator = mockAddBenefitValidator
+      validator = mockCreateBenefitValidator
     )
 
   }
 
-  "AddBenefitRequestParser" should {
+  "CreateBenefitRequestParser" should {
     "return a request object" when {
       "valid request data is supplied" in new Test {
-        MockAddBenefitValidator.validate(addBenefitRawData).returns(Nil)
-        parser.parseRequest(addBenefitRawData) shouldBe Right(addBenefitRequest)
+        MockCreateBenefitValidator.validate(createBenefitRawData).returns(Nil)
+        parser.parseRequest(createBenefitRawData) shouldBe Right(createBenefitRequest)
       }
     }
 
     "return an ErrorWrapper" when {
       "a single validation error occurs" in new Test {
-        MockAddBenefitValidator
-          .validate(addBenefitRawData.copy(nino = "notANino"))
+        MockCreateBenefitValidator
+          .validate(createBenefitRawData.copy(nino = "notANino"))
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(addBenefitRawData.copy(nino = "notANino")) shouldBe
+        parser.parseRequest(createBenefitRawData.copy(nino = "notANino")) shouldBe
           Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
 
       "multiple path parameter validation errors occur" in new Test {
-        MockAddBenefitValidator
-          .validate(addBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear"))
+        MockCreateBenefitValidator
+          .validate(createBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear"))
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(addBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear")) shouldBe
+        parser.parseRequest(createBenefitRawData.copy(nino = "notANino", taxYear = "notATaxYear")) shouldBe
           Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
 
@@ -114,11 +114,11 @@ class CreateBenefitRequestParserSpec extends UnitSpec {
           BenefitTypeFormatError
         )
 
-        MockAddBenefitValidator
-          .validate(addBenefitRawData.copy(body = invalidValueRawBody))
+        MockCreateBenefitValidator
+          .validate(createBenefitRawData.copy(body = invalidValueRawBody))
           .returns(errors)
 
-        parser.parseRequest(addBenefitRawData.copy(body = invalidValueRawBody)) shouldBe
+        parser.parseRequest(createBenefitRawData.copy(body = invalidValueRawBody)) shouldBe
           Left(ErrorWrapper(correlationId, BadRequestError, Some(errors)))
       }
     }

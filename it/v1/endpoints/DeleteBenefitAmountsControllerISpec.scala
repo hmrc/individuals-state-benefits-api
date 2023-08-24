@@ -16,6 +16,7 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -23,20 +24,22 @@ import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
     def taxYear: String
+
     def setupStubs(): StubMapping
 
-    def nino: String          = "AA123456A"
-    def benefitId: String     = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+    def nino: String = "AA123456A"
+
+    def benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
     def uri: String = s"/$nino/$taxYear/$benefitId/amounts"
-    def downstreamUri: String    = s"/income-tax/income/state-benefits/$nino/$taxYear/$benefitId"
+
+    def downstreamUri: String = s"/income-tax/income/state-benefits/$nino/$taxYear/$benefitId"
 
     def request(): WSRequest = {
       setupStubs()
@@ -55,8 +58,10 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
   private trait TysIfsTest extends Test {
     val tysYear: String = "23-24"
+
     override def taxYear: String = "2023-24"
-    override def downstreamUri: String    = s"/income-tax/income/state-benefits/$tysYear/$nino/$benefitId"
+
+    override def downstreamUri: String = s"/income-tax/income/state-benefits/$tysYear/$nino/$benefitId"
   }
 
   "Calling the 'delete state benefit amounts' endpoint" should {
@@ -70,10 +75,9 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
           DownstreamStub.onSuccess(DownstreamStub.DELETE, downstreamUri, NO_CONTENT)
         }
 
-        val response: WSResponse = await(request().delete)
+        val response: WSResponse = await(request().delete())
         response.status shouldBe NO_CONTENT
         response.body shouldBe ""
-        response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
@@ -86,10 +90,9 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
         DownstreamStub.onSuccess(DownstreamStub.DELETE, downstreamUri, NO_CONTENT)
       }
 
-      val response: WSResponse = await(request().delete)
+      val response: WSResponse = await(request().delete())
       response.status shouldBe NO_CONTENT
       response.body shouldBe ""
-      response.header("Content-Type") shouldBe Some("application/json")
     }
 
     "return error according to spec" when {
@@ -102,8 +105,10 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-            override def nino: String      = requestNino
-            override def taxYear: String   = requestTaxYear
+            override def nino: String = requestNino
+
+            override def taxYear: String = requestTaxYear
+
             override def benefitId: String = requestBenefitId
 
             override def setupStubs(): StubMapping = {
@@ -112,7 +117,7 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(nino)
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().delete())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
             response.header("Content-Type") shouldBe Some("application/json")
@@ -141,7 +146,7 @@ class DeleteBenefitAmountsControllerISpec extends IntegrationBaseSpec {
               DownstreamStub.onError(DownstreamStub.DELETE, downstreamUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().delete())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
             response.header("Content-Type") shouldBe Some("application/json")

@@ -16,10 +16,11 @@
 
 package v1.connectors
 
+import api.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequest
 
 import javax.inject.{Inject, Singleton}
@@ -29,11 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteBenefitAmountsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def deleteBenefitAmounts(request: DeleteBenefitAmountsRequest)(implicit
-                                                                 hc: HeaderCarrier,
-                                                                 ec: ExecutionContext,
-                                                                 correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    import v1.connectors.httpparsers.StandardDownstreamHttpParser._
+    import api.connectors.httpparsers.StandardDownstreamHttpParser._
 
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 

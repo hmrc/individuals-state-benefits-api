@@ -16,20 +16,20 @@
 
 package v1.mocks.requestParsers
 
+import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.CreateBenefitRequestParser
-import v1.models.errors.ErrorWrapper
 import v1.models.request.createBenefit.{CreateBenefitRawData, CreateBenefitRequest}
 
 trait MockCreateBenefitRequestParser extends MockFactory {
 
-  val mockAddBenefitRequestParser: CreateBenefitRequestParser = mock[CreateBenefitRequestParser]
+  val mockCreateBenefitRequestParser: CreateBenefitRequestParser = mock[CreateBenefitRequestParser]
 
-  object MockAddBenefitRequestParser {
+  object MockCreateBenefitRequestParser {
 
     def parse(data: CreateBenefitRawData): CallHandler[Either[ErrorWrapper, CreateBenefitRequest]] = {
-      (mockAddBenefitRequestParser.parseRequest(_: CreateBenefitRawData)(_: String)).expects(data, *)
+      (mockCreateBenefitRequestParser.parseRequest(_: CreateBenefitRawData)(_: String)).expects(data, *)
     }
 
   }

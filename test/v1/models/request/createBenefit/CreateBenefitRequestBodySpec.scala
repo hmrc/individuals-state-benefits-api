@@ -16,16 +16,16 @@
 
 package v1.models.request.createBenefit
 
+import api.models.utils.JsonErrorValidators
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.utils.JsonErrorValidators
 
 class CreateBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
   val startDate = "2020-08-03"
   val endDate   = "2020-12-03"
 
-  "AddBenefitBody" should {
+  "CreateBenefitBody" should {
     "read" when {
       "valid benefit with incapacityBenefit" in {
         val inputJson = Json.parse(

@@ -16,14 +16,14 @@
 
 package v1.connectors
 
+import api.connectors.DownstreamUri._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.connectors.DownstreamUri.{IfsUri, TaxYearSpecificIfsUri}
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
-import v1.connectors.httpparsers.StandardDownstreamHttpParser._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -34,11 +34,7 @@ class UnignoreBenefitConnector @Inject() (val http: HttpClient, val appConfig: A
 
     import request._
 
-    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/state-benefits/$nino/ignore/$benefitId")
-    } else {
-      IfsUri[Unit](s"income-tax/state-benefits/$nino/${taxYear.asMtd}/ignore/$benefitId")
-    }
+    val downstreamUri = TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/state-benefits/$nino/ignore/$benefitId")
 
     delete(downstreamUri)
   }

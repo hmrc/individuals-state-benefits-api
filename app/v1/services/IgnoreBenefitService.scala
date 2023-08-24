@@ -16,51 +16,35 @@
 
 package v1.services
 
+import api.controllers.RequestContext
+import api.models.errors._
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.IgnoreBenefitConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
-import v1.support.DownstreamResponseMappingSupport
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreBenefitService @Inject()(connector: IgnoreBenefitConnector) extends DownstreamResponseMappingSupport with Logging {
+class IgnoreBenefitService @Inject() (connector: IgnoreBenefitConnector) extends BaseService {
 
-  def ignoreBenefit(request: IgnoreBenefitRequest)(implicit
-                                                   hc: HeaderCarrier,
-                                                   ec: ExecutionContext,
-                                                   logContext: EndpointLogContext,
-                                                   correlationId: String): Future[Either[ErrorWrapper, ResponseWrapper[Unit]]] = {
+  def ignoreBenefit(request: IgnoreBenefitRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.ignoreBenefit(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private def downstreamErrorMap: Map[String, MtdError] = {
-    val errors = Map(
-      ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
-      ("INVALID_TAX_YEAR", TaxYearFormatError),
-      ("INVALID_BENEFIT_ID", BenefitIdFormatError),
-      ("INVALID_CORRELATIONID", StandardDownstreamError),
-      ("INVALID_PAYLOAD", StandardDownstreamError),
-      ("IGNORE_FORBIDDEN", RuleIgnoreForbiddenError),
-      ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
-      ("NO_DATA_FOUND", NotFoundError),
-      ("SERVICE_ERROR", StandardDownstreamError),
-      ("SERVICE_UNAVAILABLE", StandardDownstreamError)
-    )
-
-    val extraTysErrors = Map(
-      ("INVALID_CORRELATION_ID", StandardDownstreamError),
-      ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
-    )
-
-    errors ++ extraTysErrors
-  }
+  private val downstreamErrorMap: Map[String, MtdError] = Map(
+    ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
+    ("INVALID_TAX_YEAR", TaxYearFormatError),
+    ("INVALID_BENEFIT_ID", BenefitIdFormatError),
+    ("INVALID_CORRELATION_ID", StandardDownstreamError),
+    ("IGNORE_FORBIDDEN", RuleIgnoreForbiddenError),
+    ("NO_DATA_FOUND", NotFoundError),
+    ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
+    ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
+    ("SERVICE_ERROR", StandardDownstreamError),
+    ("SERVICE_UNAVAILABLE", StandardDownstreamError)
+  )
 
 }

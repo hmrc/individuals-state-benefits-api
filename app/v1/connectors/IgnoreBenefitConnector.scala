@@ -16,32 +16,29 @@
 
 package v1.connectors
 
+import api.connectors.DownstreamUri._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
+import api.models.request.EmptyBody
 import config.AppConfig
-import play.api.http.Status
+import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.connectors.DownstreamUri.{IfsUri, TaxYearSpecificIfsUri}
-import v1.connectors.httpparsers.StandardDownstreamHttpParser._
-import v1.models.request.EmptyBody
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreBenefitConnector @Inject()(val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class IgnoreBenefitConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def ignoreBenefit(
-                     request: IgnoreBenefitRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      request: IgnoreBenefitRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     import request._
 
-    implicit val successCode: SuccessCode = SuccessCode(Status.CREATED)
+    implicit val successCode: SuccessCode = SuccessCode(CREATED)
 
-    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/ignore/$benefitId")
-    } else {
-      IfsUri[Unit](s"income-tax/income/state-benefits/$nino/${taxYear.asMtd}/ignore/$benefitId")
-    }
+    val downstreamUri = TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/ignore/$benefitId")
 
     put(EmptyBody, downstreamUri)
   }

@@ -16,10 +16,12 @@
 
 package v1.controllers.requestParsers
 
-import javax.inject.Inject
-import v1.models.domain.{Nino, TaxYear}
+import api.controllers.requestParsers.RequestParser
+import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.AmendBenefitAmountsValidator
 import v1.models.request.AmendBenefitAmounts.{AmendBenefitAmountsRawData, AmendBenefitAmountsRequest, AmendBenefitAmountsRequestBody}
+
+import javax.inject.Inject
 
 class AmendBenefitAmountsRequestParser @Inject() (val validator: AmendBenefitAmountsValidator)
     extends RequestParser[AmendBenefitAmountsRawData, AmendBenefitAmountsRequest] {

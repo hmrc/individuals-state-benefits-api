@@ -16,16 +16,16 @@
 
 package v1.controllers.requestParsers.validators
 
-import v1.models.errors.MtdError
+import api.controllers.requestParsers.validators.Validator
+import api.controllers.requestParsers.validators.validations.{BenefitIdValidation, NinoValidation, TaxYearNotSupportedValidation, TaxYearValidation}
+import api.models.errors.MtdError
 import config.AppConfig
-import v1.controllers.requestParsers.validators.validations.{BenefitIdValidation, NinoValidation, TaxYearNotSupportedValidation, TaxYearValidation}
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRawData
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DeleteBenefitAmountsValidator @Inject()(implicit appConfig: AppConfig)
-  extends Validator[DeleteBenefitAmountsRawData] {
+class DeleteBenefitAmountsValidator @Inject() (implicit appConfig: AppConfig) extends Validator[DeleteBenefitAmountsRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -47,7 +47,8 @@ class DeleteBenefitAmountsValidator @Inject()(implicit appConfig: AppConfig)
     (data: DeleteBenefitAmountsRawData) => {
 
       List(
-        TaxYearNotSupportedValidation.validate(data.taxYear),
+        TaxYearNotSupportedValidation.validate(data.taxYear)
       )
     }
+
 }

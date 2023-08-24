@@ -18,10 +18,11 @@ package config
 
 import controllers.Assets
 import definition.ApiDefinitionFactory
-import javax.inject.{Inject, Singleton}
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DocumentationController @Inject() (selfAssessmentApiDefinition: ApiDefinitionFactory,
@@ -34,7 +35,7 @@ class DocumentationController @Inject() (selfAssessmentApiDefinition: ApiDefinit
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
   }
 
-  def raml(version: String, file: String): Action[AnyContent] = {
+  def asset(version: String, file: String): Action[AnyContent] = {
     assets.at(s"/public/api/conf/$version", file)
   }
 

@@ -16,84 +16,79 @@
 
 package v1.services
 
-import v1.controllers.EndpointLogContext
+import api.controllers.EndpointLogContext
+import api.models.domain.{BenefitType, Nino}
+import api.models.errors._
+import api.models.outcomes.ResponseWrapper
+import api.services.{ServiceOutcome, ServiceSpec}
 import v1.mocks.connectors.MockCreateBenefitConnector
-import v1.models.domain.{BenefitType, Nino}
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.createBenefit.{CreateBenefitRequest, CreateBenefitRequestBody}
-import v1.models.response.AddBenefitResponse
+import v1.models.response.createBenefit.CreateBenefitResponse
 
 import scala.concurrent.Future
 
 class CreateBenefitServiceSpec extends ServiceSpec {
 
-  private val nino    = "AA112233A"
-  private val taxYear = "2021-22"
-
-  val addBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
-    benefitType = BenefitType.incapacityBenefit.toString,
-    startDate = "2020-08-03",
-    endDate = Some("2020-12-03")
-  )
-
-  val request: CreateBenefitRequest = CreateBenefitRequest(
-    nino = Nino(nino),
-    taxYear = taxYear,
-    body = addBenefitRequestBody
-  )
-
-  val response: AddBenefitResponse = AddBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
-
-  trait Test extends MockCreateBenefitConnector {
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
-    val service: CreateBenefitService = new CreateBenefitService(
-      connector = mockAddBenefitConnector
-    )
-
-  }
-
-  "AddBenefitService" when {
-    "addBenefit" must {
+  "CreateBenefitService" when {
+    "createBenefit" must {
       "return correct result for a success" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, response))
+        val outcome: Right[Nothing, ResponseWrapper[CreateBenefitResponse]] = Right(ResponseWrapper(correlationId, response))
 
-        MockAddBenefitConnector
-          .addBenefit(request)
+        MockCreateBenefitConnector
+          .createBenefit(request)
           .returns(Future.successful(outcome))
 
-        await(service.addBenefit(request)) shouldBe outcome
+        val result: ServiceOutcome[CreateBenefitResponse] = await(service.createBenefit(request))
+        result shouldBe outcome
       }
 
       "map errors according to spec" when {
+        def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+          s"a $downstreamErrorCode error is returned from the service" in new Test {
 
-        def serviceError(desErrorCode: String, error: MtdError): Unit =
-          s"a $desErrorCode error is returned from the service" in new Test {
+            MockCreateBenefitConnector
+              .createBenefit(request)
+              .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-            MockAddBenefitConnector
-              .addBenefit(request)
-              .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
-
-            await(service.addBenefit(request)) shouldBe Left(ErrorWrapper(correlationId, error))
+            val result: ServiceOutcome[CreateBenefitResponse] = await(service.createBenefit(request))
+            result shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
-        val input = Seq(
-          ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
-          ("INVALID_TAX_YEAR", TaxYearFormatError),
-          ("INVALID_CORRELATIONID", StandardDownstreamError),
-          ("INVALID_PAYLOAD", StandardDownstreamError),
-          ("BENEFIT_TYPE_ALREADY_EXISTS", RuleBenefitTypeExists),
-          ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
-          ("INVALID_START_DATE", RuleStartDateAfterTaxYearEndError),
-          ("INVALID_CESSATION_DATE", RuleEndDateBeforeTaxYearStartError),
-          ("SERVER_ERROR", StandardDownstreamError),
-          ("SERVICE_UNAVAILABLE", StandardDownstreamError)
+        val errors = List(
+          "INVALID_TAXABLE_ENTITY_ID"   -> NinoFormatError,
+          "INVALID_TAX_YEAR"            -> TaxYearFormatError,
+          "INVALID_CORRELATIONID"       -> StandardDownstreamError,
+          "INVALID_PAYLOAD"             -> StandardDownstreamError,
+          "BENEFIT_TYPE_ALREADY_EXISTS" -> RuleBenefitTypeExists,
+          "NOT_SUPPORTED_TAX_YEAR"      -> RuleTaxYearNotEndedError,
+          "INVALID_START_DATE"          -> RuleStartDateAfterTaxYearEndError,
+          "INVALID_CESSATION_DATE"      -> RuleEndDateBeforeTaxYearStartError,
+          "SERVER_ERROR"                -> StandardDownstreamError,
+          "SERVICE_UNAVAILABLE"         -> StandardDownstreamError
         )
 
-        input.foreach(args => (serviceError _).tupled(args))
+        errors.foreach(args => (serviceError _).tupled(args))
       }
     }
+  }
+
+  private trait Test extends MockCreateBenefitConnector {
+    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+
+    val nino    = "AA112233A"
+    val taxYear = "2021-22"
+
+    val createBenefitRequestBody: CreateBenefitRequestBody =
+      CreateBenefitRequestBody(BenefitType.incapacityBenefit.toString, "2020-08-03", Some("2020-12-03"))
+
+    val request: CreateBenefitRequest = CreateBenefitRequest(Nino(nino), taxYear, createBenefitRequestBody)
+
+    val response: CreateBenefitResponse = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
+
+    val service: CreateBenefitService = new CreateBenefitService(
+      connector = mockCreateBenefitConnector
+    )
+
   }
 
 }

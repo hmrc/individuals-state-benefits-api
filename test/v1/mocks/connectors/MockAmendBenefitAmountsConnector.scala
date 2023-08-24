@@ -16,22 +16,23 @@
 
 package v1.mocks.connectors
 
+import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DownstreamOutcome, AmendBenefitAmountsConnector}
+import v1.connectors.AmendBenefitAmountsConnector
 import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAmendBenefitAmountsConnector extends MockFactory {
 
-  val mockUpdateBenefitAmountsConnector: AmendBenefitAmountsConnector = mock[AmendBenefitAmountsConnector]
+  val mockAmendBenefitAmountsConnector: AmendBenefitAmountsConnector = mock[AmendBenefitAmountsConnector]
 
-  object MockUpdateBenefitAmountsConnector {
+  object MockAmendBenefitAmountsConnector {
 
-    def updateBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockUpdateBenefitAmountsConnector
+    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+      (mockAmendBenefitAmountsConnector
         .amendBenefitAmounts(_: AmendBenefitAmountsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }

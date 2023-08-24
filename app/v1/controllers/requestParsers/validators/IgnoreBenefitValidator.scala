@@ -16,15 +16,15 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.controllers.requestParsers.validators.Validator
+import api.controllers.requestParsers.validators.validations._
+import api.models.errors.MtdError
 import config.AppConfig
-import utils.CurrentDateTime
-import v1.controllers.requestParsers.validators.validations._
-import v1.models.errors.MtdError
 import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 
 import javax.inject.Inject
 
-class IgnoreBenefitValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig) extends Validator[IgnoreBenefitRawData] {
+class IgnoreBenefitValidator @Inject() (implicit appConfig: AppConfig) extends Validator[IgnoreBenefitRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -42,8 +42,7 @@ class IgnoreBenefitValidator @Inject()(implicit currentDateTime: CurrentDateTime
 
   private def parameterRuleValidation: IgnoreBenefitRawData => List[List[MtdError]] = (data: IgnoreBenefitRawData) => {
     List(
-      TaxYearNotSupportedValidation.validate(data.taxYear),
-      if (data.temporalValidationEnabled) TaxYearNotEndedValidation.validate(data.taxYear) else Nil
+      TaxYearNotSupportedValidation.validate(data.taxYear)
     )
   }
 

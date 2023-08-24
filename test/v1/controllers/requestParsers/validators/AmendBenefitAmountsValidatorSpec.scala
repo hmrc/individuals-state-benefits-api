@@ -16,6 +16,9 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.controllers.requestParsers.validators.validations.DecimalValueValidation._
+import api.mocks.MockCurrentDateTime
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
@@ -23,12 +26,9 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.AnyContentAsJson
 import support.UnitSpec
 import utils.CurrentDateTime
-import v1.controllers.requestParsers.validators.validations.ValueFormatErrorMessages
-import v1.mocks.MockCurrentDateTime
-import v1.models.errors._
 import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRawData
 
-class AmendBenefitAmountsValidatorSpec extends UnitSpec with ValueFormatErrorMessages {
+class AmendBenefitAmountsValidatorSpec extends UnitSpec {
 
   private val validNino      = "AA123456A"
   private val validTaxYear   = "2020-21"
@@ -91,7 +91,7 @@ class AmendBenefitAmountsValidatorSpec extends UnitSpec with ValueFormatErrorMes
 
   }
 
-  "UpdateBenefitAmountsValidator" when {
+  "AmendBenefitAmountsValidator" when {
     "running a validation" should {
       "return no errors for a valid request" in new Test {
         validator.validate(AmendBenefitAmountsRawData(validNino, validTaxYear, validBenefitId, validRawBody)) shouldBe Nil

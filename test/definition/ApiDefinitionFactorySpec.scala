@@ -16,14 +16,13 @@
 
 package definition
 
+import api.mocks.MockHttpClient
 import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
-import definition.Versions.VERSION_1
 import mocks.MockAppConfig
-import play.api.Configuration
+import routing.Version1
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import v1.mocks.MockHttpClient
 
 class ApiDefinitionFactorySpec extends UnitSpec {
 
@@ -37,12 +36,11 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "definition" when {
     "called" should {
       "return a valid Definition case class" in new Test {
-        MockedAppConfig.featureSwitches returns Configuration.empty
-        MockedAppConfig.apiStatus returns "1.0"
-        MockedAppConfig.endpointsEnabled returns true
-        MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
-          definitionEnabled = true,
-          authValidationEnabled = true) anyNumberOfTimes ()
+        MockedAppConfig.apiStatus(Version1) returns "BETA"
+        MockedAppConfig.endpointsEnabled(Version1) returns true
+        MockedAppConfig.confidenceLevelCheckEnabled
+          .returns(ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = true, authValidationEnabled = true))
+          .anyNumberOfTimes()
 
         private val readScope  = "read:self-assessment"
         private val writeScope = "write:self-assessment"
@@ -70,8 +68,8 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               categories = Seq("INCOME_TAX_MTD"),
               versions = Seq(
                 APIVersion(
-                  version = VERSION_1,
-                  status = ALPHA,
+                  version = Version1,
+                  status = BETA,
                   endpointsEnabled = true
                 )
               ),
@@ -84,13 +82,17 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
   "confidenceLevel" when {
     Seq(
-      (true, ConfidenceLevel.L200),
-      (false, ConfidenceLevel.L50)
-    ).foreach { case (definitionEnabled, cl) =>
-      s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {
-        s"return $cl" in new Test {
-          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
-          apiDefinitionFactory.confidenceLevel shouldBe cl
+      (true, ConfidenceLevel.L250, ConfidenceLevel.L250),
+      (true, ConfidenceLevel.L200, ConfidenceLevel.L200),
+      (false, ConfidenceLevel.L200, ConfidenceLevel.L50)
+    ).foreach { case (definitionEnabled, configCL, expectedDefinitionCL) =>
+      s"confidence-level-check.definition.enabled is $definitionEnabled and confidence-level = $configCL" should {
+        s"return confidence level $expectedDefinitionCL" in new Test {
+          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
+            confidenceLevel = configCL,
+            definitionEnabled = definitionEnabled,
+            authValidationEnabled = true)
+          apiDefinitionFactory.confidenceLevel shouldBe expectedDefinitionCL
         }
       }
     }
@@ -99,15 +101,15 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockedAppConfig.apiStatus returns "BETA"
-        apiDefinitionFactory.buildAPIStatus("1.0") shouldBe BETA
+        MockedAppConfig.apiStatus(Version1) returns "BETA"
+        apiDefinitionFactory.buildAPIStatus(Version1) shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockedAppConfig.apiStatus returns "ALPHO"
-        apiDefinitionFactory.buildAPIStatus("1.0") shouldBe ALPHA
+        MockedAppConfig.apiStatus(Version1) returns "ALPHO"
+        apiDefinitionFactory.buildAPIStatus(Version1) shouldBe ALPHA
       }
     }
   }

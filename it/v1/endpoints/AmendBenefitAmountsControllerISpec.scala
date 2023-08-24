@@ -16,13 +16,13 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs._
 
 class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
@@ -299,12 +299,14 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
   }
 
   private trait NonTysTest extends Test {
-    def taxYear: String       = "2019-20"
+    def taxYear: String = "2019-20"
+
     def downstreamUri: String = s"/income-tax/income/state-benefits/$nino/2019-20/$benefitId"
   }
 
   private trait TysIfsTest extends Test {
-    def taxYear: String       = "2023-24"
+    def taxYear: String = "2023-24"
+
     def downstreamUri: String = s"/income-tax/23-24/income/state-benefits/$nino/$benefitId"
   }
 

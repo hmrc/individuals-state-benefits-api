@@ -16,6 +16,7 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -23,7 +24,6 @@ import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
@@ -63,10 +63,9 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
           DownstreamStub.onSuccess(DownstreamStub.DELETE, ifsUri, NO_CONTENT)
         }
 
-        val response: WSResponse = await(request().delete)
+        val response: WSResponse = await(request().delete())
         response.status shouldBe NO_CONTENT
         response.body shouldBe ""
-        response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
@@ -90,7 +89,7 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(nino)
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().delete())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
             response.header("Content-Type") shouldBe Some("application/json")
@@ -119,7 +118,7 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
               DownstreamStub.onError(DownstreamStub.DELETE, ifsUri, ifsStatus, errorBody(ifsCode))
             }
 
-            val response: WSResponse = await(request().delete)
+            val response: WSResponse = await(request().delete())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
             response.header("Content-Type") shouldBe Some("application/json")
@@ -138,8 +137,8 @@ class DeleteBenefitControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
+          (FORBIDDEN, "DELETE_FORBIDDEN", BAD_REQUEST, RuleDeleteForbiddenError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (FORBIDDEN, "DELETE_FORBIDDEN", FORBIDDEN, RuleDeleteForbiddenError),
           (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)

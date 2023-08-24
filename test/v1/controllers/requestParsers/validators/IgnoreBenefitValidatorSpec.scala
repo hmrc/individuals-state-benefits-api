@@ -16,26 +16,26 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.mocks.MockCurrentDateTime
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.CurrentDateTime
-import v1.mocks.MockCurrentDateTime
-import v1.models.errors._
 import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 
 class IgnoreBenefitValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
-  private val validTaxYear = "2020-21"
+  private val validNino      = "AA123456A"
+  private val validTaxYear   = "2020-21"
   private val validBenefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   class Test extends MockCurrentDateTime with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
     implicit val appConfig: AppConfig = mockAppConfig
 
@@ -87,11 +87,6 @@ class IgnoreBenefitValidatorSpec extends UnitSpec {
       "return RuleTaxYearNotSupportedError error for an unsupported tax year" in new Test {
         validator.validate(IgnoreBenefitRawData(validNino, "2019-20", validBenefitId)) shouldBe
           List(RuleTaxYearNotSupportedError)
-      }
-
-      "return RuleTaxYearNotEndedError error for a tax year which hasn't ended" in new Test {
-        validator.validate(IgnoreBenefitRawData(validNino, "2022-23", validBenefitId)) shouldBe
-          List(RuleTaxYearNotEndedError)
       }
     }
   }

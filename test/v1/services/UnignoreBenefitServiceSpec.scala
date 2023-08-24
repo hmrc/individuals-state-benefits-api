@@ -16,11 +16,12 @@
 
 package v1.services
 
-import v1.controllers.EndpointLogContext
+import api.controllers.EndpointLogContext
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors._
+import api.models.outcomes.ResponseWrapper
+import api.services.{ServiceOutcome, ServiceSpec}
 import v1.mocks.connectors.MockUnignoreBenefitConnector
-import v1.models.domain.{Nino, TaxYear}
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
 import scala.concurrent.Future
@@ -37,12 +38,10 @@ class UnignoreBenefitServiceSpec extends ServiceSpec {
           .returns(Future.successful(outcome))
 
         val result: Either[ErrorWrapper, ResponseWrapper[Unit]] = await(service.unignoreBenefit(request))
-
         result shouldBe outcome
       }
 
       "map errors according to spec" when {
-
         def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
           s"a $downstreamErrorCode error is returned from the service" in new Test {
 
@@ -50,32 +49,29 @@ class UnignoreBenefitServiceSpec extends ServiceSpec {
               .unignoreBenefit(request)
               .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-            await(service.unignoreBenefit(request)) shouldBe Left(ErrorWrapper(correlationId, error))
+            val result: ServiceOutcome[Unit] = await(service.unignoreBenefit(request))
+            result shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
         val errors = List(
           ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
           ("INVALID_TAX_YEAR", TaxYearFormatError),
+          ("INVALID_CORRELATION_ID", StandardDownstreamError),
           ("INVALID_BENEFIT_ID", BenefitIdFormatError),
-          ("INVALID_CORRELATIONID", StandardDownstreamError),
-          ("BEFORE_TAX_YEAR_ENDED", RuleTaxYearNotEndedError),
           ("CUSTOMER_ADDED", RuleUnignoreForbiddenError),
           ("NO_DATA_FOUND", NotFoundError),
-          ("SERVER_ERROR", StandardDownstreamError),
+          ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
+          ("BEFORE_TAX_YEAR_ENDED", RuleTaxYearNotEndedError),
+          ("SERVICE_ERROR", StandardDownstreamError),
           ("SERVICE_UNAVAILABLE", StandardDownstreamError)
         )
 
-        val extraTysErrors = List(
-          ("INVALID_CORRELATION_ID", StandardDownstreamError),
-          ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
-        )
-
-        (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
+        errors.foreach(args => (serviceError _).tupled(args))
       }
     }
   }
 
-  trait Test extends MockUnignoreBenefitConnector {
+  private trait Test extends MockUnignoreBenefitConnector {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     val nino: String      = "AA111111A"

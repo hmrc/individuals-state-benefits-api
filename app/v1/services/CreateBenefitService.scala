@@ -16,49 +16,37 @@
 
 package v1.services
 
-import cats.data.EitherT
+import api.controllers.RequestContext
+import api.models.errors._
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.CreateBenefitConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.createBenefit.CreateBenefitRequest
-import v1.models.response.AddBenefitResponse
-import v1.support.DownstreamResponseMappingSupport
+import v1.models.response.createBenefit.CreateBenefitResponse
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateBenefitService @Inject() (connector: CreateBenefitConnector) extends DownstreamResponseMappingSupport with Logging {
+class CreateBenefitService @Inject() (connector: CreateBenefitConnector) extends BaseService {
 
-  def addBenefit(request: CreateBenefitRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[Either[ErrorWrapper, ResponseWrapper[AddBenefitResponse]]] = {
+  def createBenefit(
+      request: CreateBenefitRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[CreateBenefitResponse]] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(connector.addBenefit(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
-
-    result.value
+    connector.createBenefit(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private def desErrorMap: Map[String, MtdError] =
-    Map(
-      "INVALID_TAXABLE_ENTITY_ID"   -> NinoFormatError,
-      "INVALID_TAX_YEAR"            -> TaxYearFormatError,
-      "INVALID_CORRELATIONID"       -> StandardDownstreamError,
-      "INVALID_PAYLOAD"             -> StandardDownstreamError,
-      "BENEFIT_TYPE_ALREADY_EXISTS" -> RuleBenefitTypeExists,
-      "NOT_SUPPORTED_TAX_YEAR"      -> RuleTaxYearNotEndedError,
-      "INVALID_START_DATE"          -> RuleStartDateAfterTaxYearEndError,
-      "INVALID_CESSATION_DATE"      -> RuleEndDateBeforeTaxYearStartError,
-      "SERVER_ERROR"                -> StandardDownstreamError,
-      "SERVICE_UNAVAILABLE"         -> StandardDownstreamError
-    )
+  private val downstreamErrorMap: Map[String, MtdError] = Map(
+    "INVALID_TAXABLE_ENTITY_ID"   -> NinoFormatError,
+    "INVALID_TAX_YEAR"            -> TaxYearFormatError,
+    "INVALID_CORRELATIONID"       -> StandardDownstreamError,
+    "INVALID_PAYLOAD"             -> StandardDownstreamError,
+    "BENEFIT_TYPE_ALREADY_EXISTS" -> RuleBenefitTypeExists,
+    "NOT_SUPPORTED_TAX_YEAR"      -> RuleTaxYearNotEndedError,
+    "INVALID_START_DATE"          -> RuleStartDateAfterTaxYearEndError,
+    "INVALID_CESSATION_DATE"      -> RuleEndDateBeforeTaxYearStartError,
+    "SERVER_ERROR"                -> StandardDownstreamError,
+    "SERVICE_UNAVAILABLE"         -> StandardDownstreamError
+  )
 
 }

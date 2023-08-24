@@ -16,36 +16,22 @@
 
 package v1.endpoints
 
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{DateTime, DateTimeZone}
+import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
 
   "Calling the 'unignore benefit' endpoint" should {
     "return a 200 status code" when {
-      "any valid request is made" in new NonTysTest {
+      "any valid request is made" in new Test {
 
-        override def setupStubs() = {
-          DownstreamStub.onSuccess(DownstreamStub.DELETE, downstreamUri, NO_CONTENT)
-        }
-
-        val response: WSResponse = await(request().post(JsObject.empty))
-        response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
-      }
-
-      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
-
-        override def setupStubs() = {
+        override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.DELETE, downstreamUri, NO_CONTENT)
         }
 
@@ -57,25 +43,6 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
     }
 
     "return error according to spec" when {
-
-      def getCurrentTaxYear: String = {
-        val currentDate = DateTime.now(DateTimeZone.UTC)
-
-        val taxYearStartDate: DateTime = DateTime.parse(
-          currentDate.getYear + "-04-06",
-          DateTimeFormat.forPattern("yyyy-MM-dd")
-        )
-
-        def fromDesIntToString(taxYear: Int): String =
-          (taxYear - 1) + "-" + taxYear.toString.drop(2)
-
-        if (currentDate.isBefore(taxYearStartDate)) {
-          fromDesIntToString(currentDate.getYear)
-        } else {
-          fromDesIntToString(currentDate.getYear + 1)
-        }
-      }
-
       "validation error" when {
         def validationErrorTest(requestNino: String,
                                 requestTaxYear: String,
@@ -83,7 +50,7 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
                                 expectedStatus: Int,
                                 expectedBody: MtdError,
                                 scenario: Option[String]): Unit = {
-          s"validation fails with ${expectedBody.code} error ${scenario.getOrElse("")}" in new NonTysTest {
+          s"validation fails with ${expectedBody.code} error ${scenario.getOrElse("")}" in new Test {
 
             override val nino: String      = requestNino
             override val taxYear: String   = requestTaxYear
@@ -100,8 +67,7 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "20199", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", BAD_REQUEST, TaxYearFormatError, None),
           ("AA123456A", "2019-20", "ABCDE12345FG", BAD_REQUEST, BenefitIdFormatError, None),
           ("AA123456A", "2018-19", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearNotSupportedError, None),
-          ("AA123456A", "2019-21", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", BAD_REQUEST, RuleTaxYearRangeInvalidError, None),
-          ("AA123456A", getCurrentTaxYear, "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", BAD_REQUEST, RuleTaxYearNotEndedError, None)
+          ("AA123456A", "2019-21", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", BAD_REQUEST, RuleTaxYearRangeInvalidError, None)
         )
 
         input.foreach(args => (validationErrorTest _).tupled(args))
@@ -109,9 +75,9 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
 
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new NonTysTest {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new Test {
 
-            override def setupStubs() = {
+            override def setupStubs(): Unit = {
               DownstreamStub.onError(DownstreamStub.DELETE, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
@@ -145,11 +111,10 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino: String          = "AA123456A"
-    val benefitId: String     = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-    val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+    val nino: String      = "AA123456A"
+    val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-    def taxYear: String
+    val taxYear: String = "2019-20"
 
     val hateoasResponse: JsValue = Json.parse(
       s"""
@@ -170,9 +135,8 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
        """.stripMargin
     )
 
-    def mtdUri: String = s"/$nino/$taxYear/$benefitId/unignore"
-
-    def downstreamUri: String
+    lazy val mtdUri: String   = s"/$nino/$taxYear/$benefitId/unignore"
+    val downstreamUri: String = s"/income-tax/19-20/state-benefits/$nino/ignore/$benefitId"
 
     def setupStubs(): Unit = {}
 
@@ -195,20 +159,6 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
          |   "reason": "downstream error message"
          |}
             """.stripMargin
-
-  }
-
-  private trait NonTysTest extends Test {
-    def taxYear: String       = "2019-20"
-    def downstreamUri: String = s"/income-tax/state-benefits/$nino/2019-20/ignore/$benefitId"
-  }
-
-  private trait TysIfsTest extends Test {
-    def taxYear: String       = "2023-24"
-    def downstreamUri: String = s"/income-tax/23-24/state-benefits/$nino/ignore/$benefitId"
-
-    override def request: WSRequest =
-      super.request.addHttpHeaders("suspend-temporal-validations" -> "true")
 
   }
 

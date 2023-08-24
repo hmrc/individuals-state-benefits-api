@@ -16,12 +16,11 @@
 
 package v1.mocks.services
 
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
-import v1.models.errors.ErrorWrapper
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRequest
 import v1.services.AmendBenefitAmountsService
 
@@ -29,14 +28,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAmendBenefitAmountsService extends MockFactory {
 
-  val mockUpdateBenefitAmountsService: AmendBenefitAmountsService = mock[AmendBenefitAmountsService]
+  val mockAmendBenefitAmountsService: AmendBenefitAmountsService = mock[AmendBenefitAmountsService]
 
-  object MockUpdateBenefitAmountsService {
+  object MockAmendBenefitAmountsService {
 
-    def updateBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
-      (mockUpdateBenefitAmountsService
-        .updateBenefitAmounts(_: AmendBenefitAmountsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
-        .expects(requestData, *, *, *, *)
+    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (mockAmendBenefitAmountsService
+        .amendBenefitAmounts(_: AmendBenefitAmountsRequest)(_: RequestContext, _: ExecutionContext))
+        .expects(requestData, *, *)
     }
 
   }

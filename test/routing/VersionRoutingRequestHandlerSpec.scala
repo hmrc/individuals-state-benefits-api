@@ -17,10 +17,10 @@
 package routing
 
 import akka.actor.ActorSystem
+import api.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
 import mocks.MockAppConfig
 import org.scalatest.Inside
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Configuration
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.{HttpConfiguration, HttpErrorHandler, HttpFilters}
 import play.api.libs.json.Json
@@ -29,7 +29,6 @@ import play.api.routing.Router
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import support.UnitSpec
-import v1.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
 
 class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockAppConfig with GuiceOneAppPerSuite {
   test =>
@@ -42,8 +41,6 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
 
   object DefaultHandler extends Handler
   object V1Handler      extends Handler
-  object V2Handler      extends Handler
-  object V3Handler      extends Handler
 
   private val defaultRouter = Router.from { case GET(p"") =>
     DefaultHandler
@@ -53,26 +50,16 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     V1Handler
   }
 
-  private val v2Router = Router.from { case GET(p"/v2") =>
-    V2Handler
-  }
-
-  private val v3Router = Router.from { case GET(p"/v3") =>
-    V3Handler
-  }
-
   private val routingMap = new VersionRoutingMap {
-    override val defaultRouter: Router    = test.defaultRouter
-    override val map: Map[String, Router] = Map("1.0" -> v1Router, "2.0" -> v2Router, "3.0" -> v3Router)
+    override val defaultRouter: Router     = test.defaultRouter
+    override val map: Map[Version, Router] = Map(Version1 -> v1Router)
   }
 
   class Test(implicit acceptHeader: Option[String]) {
     val httpConfiguration: HttpConfiguration = HttpConfiguration("context")
     private val errorHandler                 = mock[HttpErrorHandler]
     private val filters                      = mock[HttpFilters]
-    (filters.filters _).stubs().returns(Seq.empty)
-
-    MockedAppConfig.featureSwitches.returns(Configuration("version-1.enabled" -> true, "version-2.enabled" -> true))
+    (() => filters.filters).stubs().returns(Seq.empty)
 
     val requestHandler: VersionRoutingRequestHandler =
       new VersionRoutingRequestHandler(routingMap, errorHandler, httpConfiguration, mockAppConfig, filters, action)
@@ -103,11 +90,6 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     handleWithVersionRoutes("/v1", V1Handler)
   }
 
-  "Routing requests with v2" should {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.2.0+json")
-    handleWithVersionRoutes("/v2", V2Handler)
-  }
-
   private def handleWithDefaultRoutes()(implicit acceptHeader: Option[String]): Unit = {
     "if the request ends with a trailing slash" when {
       "handler found" should {
@@ -129,6 +111,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     "if the request ends with a trailing slash" when {
       "handler found" should {
         "use it" in new Test {
+          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
 
           requestHandler.routeRequest(buildRequest(s"$path/")) shouldBe Some(handler)
         }
@@ -136,6 +119,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
 
       "handler not found" should {
         "try without the trailing slash" in new Test {
+          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
 
           requestHandler.routeRequest(buildRequest(s"$path")) shouldBe Some(handler)
         }

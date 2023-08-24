@@ -16,10 +16,12 @@
 
 package v1.controllers.requestParsers
 
-import javax.inject.Inject
-import v1.models.domain.Nino
+import api.controllers.requestParsers.RequestParser
+import api.models.domain.Nino
 import v1.controllers.requestParsers.validators.AmendBenefitValidator
 import v1.models.request.AmendBenefit.{AmendBenefitRawData, AmendBenefitRequest, AmendBenefitRequestBody}
+
+import javax.inject.Inject
 
 class AmendBenefitRequestParser @Inject() (val validator: AmendBenefitValidator) extends RequestParser[AmendBenefitRawData, AmendBenefitRequest] {
 

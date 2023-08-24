@@ -16,10 +16,10 @@
 
 package v1.controllers.requestParsers
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors._
 import support.UnitSpec
-import v1.models.domain.{Nino, TaxYear}
 import v1.mocks.validators.MockIgnoreBenefitValidator
-import v1.models.errors._
 import v1.models.request.ignoreBenefit.{IgnoreBenefitRawData, IgnoreBenefitRequest}
 
 class IgnoreBenefitRequestParserSpec extends UnitSpec {
