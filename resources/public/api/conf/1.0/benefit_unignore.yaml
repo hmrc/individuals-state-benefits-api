@@ -13,6 +13,7 @@ description: |
   | UNIGNORE_FORBIDDEN               | Simulates the scenario in which a benefit is customer added and therefore cannot be unignored.    |
   | NOT_FOUND                        | Simulates the scenario where no data is found.                                                    |
   | TAX_YEAR_NOT_ENDED               | Simulates the scenario where the tax year provided has not ended.                                 |
+  | STATEFUL                         | Performs a stateful unignore.                                                                     |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
