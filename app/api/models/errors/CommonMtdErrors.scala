@@ -23,9 +23,9 @@ object NinoFormatError extends MtdError("FORMAT_NINO", "The provided NINO is inv
 
 object TaxYearFormatError extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid", BAD_REQUEST)
 
-object StartDateFormatError extends MtdError("FORMAT_START_DATE", "The provided start date is invalid", BAD_REQUEST)
+object StartDateFormatError extends MtdError("FORMAT_START_DATE", "The provided start date is invalid or before 1900", BAD_REQUEST)
 
-object EndDateFormatError extends MtdError("FORMAT_END_DATE", "The provided end date is invalid", BAD_REQUEST)
+object EndDateFormatError extends MtdError("FORMAT_END_DATE", "The provided end date is invalid or after 2100", BAD_REQUEST)
 
 object BenefitIdFormatError extends MtdError("FORMAT_BENEFIT_ID", "The provided benefit ID is invalid", BAD_REQUEST)
 
