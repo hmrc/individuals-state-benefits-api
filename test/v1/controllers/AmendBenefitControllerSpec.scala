@@ -161,12 +161,11 @@ class AmendBenefitControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
 
     val controller = new AmendBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      appConfig = mockAppConfig,
       parser = mockAmendBenefitRequestParser,
       service = mockAmendBenefitService,
       hateoasFactory = mockHateoasFactory,

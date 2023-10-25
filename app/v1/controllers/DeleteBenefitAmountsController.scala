@@ -20,7 +20,7 @@ import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import routing.{Version, Version1}
-import utils.{IdGenerator, Logging}
+import utils.IdGenerator
 import v1.controllers.requestParsers.DeleteBenefitAmountsRequestParser
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRawData
 import v1.services.DeleteBenefitAmountsService
@@ -36,8 +36,7 @@ class DeleteBenefitAmountsController @Inject() (val authService: EnrolmentsAuthS
                                                 auditService: AuditService,
                                                 cc: ControllerComponents,
                                                 idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
@@ -49,11 +48,7 @@ class DeleteBenefitAmountsController @Inject() (val authService: EnrolmentsAuthS
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: DeleteBenefitAmountsRawData = DeleteBenefitAmountsRawData(
-        nino = nino,
-        taxYear = taxYear,
-        benefitId = benefitId
-      )
+      val rawData = DeleteBenefitAmountsRawData(nino, taxYear, benefitId)
 
       val requestHandler = RequestHandlerOld
         .withParser(parser)

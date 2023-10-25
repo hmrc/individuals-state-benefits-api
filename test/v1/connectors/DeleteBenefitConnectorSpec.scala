@@ -19,7 +19,7 @@ package v1.connectors
 import api.connectors.ConnectorSpec
 import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.deleteBenefit.DeleteBenefitRequest
+import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 
 import scala.concurrent.Future
 
@@ -52,7 +52,7 @@ class DeleteBenefitConnectorSpec extends ConnectorSpec {
   trait Test {
     _: ConnectorTest =>
 
-    protected val request: DeleteBenefitRequest = DeleteBenefitRequest(
+    protected val request: DeleteBenefitRequestData = DeleteBenefitRequestData(
       nino = Nino(nino),
       taxYear = TaxYear.fromMtd(taxYear),
       benefitId = BenefitId(benefitId)

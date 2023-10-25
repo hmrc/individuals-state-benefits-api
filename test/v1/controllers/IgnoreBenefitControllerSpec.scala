@@ -25,7 +25,6 @@ import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.hateoas.Method.{GET, POST}
 import api.models.outcomes.ResponseWrapper
-import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version1
@@ -40,7 +39,6 @@ import scala.concurrent.Future
 class IgnoreBenefitControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
-    with MockAppConfig
     with MockIgnoreBenefitService
     with MockIgnoreBenefitRequestParser
     with MockAuditService
@@ -94,7 +92,7 @@ class IgnoreBenefitControllerSpec
     }
   }
 
-  private trait Test extends ControllerTest with AuditEventChecking {
+  private trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
     val taxYear: String   = "2019-20"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
@@ -105,7 +103,6 @@ class IgnoreBenefitControllerSpec
     val controller = new IgnoreBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      appConfig = mockAppConfig,
       parser = mockIgnoreBenefitRequestParser,
       service = mockIgnoreBenefitService,
       hateoasFactory = mockHateoasFactory,

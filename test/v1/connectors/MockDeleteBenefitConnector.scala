@@ -20,7 +20,7 @@ import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.models.request.deleteBenefit.DeleteBenefitRequest
+import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,9 +30,9 @@ trait MockDeleteBenefitConnector extends MockFactory {
 
   object MockDeleteBenefitConnector {
 
-    def deleteBenefit(request: DeleteBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def deleteBenefit(request: DeleteBenefitRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockDeleteBenefitConnector
-        .deleteBenefit(_: DeleteBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .deleteBenefit(_: DeleteBenefitRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(request, *, *, *)
     }
 

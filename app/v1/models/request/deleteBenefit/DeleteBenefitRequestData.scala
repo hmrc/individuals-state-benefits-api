@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.deleteRetrieve
+package v1.models.request.deleteBenefit
 
-import api.models.request.RawData
+import api.models.domain.{BenefitId, Nino, TaxYear}
 
-case class DeleteRetrieveRawData(nino: String, taxYear: String) extends RawData
+case class DeleteBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)

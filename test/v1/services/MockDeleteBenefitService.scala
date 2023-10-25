@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.deleteBenefit.DeleteBenefitRequest
+import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,10 +31,10 @@ trait MockDeleteBenefitService extends MockFactory {
 
   object MockDeleteBenefitService {
 
-    def deleteBenefit(requestData: DeleteBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def deleteBenefit(requestData: DeleteBenefitRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (
         mockDeleteBenefitService
-          .deleteBenefit(_: DeleteBenefitRequest)(
+          .deleteBenefit(_: DeleteBenefitRequestData)(
             _: RequestContext,
             _: ExecutionContext
           )

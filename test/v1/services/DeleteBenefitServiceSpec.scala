@@ -23,7 +23,7 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockDeleteBenefitConnector
-import v1.models.request.deleteBenefit.DeleteBenefitRequest
+import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 
 import scala.concurrent.Future
 
@@ -81,7 +81,7 @@ class DeleteBenefitServiceSpec extends ServiceSpec {
       connector = mockDeleteBenefitConnector
     )
 
-    val request: DeleteBenefitRequest = DeleteBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+    val request: DeleteBenefitRequestData = DeleteBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   }
 

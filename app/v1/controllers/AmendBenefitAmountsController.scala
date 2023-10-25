@@ -19,11 +19,10 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
-import routing.{Version1, Version}
-import utils.{IdGenerator, Logging}
+import routing.{Version, Version1}
+import utils.IdGenerator
 import v1.controllers.requestParsers.AmendBenefitAmountsRequestParser
 import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRawData
 import v1.models.response.amendBenefitAmounts.AmendBenefitAmountsHateoasData
@@ -36,15 +35,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AmendBenefitAmountsController @Inject() (val authService: EnrolmentsAuthService,
                                                val lookupService: MtdIdLookupService,
-                                               appConfig: AppConfig,
                                                parser: AmendBenefitAmountsRequestParser,
                                                service: AmendBenefitAmountsService,
                                                auditService: AuditService,
                                                hateoasFactory: HateoasFactory,
                                                cc: ControllerComponents,
                                                val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
@@ -56,12 +53,7 @@ class AmendBenefitAmountsController @Inject() (val authService: EnrolmentsAuthSe
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: AmendBenefitAmountsRawData = AmendBenefitAmountsRawData(
-        nino = nino,
-        taxYear = taxYear,
-        benefitId = benefitId,
-        body = AnyContentAsJson(request.body)
-      )
+      val rawData = AmendBenefitAmountsRawData(nino, taxYear, benefitId, AnyContentAsJson(request.body))
 
       val requestHandler = RequestHandlerOld
         .withParser(parser)
