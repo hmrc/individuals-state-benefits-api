@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.connectors
 
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.ListBenefitsConnector
-import v1.models.request.listBenefits.ListBenefitsRequest
-import v1.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsResponse}
+import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListBenefitsConnector extends MockFactory {
+trait MockAmendBenefitAmountsConnector extends MockFactory {
 
-  val mockListBenefitsConnector: ListBenefitsConnector = mock[ListBenefitsConnector]
+  val mockAmendBenefitAmountsConnector: AmendBenefitAmountsConnector = mock[AmendBenefitAmountsConnector]
 
-  object MockListBenefitsConnector {
+  object MockAmendBenefitAmountsConnector {
 
-    def listBenefits(
-        requestData: ListBenefitsRequest): CallHandler[Future[DownstreamOutcome[ListBenefitsResponse[HMRCStateBenefit, CustomerStateBenefit]]]] = {
-      (mockListBenefitsConnector
-        .listBenefits(_: ListBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+      (mockAmendBenefitAmountsConnector
+        .amendBenefitAmounts(_: AmendBenefitAmountsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
 

@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package v1.mocks.services
+package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.createBenefit.CreateBenefitRequest
-import v1.models.response.createBenefit.CreateBenefitResponse
-import v1.services.CreateBenefitService
+import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateBenefitService extends MockFactory {
+trait MockIgnoreBenefitService extends MockFactory {
 
-  val mockCreateStateBenefitService: CreateBenefitService = mock[CreateBenefitService]
+  val mockIgnoreBenefitService: IgnoreBenefitService = mock[IgnoreBenefitService]
 
-  object MockCreateStateBenefitService {
+  object MockIgnoreBenefitService {
 
-    def createStateBenefit(requestData: CreateBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[CreateBenefitResponse]]]] = {
-      (mockCreateStateBenefitService
-        .createBenefit(_: CreateBenefitRequest)(_: RequestContext, _: ExecutionContext))
-        .expects(requestData, *, *)
+    def ignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (mockIgnoreBenefitService
+        .ignoreBenefit(_: IgnoreBenefitRequest)(_: RequestContext, _: ExecutionContext))
+        .expects(request, *, *)
     }
 
   }

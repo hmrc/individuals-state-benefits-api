@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.services
 
-import api.connectors.DownstreamOutcome
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.AmendBenefitConnector
-import v1.models.request.AmendBenefit.AmendBenefitRequest
+import v1.models.request.deleteBenefit.DeleteBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendBenefitConnector extends MockFactory {
+trait MockDeleteBenefitService extends MockFactory {
 
-  val mockAmendBenefitConnector: AmendBenefitConnector = mock[AmendBenefitConnector]
+  val mockDeleteBenefitService: DeleteBenefitService = mock[DeleteBenefitService]
 
-  object MockAmendBenefitConnector {
+  object MockDeleteBenefitService {
 
-    def amendBenefit(requestData: AmendBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockAmendBenefitConnector
-        .amendBenefit(_: AmendBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
-        .expects(requestData, *, *, *)
+    def deleteBenefit(requestData: DeleteBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (
+        mockDeleteBenefitService
+          .deleteBenefit(_: DeleteBenefitRequest)(
+            _: RequestContext,
+            _: ExecutionContext
+          )
+        )
+        .expects(requestData, *, *)
     }
 
   }

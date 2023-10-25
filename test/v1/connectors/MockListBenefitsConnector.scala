@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.connectors
 
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.IgnoreBenefitConnector
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
+import v1.models.request.listBenefits.ListBenefitsRequest
+import v1.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockIgnoreBenefitConnector extends MockFactory {
+trait MockListBenefitsConnector extends MockFactory {
 
-  val mockIgnoreBenefitConnector: IgnoreBenefitConnector = mock[IgnoreBenefitConnector]
+  val mockListBenefitsConnector: ListBenefitsConnector = mock[ListBenefitsConnector]
 
-  object MockIgnoreBenefitConnector {
+  object MockListBenefitsConnector {
 
-    def ignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockIgnoreBenefitConnector
-        .ignoreBenefit(_: IgnoreBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
-        .expects(request, *, *, *)
+    def listBenefits(
+        requestData: ListBenefitsRequest): CallHandler[Future[DownstreamOutcome[ListBenefitsResponse[HMRCStateBenefit, CustomerStateBenefit]]]] = {
+      (mockListBenefitsConnector
+        .listBenefits(_: ListBenefitsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
 
   }

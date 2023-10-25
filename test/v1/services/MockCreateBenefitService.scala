@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.services
 
-import api.connectors.DownstreamOutcome
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.CreateBenefitConnector
 import v1.models.request.createBenefit.CreateBenefitRequest
 import v1.models.response.createBenefit.CreateBenefitResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateBenefitConnector extends MockFactory {
+trait MockCreateBenefitService extends MockFactory {
 
-  val mockCreateBenefitConnector: CreateBenefitConnector = mock[CreateBenefitConnector]
+  val mockCreateStateBenefitService: CreateBenefitService = mock[CreateBenefitService]
 
-  object MockCreateBenefitConnector {
+  object MockCreateStateBenefitService {
 
-    def createBenefit(request: CreateBenefitRequest): CallHandler[Future[DownstreamOutcome[CreateBenefitResponse]]] = {
-      (mockCreateBenefitConnector
-        .createBenefit(_: CreateBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
-        .expects(request, *, *, *)
+    def createStateBenefit(requestData: CreateBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[CreateBenefitResponse]]]] = {
+      (mockCreateStateBenefitService
+        .createBenefit(_: CreateBenefitRequest)(_: RequestContext, _: ExecutionContext))
+        .expects(requestData, *, *)
     }
 
   }

@@ -27,8 +27,8 @@ import play.api.libs.json.JsObject
 import play.api.mvc.Result
 import v1.fixtures.ListBenefitsFixture._
 import v1.mocks.requestParsers.MockListBenefitsRequestParser
-import v1.mocks.services.MockListBenefitsService
 import v1.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsHateoasData}
+import v1.services.MockListBenefitsService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

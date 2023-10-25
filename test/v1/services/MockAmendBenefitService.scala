@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package v1.mocks.services
+package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
-import v1.services.IgnoreBenefitService
+import v1.models.request.AmendBenefit.AmendBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockIgnoreBenefitService extends MockFactory {
+trait MockAmendBenefitService extends MockFactory {
 
-  val mockIgnoreBenefitService: IgnoreBenefitService = mock[IgnoreBenefitService]
+  val mockAmendBenefitService: AmendBenefitService = mock[AmendBenefitService]
 
-  object MockIgnoreBenefitService {
+  object MockAmendBenefitService {
 
-    def ignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
-      (mockIgnoreBenefitService
-        .ignoreBenefit(_: IgnoreBenefitRequest)(_: RequestContext, _: ExecutionContext))
-        .expects(request, *, *)
+    def amendBenefit(requestData: AmendBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (mockAmendBenefitService
+        .amendBenefit(_: AmendBenefitRequest)(_: RequestContext, _: ExecutionContext))
+        .expects(requestData, *, *)
     }
 
   }

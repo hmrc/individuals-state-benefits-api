@@ -22,7 +22,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.connectors.MockDeleteBenefitConnector
+import v1.connectors.MockDeleteBenefitConnector
 import v1.models.request.deleteBenefit.DeleteBenefitRequest
 
 import scala.concurrent.Future

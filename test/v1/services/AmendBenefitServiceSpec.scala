@@ -21,7 +21,7 @@ import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v1.mocks.connectors.MockAmendBenefitConnector
+import v1.connectors.MockAmendBenefitConnector
 import v1.models.request.AmendBenefit.{AmendBenefitRequest, AmendBenefitRequestBody}
 
 import scala.concurrent.Future

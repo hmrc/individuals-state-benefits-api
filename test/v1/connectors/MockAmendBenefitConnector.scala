@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package v1.mocks.services
+package v1.connectors
 
-import api.controllers.RequestContext
-import api.models.errors.ErrorWrapper
-import api.models.outcomes.ResponseWrapper
+import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
-import v1.services.UnignoreBenefitService
+import uk.gov.hmrc.http.HeaderCarrier
+import v1.models.request.AmendBenefit.AmendBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUnignoreBenefitService extends MockFactory {
+trait MockAmendBenefitConnector extends MockFactory {
 
-  val mockUnignoreBenefitService: UnignoreBenefitService = mock[UnignoreBenefitService]
+  val mockAmendBenefitConnector: AmendBenefitConnector = mock[AmendBenefitConnector]
 
-  object MockUnignoreBenefitService {
+  object MockAmendBenefitConnector {
 
-    def unignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
-      (mockUnignoreBenefitService
-        .unignoreBenefit(_: IgnoreBenefitRequest)(_: RequestContext, _: ExecutionContext))
-        .expects(request, *, *)
+    def amendBenefit(requestData: AmendBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+      (mockAmendBenefitConnector
+        .amendBenefit(_: AmendBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
 
   }

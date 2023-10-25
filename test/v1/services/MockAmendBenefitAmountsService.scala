@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package v1.mocks.services
+package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.AmendBenefit.AmendBenefitRequest
-import v1.services.AmendBenefitService
+import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendBenefitService extends MockFactory {
+trait MockAmendBenefitAmountsService extends MockFactory {
 
-  val mockAmendBenefitService: AmendBenefitService = mock[AmendBenefitService]
+  val mockAmendBenefitAmountsService: AmendBenefitAmountsService = mock[AmendBenefitAmountsService]
 
-  object MockAmendBenefitService {
+  object MockAmendBenefitAmountsService {
 
-    def amendBenefit(requestData: AmendBenefitRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
-      (mockAmendBenefitService
-        .amendBenefit(_: AmendBenefitRequest)(_: RequestContext, _: ExecutionContext))
+    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+      (mockAmendBenefitAmountsService
+        .amendBenefitAmounts(_: AmendBenefitAmountsRequest)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

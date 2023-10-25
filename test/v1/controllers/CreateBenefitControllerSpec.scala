@@ -31,9 +31,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsJson, Result}
 import routing.Version1
 import v1.mocks.requestParsers.MockCreateBenefitRequestParser
-import v1.mocks.services.MockCreateBenefitService
 import v1.models.request.createBenefit.{CreateBenefitRawData, CreateBenefitRequest, CreateBenefitRequestBody}
 import v1.models.response.createBenefit.{CreateBenefitHateoasData, CreateBenefitResponse}
+import v1.services.MockCreateBenefitService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.connectors
 
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.UnignoreBenefitConnector
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUnignoreBenefitConnector extends MockFactory {
+trait MockIgnoreBenefitConnector extends MockFactory {
 
-  val mockUnignoreBenefitConnector: UnignoreBenefitConnector = mock[UnignoreBenefitConnector]
+  val mockIgnoreBenefitConnector: IgnoreBenefitConnector = mock[IgnoreBenefitConnector]
 
-  object MockUnignoreBenefitConnector {
+  object MockIgnoreBenefitConnector {
 
-    def unignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockUnignoreBenefitConnector
-        .unignoreBenefit(_: IgnoreBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+    def ignoreBenefit(request: IgnoreBenefitRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+      (mockIgnoreBenefitConnector
+        .ignoreBenefit(_: IgnoreBenefitRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(request, *, *, *)
     }
 

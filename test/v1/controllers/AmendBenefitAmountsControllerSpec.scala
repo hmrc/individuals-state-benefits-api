@@ -30,9 +30,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsJson, Result}
 import routing.Version1
 import v1.mocks.requestParsers.MockAmendBenefitAmountsRequestParser
-import v1.mocks.services.MockAmendBenefitAmountsService
 import v1.models.request.AmendBenefitAmounts.{AmendBenefitAmountsRawData, AmendBenefitAmountsRequest, AmendBenefitAmountsRequestBody}
 import v1.models.response.amendBenefitAmounts.AmendBenefitAmountsHateoasData
+import v1.services.MockAmendBenefitAmountsService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

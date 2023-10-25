@@ -26,8 +26,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import routing.Version1
 import v1.mocks.requestParsers.MockDeleteBenefitRequestParser
-import v1.mocks.services.MockDeleteBenefitService
 import v1.models.request.deleteBenefit.{DeleteBenefitRawData, DeleteBenefitRequest}
+import v1.services.MockDeleteBenefitService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

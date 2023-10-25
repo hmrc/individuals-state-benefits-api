@@ -21,7 +21,7 @@ import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockDeleteBenefitAmountsConnector
+import v1.connectors.MockDeleteBenefitAmountsConnector
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequest
 
 import scala.concurrent.Future

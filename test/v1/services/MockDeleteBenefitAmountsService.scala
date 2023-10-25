@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.services
 
-import api.connectors.DownstreamOutcome
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.DeleteBenefitAmountsConnector
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockDeleteBenefitAmountsConnector extends MockFactory {
+trait MockDeleteBenefitAmountsService extends MockFactory {
 
-  val mockDeleteBenefitAmountsConnector: DeleteBenefitAmountsConnector = mock[DeleteBenefitAmountsConnector]
+  val mockDeleteBenefitAmountsService: DeleteBenefitAmountsService =
+    mock[DeleteBenefitAmountsService]
 
-  object MockDeleteBenefitAmountsConnector {
+  object MockDeleteBenefitAmountsService {
 
-    def deleteBenefitAmounts(request: DeleteBenefitAmountsRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (
-        mockDeleteBenefitAmountsConnector
-          .deleteBenefitAmounts(_: DeleteBenefitAmountsRequest)(
-            _: HeaderCarrier,
-            _: ExecutionContext,
-            _: String
-          )
+    def deleteBenefitAmounts(requestData: DeleteBenefitAmountsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = (
+      mockDeleteBenefitAmountsService
+        .delete(_: DeleteBenefitAmountsRequest)(
+          _: RequestContext,
+          _: ExecutionContext
         )
-        .expects(request, *, *, *)
-    }
+      )
+      .expects(requestData, *, *)
 
   }
 

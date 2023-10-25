@@ -30,9 +30,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version1
 import v1.mocks.requestParsers.MockIgnoreBenefitRequestParser
-import v1.mocks.services.MockIgnoreBenefitService
 import v1.models.request.ignoreBenefit.{IgnoreBenefitRawData, IgnoreBenefitRequest}
 import v1.models.response.ignoreBenefit.IgnoreBenefitHateoasData
+import v1.services.MockIgnoreBenefitService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
