@@ -18,7 +18,7 @@ package v1.connectors
 
 import api.connectors.ConnectorSpec
 import api.mocks.MockHttpClient
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,8 +39,8 @@ class AmendBenefitConnectorSpec extends ConnectorSpec {
 
   val request: AmendBenefitRequest = AmendBenefitRequest(
     nino = Nino(nino),
-    taxYear = taxYear,
-    benefitId = benefitId,
+    taxYear = TaxYear.fromMtd(taxYear),
+    benefitId = BenefitId(benefitId),
     body = amendBenefitRequestBody
   )
 

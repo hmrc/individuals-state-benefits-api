@@ -17,7 +17,7 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
@@ -81,7 +81,7 @@ class AmendBenefitServiceSpec extends ServiceSpec {
 
     val amendBenefitRequestBody: AmendBenefitRequestBody = AmendBenefitRequestBody("2020-08-03", Some("2020-12-03"))
 
-    val requestData: AmendBenefitRequest = AmendBenefitRequest(Nino(nino), taxYear, benefitId, amendBenefitRequestBody)
+    val requestData: AmendBenefitRequest = AmendBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), amendBenefitRequestBody)
 
     val service: AmendBenefitService = new AmendBenefitService(
       connector = mockAmendBenefitConnector

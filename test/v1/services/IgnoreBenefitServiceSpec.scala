@@ -17,7 +17,7 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
@@ -78,7 +78,7 @@ class IgnoreBenefitServiceSpec extends ServiceSpec {
     val taxYear: String   = "2019-20"
     val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
 
-    val request: IgnoreBenefitRequest = IgnoreBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), benefitId)
+    val request: IgnoreBenefitRequest = IgnoreBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
     val service: IgnoreBenefitService = new IgnoreBenefitService(
       connector = mockIgnoreBenefitConnector

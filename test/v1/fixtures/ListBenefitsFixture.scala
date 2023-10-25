@@ -17,7 +17,7 @@
 package v1.fixtures
 
 import api.hateoas.{HateoasWrapper, Link}
-import api.models.domain.{Nino, TaxYear, Timestamp}
+import api.models.domain.{BenefitId, Nino, TaxYear, Timestamp}
 import api.hateoas.Method._
 import play.api.libs.json.{JsValue, Json}
 import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
@@ -40,11 +40,11 @@ object ListBenefitsFixture {
       benefitId = reqBenefitId
     )
 
-  val requestData: Option[String] => ListBenefitsRequest = reqBenefitId =>
+  val requestData: Option[String] => ListBenefitsRequest = maybeBenefitId =>
     ListBenefitsRequest(
       nino = Nino(nino),
       taxYear = TaxYear.fromMtd(taxYear),
-      benefitId = reqBenefitId
+      benefitId = maybeBenefitId.map(BenefitId)
     )
 
   val hateosJson: JsValue = Json.parse(

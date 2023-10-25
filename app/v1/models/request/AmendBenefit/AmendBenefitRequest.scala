@@ -16,6 +16,6 @@
 
 package v1.models.request.AmendBenefit
 
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 
-case class AmendBenefitRequest(nino: Nino, taxYear: String, benefitId: String, body: AmendBenefitRequestBody)
+case class AmendBenefitRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId, body: AmendBenefitRequestBody)

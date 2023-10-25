@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsJson
@@ -57,7 +57,7 @@ class AmendBenefitAmountsRequestParserSpec extends UnitSpec {
   private val amendBenefitAmountsRequest = AmendBenefitAmountsRequest(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear),
-    benefitId = benefitId,
+    benefitId = BenefitId(benefitId),
     body = amendBenefitAmountsRequestBody
   )
 

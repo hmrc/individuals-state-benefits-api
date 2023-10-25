@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.ConnectorSpec
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.deleteBenefit.DeleteBenefitRequest
 
@@ -54,8 +54,8 @@ class DeleteBenefitConnectorSpec extends ConnectorSpec {
 
     protected val request: DeleteBenefitRequest = DeleteBenefitRequest(
       nino = Nino(nino),
-      taxYear = taxYear,
-      benefitId = benefitId
+      taxYear = TaxYear.fromMtd(taxYear),
+      benefitId = BenefitId(benefitId)
     )
 
     val connector: DeleteBenefitConnector = new DeleteBenefitConnector(

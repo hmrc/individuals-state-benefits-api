@@ -21,7 +21,7 @@ import api.hateoas.{HateoasWrapper, Link}
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.hateoas.Method.{DELETE, GET, PUT}
 import api.models.outcomes.ResponseWrapper
@@ -73,7 +73,7 @@ class AmendBenefitAmountsControllerSpec
   val requestData: AmendBenefitAmountsRequest = AmendBenefitAmountsRequest(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear),
-    benefitId = benefitId,
+    benefitId = BenefitId(benefitId),
     body = amendBenefitAmountsRequestBody
   )
 

@@ -17,7 +17,7 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
@@ -90,7 +90,7 @@ class AmendBenefitAmountsServiceSpec extends ServiceSpec {
     val requestData: AmendBenefitAmountsRequest = AmendBenefitAmountsRequest(
       nino = Nino(nino),
       taxYear = TaxYear.fromMtd(taxYear),
-      benefitId = benefitId,
+      benefitId = BenefitId(benefitId),
       body = body
     )
 

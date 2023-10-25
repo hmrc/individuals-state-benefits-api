@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers
 
 import api.controllers.requestParsers.RequestParser
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import v1.controllers.requestParsers.validators.AmendBenefitValidator
 import v1.models.request.AmendBenefit.{AmendBenefitRawData, AmendBenefitRequest, AmendBenefitRequestBody}
 
@@ -26,6 +26,6 @@ import javax.inject.Inject
 class AmendBenefitRequestParser @Inject() (val validator: AmendBenefitValidator) extends RequestParser[AmendBenefitRawData, AmendBenefitRequest] {
 
   override protected def requestFor(data: AmendBenefitRawData): AmendBenefitRequest =
-    AmendBenefitRequest(Nino(data.nino), data.taxYear, data.benefitId, data.body.json.as[AmendBenefitRequestBody])
+    AmendBenefitRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), BenefitId(data.benefitId), data.body.json.as[AmendBenefitRequestBody])
 
 }

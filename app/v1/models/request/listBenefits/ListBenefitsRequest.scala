@@ -16,6 +16,6 @@
 
 package v1.models.request.listBenefits
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 
-case class ListBenefitsRequest(nino: Nino, taxYear: TaxYear, benefitId: Option[String])
+case class ListBenefitsRequest(nino: Nino, taxYear: TaxYear, benefitId: Option[BenefitId])

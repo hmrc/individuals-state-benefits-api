@@ -17,7 +17,7 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
@@ -31,7 +31,7 @@ class DeleteBenefitAmountsServiceSpec extends ServiceSpec {
   private val request = DeleteBenefitAmountsRequest(
     nino = Nino("AA112233A"),
     taxYear = TaxYear.fromMtd("2023-24"),
-    benefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+    benefitId = BenefitId("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
   )
 
   "DeleteOtherEmploymentIncomeServiceSpec" when {

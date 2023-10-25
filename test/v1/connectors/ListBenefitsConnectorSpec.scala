@@ -18,7 +18,7 @@ package v1.connectors
 
 import api.connectors.ConnectorSpec
 import api.mocks.MockHttpClient
-import api.models.domain.{Nino, TaxYear, Timestamp}
+import api.models.domain.{BenefitId, Nino, TaxYear, Timestamp}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import v1.models.request.listBenefits.ListBenefitsRequest
@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 class ListBenefitsConnectorSpec extends ConnectorSpec {
 
-  val nino: String      = "AA111111A"
-  val taxYear: String   = "2019-20"
+  private val nino      = "AA111111A"
+  private val taxYear   = "2019-20"
   private val benefitId = "4557ecb5-fd32-48cc-81f5-e6acd1099f3c"
 
   private val validResponse = ListBenefitsResponse(
@@ -66,7 +66,7 @@ class ListBenefitsConnectorSpec extends ConnectorSpec {
     "listBenefits" when {
       "a benefitId query param is provided" must {
         "return a 200 status for a success scenario" in new IfsTest with Test {
-          val request = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd("2019-20"), Some(benefitId))
+          val request = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd("2019-20"), Some(BenefitId(benefitId)))
           val outcome = Right(ResponseWrapper(correlationId, validResponse))
 
           willGet(s"$baseUrl/income-tax/income/state-benefits/$nino/$taxYear", parameters = Seq("benefitId" -> benefitId)) returns Future
@@ -93,7 +93,7 @@ class ListBenefitsConnectorSpec extends ConnectorSpec {
       "a benefitId is provided for a TYS tax year" must {
         "return a 200 status for a success scenario" in new TysIfsTest with Test {
 
-          val request = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd("2023-24"), Some(benefitId))
+          val request = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd("2023-24"), Some(BenefitId(benefitId)))
           val outcome = Right(ResponseWrapper(correlationId, validResponse))
 
           willGet(s"$baseUrl/income-tax/income/state-benefits/23-24/$nino", parameters = Seq("benefitId" -> benefitId)) returns Future.successful(

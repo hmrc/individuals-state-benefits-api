@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package v1.models.request.ignoreBenefit
+package api.models.domain
 
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import support.UnitSpec
 
-case class IgnoreBenefitRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)
+class BenefitIdSpec extends UnitSpec {
+
+  "toString" should {
+    "return the BenefitId value" in {
+      val result = BenefitId("some id").toString
+      result shouldBe "some id"
+    }
+  }
+
+}

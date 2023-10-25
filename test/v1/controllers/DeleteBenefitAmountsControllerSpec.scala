@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
@@ -51,7 +51,7 @@ class DeleteBenefitAmountsControllerSpec
   val requestData: DeleteBenefitAmountsRequest = DeleteBenefitAmountsRequest(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear),
-    benefitId = benefitId
+    benefitId = BenefitId(benefitId)
   )
 
   "DeleteBenefitAmountsController" should {

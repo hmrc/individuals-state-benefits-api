@@ -34,7 +34,7 @@ class DeleteBenefitConnector @Inject() (val http: HttpClient, val appConfig: App
 
     import request._
 
-    val downstreamUri = IfsUri[Unit](s"income-tax/income/state-benefits/${nino.nino}/$taxYear/custom/$benefitId")
+    val downstreamUri = IfsUri[Unit](s"income-tax/income/state-benefits/$nino/${taxYear.asMtd}/custom/$benefitId")
 
     delete(downstreamUri)
   }

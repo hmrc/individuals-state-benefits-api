@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequest
 
@@ -25,8 +25,8 @@ import scala.concurrent.Future
 
 class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
 
-  private val nino: String      = "AA123456A"
-  private val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val nino      = "AA123456A"
+  private val benefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   "DeleteBenefitAmountsConnector" should {
     "return a 200 result on delete" when {
@@ -70,7 +70,7 @@ class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
       DeleteBenefitAmountsRequest(
         nino = Nino(nino),
         taxYear = taxYear,
-        benefitId = benefitId
+        benefitId = BenefitId(benefitId)
       )
 
   }

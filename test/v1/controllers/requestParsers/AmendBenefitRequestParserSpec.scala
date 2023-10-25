@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers
 
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsJson
@@ -26,8 +26,8 @@ import v1.models.request.AmendBenefit.{AmendBenefitRawData, AmendBenefitRequest,
 
 class AmendBenefitRequestParserSpec extends UnitSpec {
 
-  private val nino: String                   = "AA123456B"
-  private val taxYear: String                = "2020-21"
+  private val nino                           = "AA123456B"
+  private val taxYear                        = "2020-21"
   private val benefitId                      = "4557ecb5-fd32-48cc-81f5-e6acd1099f3c"
   implicit private val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
@@ -56,8 +56,8 @@ class AmendBenefitRequestParserSpec extends UnitSpec {
 
   private val amendBenefitRequest = AmendBenefitRequest(
     nino = Nino(nino),
-    taxYear = taxYear,
-    benefitId = benefitId,
+    taxYear = TaxYear.fromMtd(taxYear),
+    benefitId = BenefitId(benefitId),
     body = amendBenefitRequestBody
   )
 

@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers
 
 import api.controllers.requestParsers.RequestParser
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import v1.controllers.requestParsers.validators.DeleteBenefitValidator
 import v1.models.request.deleteBenefit.{DeleteBenefitRawData, DeleteBenefitRequest}
 
@@ -26,6 +26,6 @@ import javax.inject.Inject
 class DeleteBenefitRequestParser @Inject() (val validator: DeleteBenefitValidator) extends RequestParser[DeleteBenefitRawData, DeleteBenefitRequest] {
 
   override protected def requestFor(data: DeleteBenefitRawData): DeleteBenefitRequest =
-    DeleteBenefitRequest(Nino(data.nino), data.taxYear, data.benefitId)
+    DeleteBenefitRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), BenefitId(data.benefitId))
 
 }

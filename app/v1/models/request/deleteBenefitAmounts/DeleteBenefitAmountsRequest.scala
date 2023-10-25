@@ -16,6 +16,6 @@
 
 package v1.models.request.deleteBenefitAmounts
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 
-case class DeleteBenefitAmountsRequest(nino: Nino, taxYear: TaxYear, benefitId: String)
+case class DeleteBenefitAmountsRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.ignoreBenefit
+package api.models.domain
 
-import api.models.domain.{BenefitId, Nino, TaxYear}
-
-case class IgnoreBenefitRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)
+case class BenefitId(benefitId: String) {
+  override def toString: String = benefitId
+}

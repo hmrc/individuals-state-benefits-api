@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockDeleteBenefitAmountsValidator
@@ -24,14 +24,13 @@ import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, Dele
 
 class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
   val nino: String                   = "AA123456B"
-  val taxYear: TaxYear               = TaxYear.fromMtd("2019-20")
-  val taxYearString: String          = "2019-20"
+  val taxYear: String                = "2019-20"
   val benefitId: String              = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   private val rawData = DeleteBenefitAmountsRawData(
     nino = nino,
-    taxYear = taxYearString,
+    taxYear = taxYear,
     benefitId = benefitId
   )
 
@@ -52,7 +51,7 @@ class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
 
         val result: Either[ErrorWrapper, DeleteBenefitAmountsRequest] =
           parser.parseRequest(rawData)
-        result shouldBe Right(DeleteBenefitAmountsRequest(Nino(nino), taxYear, benefitId))
+        result shouldBe Right(DeleteBenefitAmountsRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId)))
       }
     }
 

@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.AmendBenefitAmounts.{AmendBenefitAmountsRequest, AmendBenefitAmountsRequestBody}
 
@@ -73,7 +73,7 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
     val request: AmendBenefitAmountsRequest = AmendBenefitAmountsRequest(
       nino = Nino(nino),
       taxYear = taxYear,
-      benefitId = benefitId,
+      benefitId = BenefitId(benefitId),
       body = body
     )
 

@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers
 
-import api.models.domain.Nino
+import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors._
 import support.UnitSpec
 import v1.mocks.validators.MockDeleteBenefitValidator
@@ -49,7 +49,7 @@ class DeleteBenefitRequestParserSpec extends UnitSpec {
         MockDeleteBenefitValidator.validate(deleteBenefitRawData).returns(Nil)
 
         parser.parseRequest(deleteBenefitRawData) shouldBe
-          Right(DeleteBenefitRequest(Nino(nino), taxYear, benefitId))
+          Right(DeleteBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId)))
       }
     }
 
