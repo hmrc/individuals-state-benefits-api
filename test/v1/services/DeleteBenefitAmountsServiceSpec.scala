@@ -22,13 +22,13 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.connectors.MockDeleteBenefitAmountsConnector
-import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequest
+import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequestData
 
 import scala.concurrent.Future
 
 class DeleteBenefitAmountsServiceSpec extends ServiceSpec {
 
-  private val request = DeleteBenefitAmountsRequest(
+  private val request = DeleteBenefitAmountsRequestData(
     nino = Nino("AA112233A"),
     taxYear = TaxYear.fromMtd("2023-24"),
     benefitId = BenefitId("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")

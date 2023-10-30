@@ -19,16 +19,16 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{BenefitId, Nino, TaxYear}
 import v1.controllers.requestParsers.validators.DeleteBenefitAmountsValidator
-import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequest}
+import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequestData}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DeleteBenefitAmountsRequestParser @Inject() (val validator: DeleteBenefitAmountsValidator)
-    extends RequestParser[DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequest] {
+    extends RequestParser[DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequestData] {
 
-  override protected def requestFor(data: DeleteBenefitAmountsRawData): DeleteBenefitAmountsRequest =
-    DeleteBenefitAmountsRequest(
+  override protected def requestFor(data: DeleteBenefitAmountsRawData): DeleteBenefitAmountsRequestData =
+    DeleteBenefitAmountsRequestData(
       Nino(data.nino),
       TaxYear.fromMtd(data.taxYear),
       BenefitId(data.benefitId)

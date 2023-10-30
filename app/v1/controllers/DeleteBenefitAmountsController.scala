@@ -21,8 +21,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import routing.{Version, Version1}
 import utils.IdGenerator
-import v1.controllers.requestParsers.DeleteBenefitAmountsRequestParser
-import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRawData
+import v1.controllers.validators.DeleteBenefitAmountsValidatorFactory
 import v1.services.DeleteBenefitAmountsService
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +30,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DeleteBenefitAmountsController @Inject() (val authService: EnrolmentsAuthService,
                                                 val lookupService: MtdIdLookupService,
-                                                parser: DeleteBenefitAmountsRequestParser,
+                                                validatorFactory: DeleteBenefitAmountsValidatorFactory,
                                                 service: DeleteBenefitAmountsService,
                                                 auditService: AuditService,
                                                 cc: ControllerComponents,
@@ -48,22 +47,21 @@ class DeleteBenefitAmountsController @Inject() (val authService: EnrolmentsAuthS
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = DeleteBenefitAmountsRawData(nino, taxYear, benefitId)
+      val validator = validatorFactory.validator(nino, taxYear, benefitId)
 
-      val requestHandler = RequestHandlerOld
-        .withParser(parser)
+      val requestHandler = RequestHandler
+        .withValidator(validator)
         .withService(service.delete)
-        .withAuditing(AuditHandlerOld(
+        .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "DeleteStateBenefitAmounts",
           transactionName = "delete-state-benefit-amounts",
-          version = Version.from(request, orElse = Version1),
-          pathParams = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
-          queryParams = None,
+          apiVersion = Version.from(request, orElse = Version1),
+          params = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
           requestBody = None
         ))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
 
     }
 

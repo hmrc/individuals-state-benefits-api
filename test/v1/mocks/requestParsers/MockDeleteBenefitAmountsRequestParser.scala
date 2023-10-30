@@ -20,7 +20,7 @@ import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.DeleteBenefitAmountsRequestParser
-import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequest}
+import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequestData}
 
 trait MockDeleteBenefitAmountsRequestParser extends MockFactory {
 
@@ -29,7 +29,7 @@ trait MockDeleteBenefitAmountsRequestParser extends MockFactory {
 
   object MockDeleteBenefitAmountsRequestParser {
 
-    def parse(data: DeleteBenefitAmountsRawData): CallHandler[Either[ErrorWrapper, DeleteBenefitAmountsRequest]] =
+    def parse(data: DeleteBenefitAmountsRawData): CallHandler[Either[ErrorWrapper, DeleteBenefitAmountsRequestData]] =
       (mockDeleteBenefitAmountsRequestParser
         .parseRequest(_: DeleteBenefitAmountsRawData)(_: String))
         .expects(data, *)

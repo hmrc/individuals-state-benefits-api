@@ -20,7 +20,7 @@ import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockDeleteBenefitAmountsValidator
-import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequest}
+import v1.models.request.deleteBenefitAmounts.{DeleteBenefitAmountsRawData, DeleteBenefitAmountsRequestData}
 
 class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
   val nino: String                   = "AA123456B"
@@ -49,9 +49,9 @@ class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
           .validate(rawData)
           .returns(Nil)
 
-        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequest] =
+        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequestData] =
           parser.parseRequest(rawData)
-        result shouldBe Right(DeleteBenefitAmountsRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId)))
+        result shouldBe Right(DeleteBenefitAmountsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId)))
       }
     }
 
@@ -61,7 +61,7 @@ class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
           .validate(rawData.copy(nino = "notANino"))
           .returns(List(NinoFormatError))
 
-        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequest] =
+        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequestData] =
           parser.parseRequest(rawData.copy(nino = "notANino"))
         result shouldBe Left(ErrorWrapper(correlationId, NinoFormatError, None))
 
@@ -72,7 +72,7 @@ class DeleteBenefitAmountsRequestParserSpec extends UnitSpec {
           .validate(rawData.copy(nino = "notANino", taxYear = "notATaxYear"))
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequest] =
+        val result: Either[ErrorWrapper, DeleteBenefitAmountsRequestData] =
           parser.parseRequest(rawData.copy(nino = "notANino", taxYear = "notATaxYear"))
         result shouldBe Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
