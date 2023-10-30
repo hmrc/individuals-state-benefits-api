@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.request.AmendBenefit
+package v1.models.request.amendBenefitAmounts
 
 import play.api.libs.json.{Json, OFormat}
 
-case class AmendBenefitRequestBody(startDate: String, endDate: Option[String])
+case class AmendBenefitAmountsRequestBody(amount: BigDecimal, taxPaid: Option[BigDecimal])
 
-object AmendBenefitRequestBody {
-  implicit val format: OFormat[AmendBenefitRequestBody] = Json.format[AmendBenefitRequestBody]
+object AmendBenefitAmountsRequestBody {
+  implicit val format: OFormat[AmendBenefitAmountsRequestBody] = Json.format[AmendBenefitAmountsRequestBody]
 }

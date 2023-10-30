@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.AmendBenefitAmounts
+package v1.models.request.amendBenefit
 
 import api.models.domain.{BenefitId, Nino, TaxYear}
 
-case class AmendBenefitAmountsRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId, body: AmendBenefitAmountsRequestBody)
+case class AmendBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId, body: AmendBenefitRequestBody)

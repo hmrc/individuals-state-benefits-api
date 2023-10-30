@@ -22,7 +22,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v1.connectors.MockAmendBenefitConnector
-import v1.models.request.AmendBenefit.{AmendBenefitRequest, AmendBenefitRequestBody}
+import v1.models.request.amendBenefit.{AmendBenefitRequestData, AmendBenefitRequestBody}
 
 import scala.concurrent.Future
 
@@ -81,7 +81,7 @@ class AmendBenefitServiceSpec extends ServiceSpec {
 
     val amendBenefitRequestBody: AmendBenefitRequestBody = AmendBenefitRequestBody("2020-08-03", Some("2020-12-03"))
 
-    val requestData: AmendBenefitRequest = AmendBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), amendBenefitRequestBody)
+    val requestData: AmendBenefitRequestData = AmendBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), amendBenefitRequestBody)
 
     val service: AmendBenefitService = new AmendBenefitService(
       connector = mockAmendBenefitConnector

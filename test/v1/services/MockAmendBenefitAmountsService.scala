@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.AmendBenefitAmounts.AmendBenefitAmountsRequest
+import v1.models.request.amendBenefitAmounts.AmendBenefitAmountsRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,9 @@ trait MockAmendBenefitAmountsService extends MockFactory {
 
   object MockAmendBenefitAmountsService {
 
-    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def amendBenefitAmounts(requestData: AmendBenefitAmountsRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockAmendBenefitAmountsService
-        .amendBenefitAmounts(_: AmendBenefitAmountsRequest)(_: RequestContext, _: ExecutionContext))
+        .amendBenefitAmounts(_: AmendBenefitAmountsRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

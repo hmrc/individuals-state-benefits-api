@@ -22,7 +22,7 @@ import api.models.domain.{BenefitId, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.models.request.AmendBenefit.{AmendBenefitRequest, AmendBenefitRequestBody}
+import v1.models.request.amendBenefit.{AmendBenefitRequestData, AmendBenefitRequestBody}
 
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class AmendBenefitConnectorSpec extends ConnectorSpec {
     endDate = Some("2020-12-03")
   )
 
-  val request: AmendBenefitRequest = AmendBenefitRequest(
+  val request: AmendBenefitRequestData = AmendBenefitRequestData(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear),
     benefitId = BenefitId(benefitId),

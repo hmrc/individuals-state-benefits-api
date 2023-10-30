@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.request.AmendBenefitAmounts
+package v1.models.request.amendBenefit
 
-import api.models.request.RawData
-import play.api.mvc.AnyContentAsJson
+import play.api.libs.json.{Json, OFormat}
 
-case class AmendBenefitAmountsRawData(nino: String, taxYear: String, benefitId: String, body: AnyContentAsJson) extends RawData
+case class AmendBenefitRequestBody(startDate: String, endDate: Option[String])
+
+object AmendBenefitRequestBody {
+  implicit val format: OFormat[AmendBenefitRequestBody] = Json.format[AmendBenefitRequestBody]
+}
