@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package api.controllers.validators.resolvers
+package v1.controllers.validators.resolvers
 
-import api.models.domain.BenefitId
+import api.controllers.validators.resolvers.Resolver
 import api.models.errors.{BenefitIdFormatError, MtdError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
+import v1.models.domain.BenefitId
 
 object ResolveBenefitId extends Resolver[String, BenefitId] {
 

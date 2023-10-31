@@ -16,11 +16,12 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 import support.UnitSpec
+import v1.models.domain.BenefitId
 import v1.models.request.amendBenefitAmounts.{AmendBenefitAmountsRequestBody, AmendBenefitAmountsRequestData}
 
 class AmendBenefitAmountsValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
@@ -50,7 +51,6 @@ class AmendBenefitAmountsValidatorFactorySpec extends UnitSpec with JsonErrorVal
     "return the parsed domain object" when {
       "passed a valid request" in {
         val result = validator(validNino, validTaxYear, validBenefitId, validBody).validateAndWrapResult()
-
         result shouldBe Right(AmendBenefitAmountsRequestData(parsedNino, parsedTaxYear, parsedBenefitId, parsedBody))
       }
     }

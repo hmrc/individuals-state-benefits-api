@@ -19,12 +19,13 @@ package v1.controllers
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import v1.controllers.validators.MockDeleteBenefitValidatorFactory
+import v1.models.domain.BenefitId
 import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 import v1.services.MockDeleteBenefitService
 

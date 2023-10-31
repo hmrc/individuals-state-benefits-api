@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package api.models.domain
+package v1.models.domain
 
-case class BenefitId(benefitId: String) {
-  override def toString: String = benefitId
+import support.UnitSpec
+
+class BenefitIdSpec extends UnitSpec {
+
+  "toString" should {
+    "return the BenefitId value" in {
+      val result = BenefitId("some id").toString
+      result shouldBe "some id"
+    }
+  }
+
 }

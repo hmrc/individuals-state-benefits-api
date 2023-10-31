@@ -16,11 +16,12 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsObject, JsValue, Json}
 import support.UnitSpec
+import v1.models.domain.BenefitId
 import v1.models.request.amendBenefit.{AmendBenefitRequestBody, AmendBenefitRequestData}
 
 class AmendBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidators {

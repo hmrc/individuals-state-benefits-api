@@ -21,7 +21,7 @@ import api.hateoas.{HateoasWrapper, Link}
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.hateoas.Method.{GET, POST}
 import api.models.outcomes.ResponseWrapper
@@ -29,6 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version1
 import v1.mocks.requestParsers.MockIgnoreBenefitRequestParser
+import v1.models.domain.BenefitId
 import v1.models.request.ignoreBenefit.{IgnoreBenefitRawData, IgnoreBenefitRequest}
 import v1.models.response.ignoreBenefit.IgnoreBenefitHateoasData
 import v1.services.MockIgnoreBenefitService

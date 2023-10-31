@@ -17,8 +17,9 @@
 package v1.connectors
 
 import api.connectors.ConnectorSpec
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
+import v1.models.domain.BenefitId
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequestData
 
 import scala.concurrent.Future

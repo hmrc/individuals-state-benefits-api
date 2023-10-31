@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package api.controllers.validators.resolvers
+package v1.controllers.validators.resolvers
 
-import api.models.domain.BenefitId
 import api.models.errors.BenefitIdFormatError
 import cats.data.Validated.{Invalid, Valid}
 import support.UnitSpec
+import v1.controllers.validators.resolvers
+import v1.models.domain.BenefitId
 
 class ResolveBenefitIdSpec extends UnitSpec {
 
@@ -35,7 +36,7 @@ class ResolveBenefitIdSpec extends UnitSpec {
     "return an error" when {
       "given an invalid benefit ID" in {
         val invalidBenefitId = ""
-        val result           = ResolveBenefitId(invalidBenefitId)
+        val result           = resolvers.ResolveBenefitId(invalidBenefitId)
         result shouldBe Invalid(List(BenefitIdFormatError))
       }
     }

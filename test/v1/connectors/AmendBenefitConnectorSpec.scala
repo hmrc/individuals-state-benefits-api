@@ -18,10 +18,11 @@ package v1.connectors
 
 import api.connectors.ConnectorSpec
 import api.mocks.MockHttpClient
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.models.domain.BenefitId
 import v1.models.request.amendBenefit.{AmendBenefitRequestData, AmendBenefitRequestBody}
 
 import scala.concurrent.Future

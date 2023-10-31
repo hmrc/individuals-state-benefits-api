@@ -17,8 +17,9 @@
 package v1.controllers.requestParsers
 
 import api.controllers.requestParsers.RequestParser
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.ListBenefitsValidator
+import v1.models.domain.BenefitId
 import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 
 import javax.inject.Inject

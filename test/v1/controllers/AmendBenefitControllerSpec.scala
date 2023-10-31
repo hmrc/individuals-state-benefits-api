@@ -22,13 +22,14 @@ import api.hateoas.{HateoasWrapper, Link}
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import v1.controllers.validators.MockAmendBenefitValidatorFactory
+import v1.models.domain.BenefitId
 import v1.models.request.amendBenefit.{AmendBenefitRequestBody, AmendBenefitRequestData}
 import v1.models.response.amendBenefit.AmendBenefitHateoasData
 import v1.services.MockAmendBenefitService

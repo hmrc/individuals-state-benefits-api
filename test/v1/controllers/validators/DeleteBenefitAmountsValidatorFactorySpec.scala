@@ -16,7 +16,7 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{
   BadRequestError,
   BenefitIdFormatError,
@@ -27,6 +27,7 @@ import api.models.errors.{
   TaxYearFormatError
 }
 import support.UnitSpec
+import v1.models.domain.BenefitId
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequestData
 
 class DeleteBenefitAmountsValidatorFactorySpec extends UnitSpec {

@@ -17,12 +17,13 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{BenefitId, Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockDeleteBenefitConnector
+import v1.models.domain.BenefitId
 import v1.models.request.deleteBenefit.DeleteBenefitRequestData
 
 import scala.concurrent.Future

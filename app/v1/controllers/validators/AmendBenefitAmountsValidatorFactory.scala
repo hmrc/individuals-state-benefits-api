@@ -17,12 +17,12 @@
 package v1.controllers.validators
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveBenefitId, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
+import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.Valid
-import cats.implicits.{catsSyntaxTuple4Semigroupal, toFoldableOps}
+import cats.implicits.catsSyntaxTuple4Semigroupal
 import play.api.libs.json.JsValue
 import v1.models.request.amendBenefitAmounts.{AmendBenefitAmountsRequestBody, AmendBenefitAmountsRequestData}
 
@@ -47,18 +47,17 @@ class AmendBenefitAmountsValidatorFactory {
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear),
-          ResolveBenefitId(benefitId),
+          resolvers.ResolveBenefitId(benefitId),
           resolveJson(body)
         ).mapN(AmendBenefitAmountsRequestData) andThen validateBusinessRules
 
       private def validateBusinessRules(parsed: AmendBenefitAmountsRequestData): Validated[Seq[MtdError], AmendBenefitAmountsRequestData] = {
         import parsed.body._
 
-        List(
+        combine(
           resolveAmountNumber(amount, path = Some("/amount")),
           taxPaid.map(resolveTaxPaid(_, path = Some("/taxPaid"))).getOrElse(Valid(()))
-        ).traverse_(identity)
-          .map(_ => parsed)
+        ).map(_ => parsed)
       }
 
     }
