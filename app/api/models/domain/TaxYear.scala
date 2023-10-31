@@ -77,8 +77,6 @@ object TaxYear {
 
   val tysTaxYear: Int = 2024
 
-  val minimumPermittedTaxYear = new TaxYear("2020")
-
   /** UK tax year starts on 6 April.
     */
   private val taxYearMonthStart = 4

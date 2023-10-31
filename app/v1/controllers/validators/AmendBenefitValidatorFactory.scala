@@ -18,7 +18,6 @@ package v1.controllers.validators
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers._
-import api.models.domain.TaxYear
 import api.models.errors.{MtdError, StartDateFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
@@ -40,7 +39,7 @@ class AmendBenefitValidatorFactory {
   @nowarn("cat=lint-byname-implicit")
   private val resolveJson = new ResolveNonEmptyJsonObject[AmendBenefitRequestBody]()
 
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.minimumPermittedTaxYear.year))
+  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(minimumPermittedTaxYear.year))
 
   def validator(nino: String, taxYear: String, benefitId: String, body: JsValue): Validator[AmendBenefitRequestData] =
     new Validator[AmendBenefitRequestData] {

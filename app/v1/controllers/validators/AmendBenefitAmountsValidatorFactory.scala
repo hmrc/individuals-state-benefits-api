@@ -18,7 +18,6 @@ package v1.controllers.validators
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
-import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.Valid
@@ -35,7 +34,7 @@ class AmendBenefitAmountsValidatorFactory {
   @nowarn("cat=lint-byname-implicit")
   private val resolveJson = new ResolveNonEmptyJsonObject[AmendBenefitAmountsRequestBody]()
 
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.minimumPermittedTaxYear.year))
+  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(minimumPermittedTaxYear.year))
 
   private val resolveAmountNumber = ResolveParsedNumber()
   private val resolveTaxPaid      = ResolveParsedNumber(min = -99999999999.99)
