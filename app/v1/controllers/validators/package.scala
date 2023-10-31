@@ -19,5 +19,5 @@ package v1.controllers
 import api.models.domain.TaxYear
 
 package object validators {
-  val minimumPermittedTaxYear: TaxYear = TaxYear("2020")
+  val minimumPermittedTaxYear: TaxYear = TaxYear.fromMtd("2019-20")
 }
