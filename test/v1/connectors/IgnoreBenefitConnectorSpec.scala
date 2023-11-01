@@ -21,7 +21,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import api.models.request.EmptyBody
 import v1.models.domain.BenefitId
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequest
+import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
 
 import scala.concurrent.Future
 
@@ -53,7 +53,7 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
     val nino: String      = "AA111111A"
     val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
 
-    val request: IgnoreBenefitRequest = IgnoreBenefitRequest(Nino(nino), taxYear, BenefitId(benefitId))
+    val request: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
 
     val connector: IgnoreBenefitConnector = new IgnoreBenefitConnector(
       http = mockHttpClient,

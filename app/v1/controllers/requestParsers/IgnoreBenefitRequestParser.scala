@@ -20,13 +20,14 @@ import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.IgnoreBenefitValidator
 import v1.models.domain.BenefitId
-import v1.models.request.ignoreBenefit.{IgnoreBenefitRawData, IgnoreBenefitRequest}
+import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
 
 import javax.inject.Inject
 
-class IgnoreBenefitRequestParser @Inject() (val validator: IgnoreBenefitValidator) extends RequestParser[IgnoreBenefitRawData, IgnoreBenefitRequest] {
+class IgnoreBenefitRequestParser @Inject() (val validator: IgnoreBenefitValidator)
+    extends RequestParser[IgnoreBenefitRawData, IgnoreBenefitRequestData] {
 
-  override protected def requestFor(data: IgnoreBenefitRawData): IgnoreBenefitRequest =
-    IgnoreBenefitRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), BenefitId(data.benefitId))
+  override protected def requestFor(data: IgnoreBenefitRawData): IgnoreBenefitRequestData =
+    IgnoreBenefitRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear), BenefitId(data.benefitId))
 
 }

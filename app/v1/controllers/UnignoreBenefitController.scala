@@ -23,7 +23,6 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import routing.{Version, Version1}
 import utils.IdGenerator
 import v1.controllers.requestParsers.IgnoreBenefitRequestParser
-import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 import v1.models.response.unignoreBenefit.UnignoreBenefitHateoasData
 import v1.models.response.unignoreBenefit.UnignoreBenefitResponse.UnignoreBenefitLinksFactory
 import v1.services.UnignoreBenefitService

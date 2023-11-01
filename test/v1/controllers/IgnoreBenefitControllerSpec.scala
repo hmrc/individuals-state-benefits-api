@@ -30,7 +30,7 @@ import play.api.mvc.Result
 import routing.Version1
 import v1.mocks.requestParsers.MockIgnoreBenefitRequestParser
 import v1.models.domain.BenefitId
-import v1.models.request.ignoreBenefit.{IgnoreBenefitRawData, IgnoreBenefitRequest}
+import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
 import v1.models.response.ignoreBenefit.IgnoreBenefitHateoasData
 import v1.services.MockIgnoreBenefitService
 
@@ -99,7 +99,7 @@ class IgnoreBenefitControllerSpec
 
     val rawData: IgnoreBenefitRawData = IgnoreBenefitRawData(nino, taxYear, benefitId)
 
-    val requestData: IgnoreBenefitRequest = IgnoreBenefitRequest(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+    val requestData: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
     val controller = new IgnoreBenefitController(
       authService = mockEnrolmentsAuthService,

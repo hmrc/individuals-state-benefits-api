@@ -19,4 +19,4 @@ package v1.models.request.ignoreBenefit
 import api.models.domain.{Nino, TaxYear}
 import v1.models.domain.BenefitId
 
-case class IgnoreBenefitRequest(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)
+case class IgnoreBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)

@@ -24,7 +24,6 @@ import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.CurrentDateTime
-import v1.models.request.ignoreBenefit.IgnoreBenefitRawData
 
 class IgnoreBenefitValidatorSpec extends UnitSpec {
 
