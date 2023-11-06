@@ -21,14 +21,14 @@ import api.hateoas.Method.{GET, POST}
 import api.hateoas.{HateoasWrapper, Link}
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version1
-import v1.mocks.requestParsers.MockIgnoreBenefitRequestParser
+import v1.controllers.validators.MockIgnoreBenefitValidatorFactory
 import v1.models.domain.BenefitId
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
 import v1.models.response.unignoreBenefit.UnignoreBenefitHateoasData
@@ -38,19 +38,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UnignoreBenefitControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
     with MockUnignoreBenefitService
-    with MockIgnoreBenefitRequestParser
+    with MockIgnoreBenefitValidatorFactory
     with MockAuditService
     with MockHateoasFactory {
 
   "UnignoreBenefitController" should {
     "return a successful response with status 200 (OK)" when {
       "happy path" in new Test {
-        MockIgnoreBenefitRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockUnignoreBenefitService
           .unignoreBenefit(requestData)
@@ -71,17 +69,13 @@ class UnignoreBenefitControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockIgnoreBenefitRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, None)
       }
 
       "the service returns an error" in new Test {
-        MockIgnoreBenefitRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockUnignoreBenefitService
           .unignoreBenefit(requestData)
@@ -92,9 +86,9 @@ class UnignoreBenefitControllerSpec
     }
   }
 
-  private trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val taxYear: String   = "2019-20"
+    val taxYear: String = "2019-20"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
     val requestData: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
@@ -102,7 +96,7 @@ class UnignoreBenefitControllerSpec
     val controller = new UnignoreBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockIgnoreBenefitRequestParser,
+      validatorFactory = mockIgnoreBenefitValidatorFactory,
       service = mockUnignoreBenefitService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
@@ -112,15 +106,14 @@ class UnignoreBenefitControllerSpec
 
     protected def callController(): Future[Result] = controller.unignoreBenefit(nino, taxYear, benefitId)(fakeRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
+    override protected def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "UnignoreStateBenefit",
         transactionName = "unignore-state-benefit",
-        detail = GenericAuditDetailOld(
+        detail = GenericAuditDetail(
           userType = "Individual",
           agentReferenceNumber = None,
-          pathParams = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
-          queryParams = None,
+          params = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
           requestBody = None,
           `X-CorrelationId` = correlationId,
           versionNumber = Version1.name,
