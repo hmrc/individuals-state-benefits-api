@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package v1.controllers.requestParsers
+package v1.models.request.listBenefits
 
-import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
-import v1.controllers.requestParsers.validators.ListBenefitsValidator
 import v1.models.domain.BenefitId
-import v1.models.request.listBenefits.{ListBenefitsRawData, ListBenefitsRequest}
 
-import javax.inject.Inject
-
-class ListBenefitsRequestParser @Inject() (val validator: ListBenefitsValidator) extends RequestParser[ListBenefitsRawData, ListBenefitsRequest] {
-
-  override protected def requestFor(data: ListBenefitsRawData): ListBenefitsRequest =
-    ListBenefitsRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.benefitId.map(BenefitId))
-
-}
+case class ListBenefitsRequestData(nino: Nino, taxYear: TaxYear, benefitId: Option[BenefitId])
