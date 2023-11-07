@@ -23,7 +23,7 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.connectors.MockListBenefitsConnector
 import v1.models.domain.BenefitId
-import v1.models.request.listBenefits.ListBenefitsRequest
+import v1.models.request.listBenefits.ListBenefitsRequestData
 import v1.models.response.listBenefits.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsResponse}
 
 import scala.concurrent.Future
@@ -34,7 +34,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
   private val taxYear   = "2019-20"
   private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
-  private val requestData = ListBenefitsRequest(Nino(nino), TaxYear.fromMtd(taxYear), benefitId.map(BenefitId))
+  private val requestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), benefitId.map(BenefitId))
 
   private val validResponse = ListBenefitsResponse(
     stateBenefits = Some(

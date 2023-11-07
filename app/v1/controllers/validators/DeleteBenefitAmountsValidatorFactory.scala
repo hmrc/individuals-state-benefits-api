@@ -21,6 +21,7 @@ import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple3Semigroupal
+import v1.controllers.validators.resolvers.ResolveBenefitId
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequestData
 
 import javax.inject.Singleton
@@ -37,7 +38,7 @@ class DeleteBenefitAmountsValidatorFactory {
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear),
-          resolvers.ResolveBenefitId(benefitId)
+          ResolveBenefitId(benefitId)
         ).mapN(DeleteBenefitAmountsRequestData)
       }
 

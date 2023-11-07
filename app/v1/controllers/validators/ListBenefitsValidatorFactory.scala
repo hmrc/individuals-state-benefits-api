@@ -23,25 +23,26 @@ import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
 import v1.controllers.validators.resolvers.ResolveBenefitId
-import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
+import v1.models.request.listBenefits.ListBenefitsRequestData
 
 import javax.inject.Singleton
 
 @Singleton
-class IgnoreBenefitValidatorFactory {
+class ListBenefitsValidatorFactory {
 
   private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(minimumPermittedTaxYear.year))
 
-  def validator(nino: String, taxYear: String, benefitId: String): Validator[IgnoreBenefitRequestData] = new Validator[IgnoreBenefitRequestData] {
+  def validator(nino: String, taxYear: String, benefitId: Option[String]): Validator[ListBenefitsRequestData] = new Validator[ListBenefitsRequestData] {
 
-    def validate: Validated[Seq[MtdError], IgnoreBenefitRequestData] = {
+    def validate: Validated[Seq[MtdError], ListBenefitsRequestData] = {
       (
         ResolveNino(nino),
         resolveTaxYear(taxYear),
         ResolveBenefitId(benefitId)
-      ).mapN(IgnoreBenefitRequestData)
+      ).mapN(ListBenefitsRequestData)
     }
 
   }
 
 }
+
