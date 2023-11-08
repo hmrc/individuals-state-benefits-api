@@ -21,7 +21,7 @@ import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.CreateBenefitConnector
-import v1.models.request.createBenefit.CreateBenefitRequest
+import v1.models.request.createBenefit.CreateBenefitRequestData
 import v1.models.response.createBenefit.CreateBenefitResponse
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateBenefitService @Inject() (connector: CreateBenefitConnector) extends BaseService {
 
   def createBenefit(
-      request: CreateBenefitRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[CreateBenefitResponse]] = {
+      request: CreateBenefitRequestData)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[CreateBenefitResponse]] = {
 
     connector.createBenefit(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
