@@ -17,12 +17,12 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{BenefitType, Nino}
+import api.models.domain.{BenefitType, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v1.connectors.MockCreateBenefitConnector
-import v1.models.request.createBenefit.{CreateBenefitRequest, CreateBenefitRequestBody}
+import v1.models.request.createBenefit.{CreateBenefitRequestBody, CreateBenefitRequestData}
 import v1.models.response.createBenefit.CreateBenefitResponse
 
 import scala.concurrent.Future
@@ -81,7 +81,7 @@ class CreateBenefitServiceSpec extends ServiceSpec {
     val createBenefitRequestBody: CreateBenefitRequestBody =
       CreateBenefitRequestBody(BenefitType.incapacityBenefit.toString, "2020-08-03", Some("2020-12-03"))
 
-    val request: CreateBenefitRequest = CreateBenefitRequest(Nino(nino), taxYear, createBenefitRequestBody)
+    val request: CreateBenefitRequestData = CreateBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), createBenefitRequestBody)
 
     val response: CreateBenefitResponse = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 

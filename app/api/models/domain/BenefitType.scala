@@ -38,4 +38,15 @@ object BenefitType {
   case object otherStateBenefits extends BenefitType
 
   implicit val format: Format[BenefitType] = Enums.format[BenefitType]
+
+  val benefitTypes: Seq[String] = List(
+    statePension,
+    statePensionLumpSum,
+    employmentSupportAllowance,
+    jobSeekersAllowance,
+    bereavementAllowance,
+    otherStateBenefits,
+    incapacityBenefit
+  ).map(_.toString)
+
 }

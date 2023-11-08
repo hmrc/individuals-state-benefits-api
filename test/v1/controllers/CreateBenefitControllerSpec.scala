@@ -21,16 +21,16 @@ import api.hateoas.Method.{DELETE, GET, PUT}
 import api.hateoas.{HateoasWrapper, Link}
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
-import api.models.domain.{BenefitType, Nino}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{BenefitType, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContentAsJson, Result}
+import play.api.mvc.Result
 import routing.Version1
-import v1.mocks.requestParsers.MockCreateBenefitRequestParser
-import v1.models.request.createBenefit.{CreateBenefitRawData, CreateBenefitRequest, CreateBenefitRequestBody}
+import v1.controllers.validators.MockCreateBenefitValidatorFactory
+import v1.models.request.createBenefit.{CreateBenefitRequestBody, CreateBenefitRequestData}
 import v1.models.response.createBenefit.{CreateBenefitHateoasData, CreateBenefitResponse}
 import v1.services.MockCreateBenefitService
 
@@ -43,13 +43,13 @@ class CreateBenefitControllerSpec
     with MockAppConfig
     with MockCreateBenefitService
     with MockAuditService
-    with MockCreateBenefitRequestParser
+    with MockCreateBenefitValidatorFactory
     with MockHateoasFactory {
 
-  val taxYear: String   = "2019-20"
-  val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  val startDate         = "2020-08-03"
-  val endDate           = "2020-12-03"
+  private val taxYear   = "2019-20"
+  private val benefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val startDate = "2020-08-03"
+  private val endDate   = "2020-12-03"
 
   val requestBodyJson: JsValue = Json.parse(
     s"""
@@ -61,27 +61,21 @@ class CreateBenefitControllerSpec
     """.stripMargin
   )
 
-  val rawData: CreateBenefitRawData = CreateBenefitRawData(
-    nino = nino,
-    taxYear = taxYear,
-    body = AnyContentAsJson(requestBodyJson)
-  )
-
   val createStateBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
     startDate = "2019-01-01",
     endDate = Some("2020-06-01"),
     benefitType = BenefitType.incapacityBenefit.toString
   )
 
-  val requestData: CreateBenefitRequest = CreateBenefitRequest(
+  val requestData: CreateBenefitRequestData = CreateBenefitRequestData(
     nino = Nino(nino),
-    taxYear = taxYear,
+    taxYear = TaxYear.fromMtd(taxYear),
     body = createStateBenefitRequestBody
   )
 
   val responseData: CreateBenefitResponse = CreateBenefitResponse(benefitId)
 
-  private val testHateoasLinks = Seq(
+  private val testHateoasLinks = List(
     Link(href = s"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId", method = GET, rel = "self"),
     api.hateoas.Link(href = s"/individuals/state-benefits/$nino/$taxYear/$benefitId", method = PUT, rel = "amend-state-benefit"),
     api.hateoas.Link(href = s"/individuals/state-benefits/$nino/$taxYear/$benefitId", method = DELETE, rel = "delete-state-benefit")
@@ -115,9 +109,7 @@ class CreateBenefitControllerSpec
   "CreateBenefitController" should {
     "return a successful response with status 200 (OK)" when {
       "the request received is valid" in new Test {
-        MockCreateBenefitRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateStateBenefitService
           .createStateBenefit(requestData)
@@ -138,17 +130,13 @@ class CreateBenefitControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockCreateBenefitRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
-        MockCreateBenefitRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateStateBenefitService
           .createStateBenefit(requestData)
@@ -159,12 +147,12 @@ class CreateBenefitControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new CreateBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockCreateBenefitRequestParser,
+      validatorFactory = mockCreateBenefitValidatorFactory,
       service = mockCreateStateBenefitService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
@@ -174,15 +162,14 @@ class CreateBenefitControllerSpec
 
     protected def callController(): Future[Result] = controller.createStateBenefit(nino, taxYear)(fakePostRequest(requestBodyJson))
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
+    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "CreateStateBenefit",
         transactionName = "create-state-benefit",
-        detail = GenericAuditDetailOld(
+        detail = GenericAuditDetail(
           userType = "Individual",
           agentReferenceNumber = None,
-          pathParams = Map("nino" -> nino, "taxYear" -> taxYear),
-          queryParams = None,
+          params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(requestBodyJson),
           `X-CorrelationId` = correlationId,
           versionNumber = Version1.name,
