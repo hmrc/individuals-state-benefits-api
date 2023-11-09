@@ -27,6 +27,9 @@ import scala.concurrent.Future
 
 class IgnoreBenefitConnectorSpec extends ConnectorSpec {
 
+  private val nino      = "AA111111A"
+  private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
+
   "IgnoreBenefitConnector" should {
     "return the expected response for a non-TYS request" when {
       "a valid request is made" in new TysIfsTest with Test {
@@ -50,15 +53,9 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
     _: ConnectorTest =>
     def taxYear: TaxYear
 
-    val nino: String      = "AA111111A"
-    val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
-
     val request: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
 
-    val connector: IgnoreBenefitConnector = new IgnoreBenefitConnector(
-      http = mockHttpClient,
-      appConfig = mockAppConfig
-    )
+    val connector: IgnoreBenefitConnector = new IgnoreBenefitConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
   }
 
