@@ -24,7 +24,7 @@ import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
 
 class IgnoreBenefitValidatorFactorySpec extends UnitSpec {
 
-  implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   private val validNino      = "AA123456B"
   private val validTaxYear   = "2021-22"

@@ -39,7 +39,7 @@ class IgnoreBenefitValidatorFactory {
         ResolveNino(nino),
         resolveTaxYear(taxYear),
         ResolveBenefitId(benefitId)
-      ).mapN(IgnoreBenefitRequestData)
+      ) mapN IgnoreBenefitRequestData
     }
 
   }

@@ -18,13 +18,13 @@ package v1.controllers.validators
 
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import api.models.utils.JsonErrorValidators
+import play.api.libs.json.{JsBoolean, JsObject, JsString, JsValue, Json}
 import support.UnitSpec
 import v1.models.request.createBenefit._
 
-class CreateBenefitValidatorFactorySpec extends UnitSpec {
-
-  implicit private val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
+  private implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   private val validNino    = "AA123456B"
   private val validTaxYear = "2019-20"
@@ -35,26 +35,16 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec {
   private val startDate = "2020-08-03"
   private val endDate   = "2020-12-03"
 
-  private def requestJson(benefitType: String = "statePension", startDate: String = startDate, endDate: String = endDate) =
+  private val requestBody =
     Json.parse(
       s"""
          |{
-         |  "benefitType": "$benefitType",
+         |  "benefitType": "otherStateBenefits",
          |  "startDate": "$startDate",
          |  "endDate": "$endDate"
          |}
       """.stripMargin
     )
-
-  private val validRequestBodyJson = Json.parse(
-    s"""
-       |{
-       |  "benefitType": "otherStateBenefits",
-       |  "startDate": "$startDate",
-       |  "endDate" : "$endDate"
-       |}
-    """.stripMargin
-  )
 
   private val parsedCreateBenefitBody = CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
 
@@ -66,28 +56,28 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec {
   "Validator" should {
     "return the parsed domain object" when {
       "passed a valid request" in {
-        val result = validator(validNino, validTaxYear, validRequestBodyJson).validateAndWrapResult()
+        val result = validator(validNino, validTaxYear, requestBody).validateAndWrapResult()
         result shouldBe Right(CreateBenefitRequestData(parsedNino, parsedTaxYear, parsedCreateBenefitBody))
       }
     }
 
     "return a single error" when {
       "passed an invalid nino" in {
-        val result = validator("A12344A", validTaxYear, validRequestBodyJson).validateAndWrapResult()
+        val result = validator("A12344A", validTaxYear, requestBody).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))
       }
       "passed an invalid tax year" in {
-        val result = validator(validNino, "202223", validRequestBodyJson).validateAndWrapResult()
+        val result = validator(validNino, "202223", requestBody).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
       }
 
       "passed a tax year with an invalid range" in {
-        val result = validator(validNino, "2022-24", validRequestBodyJson).validateAndWrapResult()
+        val result = validator(validNino, "2022-24", requestBody).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError))
       }
 
       "passed a tax year that precedes the minimum" in {
-        val result = validator(validNino, "2018-19", validRequestBodyJson).validateAndWrapResult()
+        val result = validator(validNino, "2018-19", requestBody).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))
       }
 
@@ -99,51 +89,72 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec {
 
       "passed an incorrect request body" in {
         val paths: Seq[String] = List("/benefitType", "/endDate", "/startDate")
-        val body = Json.parse(s"""
-             |{
-             |  "benefitType": true,
-             |  "startDate": true,
-             |  "endDate": false
-             |}""".stripMargin)
+        val body = requestBody
+          .update("/benefitType", JsBoolean(true))
+          .update("/startDate", JsBoolean(true))
+          .update("/endDate", JsBoolean(false))
 
         val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleIncorrectOrEmptyBodyError.withPaths(paths)))
       }
 
       "passed an incorrect benefitType" in {
-        val result = validator(validNino, validTaxYear, requestJson(benefitType = "invalidBenefit")).validateAndWrapResult()
+        val body = requestBody.update("/benefitType", JsString("invalidBenefit"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, BenefitTypeFormatError))
       }
 
       "passed an incorrect End Date" in {
-        val result = validator(validNino, validTaxYear, requestJson(startDate = endDate, endDate = startDate)).validateAndWrapResult()
+        val body = requestBody
+          .update("/startDate", JsString(endDate))
+          .update("/endDate", JsString(startDate))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleEndBeforeStartDateError))
       }
 
       "return EndDateFormatError error for an incorrect End Date" in {
-        val result = validator(validNino, validTaxYear, requestJson(endDate = "20201203")).validateAndWrapResult()
+        val body = requestBody.update("/endDate", JsString("20201203"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, EndDateFormatError))
       }
 
       "passed an incorrect Start Date" in {
-        val result = validator(validNino, validTaxYear, requestJson(startDate = "20201203")).validateAndWrapResult()
+        val body = requestBody.update("/startDate", JsString("20201203"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, StartDateFormatError))
       }
 
       "passed a start date that is before 1900" in {
-        val result = validator(validNino, validTaxYear, requestJson(startDate = "1809-02-01")).validateAndWrapResult()
+        val body = requestBody.update("/startDate", JsString("1809-02-01"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, StartDateFormatError))
+      }
+
+      "passed a start date that is after 2100 and no end date is provided" in {
+        val body = requestBody
+          .update("/startDate", JsString("2100-01-01"))
+          .removeProperty("/endDate")
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, StartDateFormatError))
       }
 
       "passed an end date that is after 2100" in {
-        val result = validator(validNino, validTaxYear, requestJson(endDate = "2149-02-21")).validateAndWrapResult()
+        val body = requestBody.update("/endDate", JsString("2100-01-01"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, EndDateFormatError))
       }
     }
 
     "return multiple errors" when {
       "passed multiple invalid fields" in {
-        val result = validator("not-a-nino", "not-a-tax-year", validRequestBodyJson).validateAndWrapResult()
+        val result = validator("not-a-nino", "not-a-tax-year", requestBody).validateAndWrapResult()
 
         result shouldBe Left(
           ErrorWrapper(
@@ -155,7 +166,12 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec {
       }
 
       "passed multiple invalid json field formats" in {
-        val result = validator(validNino, validTaxYear, requestJson("invalid", "invalid", "invalid")).validateAndWrapResult()
+        val body = requestBody
+          .update("/benefitType", JsString("invalid"))
+          .update("/startDate", JsString("invalid"))
+          .update("/endDate", JsString("invalid"))
+
+        val result = validator(validNino, validTaxYear, body).validateAndWrapResult()
         result shouldBe Left(
           ErrorWrapper(
             correlationId,

@@ -40,11 +40,11 @@ class CreateBenefitValidatorFactory {
     new Validator[CreateBenefitRequestData] {
 
       def validate: Validated[Seq[MtdError], CreateBenefitRequestData] =
-          (
-            ResolveNino(nino),
-            resolveTaxYear(taxYear),
-            resolveJson(body)
-          ).mapN(CreateBenefitRequestData) andThen validateBusinessRules
+        (
+          ResolveNino(nino),
+          resolveTaxYear(taxYear),
+          resolveJson(body)
+        ) mapN CreateBenefitRequestData andThen validateBusinessRules
 
     }
 

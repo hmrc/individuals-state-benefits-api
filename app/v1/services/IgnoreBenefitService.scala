@@ -38,13 +38,13 @@ class IgnoreBenefitService @Inject() (connector: IgnoreBenefitConnector) extends
     ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
     ("INVALID_TAX_YEAR", TaxYearFormatError),
     ("INVALID_BENEFIT_ID", BenefitIdFormatError),
-    ("INVALID_CORRELATION_ID", StandardDownstreamError),
+    ("INVALID_CORRELATION_ID", InternalError),
     ("IGNORE_FORBIDDEN", RuleIgnoreForbiddenError),
     ("NO_DATA_FOUND", NotFoundError),
     ("NOT_SUPPORTED_TAX_YEAR", RuleTaxYearNotEndedError),
     ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
-    ("SERVICE_ERROR", StandardDownstreamError),
-    ("SERVICE_UNAVAILABLE", StandardDownstreamError)
+    ("SERVICE_ERROR", InternalError),
+    ("SERVICE_UNAVAILABLE", InternalError)
   )
 
 }

@@ -24,20 +24,19 @@ import v1.models.request.listBenefits.ListBenefitsRequestData
 
 class ListBenefitsValidatorFactorySpec extends UnitSpec {
 
-  implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val validNino          = "AA123456B"
-  private val validTaxYear       = "2020-21"
-  private val validBenefitId     = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
+  private val validNino      = "AA123456B"
+  private val validTaxYear   = "2020-21"
+  private val validBenefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
-  private val parsedNino          = Nino(validNino)
-  private val parsedTaxYear       = TaxYear.fromMtd(validTaxYear)
-  private val parsedBenefitId     = validBenefitId.map(BenefitId)
+  private val parsedNino      = Nino(validNino)
+  private val parsedTaxYear   = TaxYear.fromMtd(validTaxYear)
+  private val parsedBenefitId = validBenefitId.map(BenefitId)
 
+  private val validatorFactory = new ListBenefitsValidatorFactory
 
-  val validatorFactory = new ListBenefitsValidatorFactory
-
-  private def validator(nino: String, taxYear: String, benefitId:Option[String]) =
+  private def validator(nino: String, taxYear: String, benefitId: Option[String]) =
     validatorFactory.validator(nino, taxYear, benefitId)
 
   "validator" should {
@@ -47,8 +46,8 @@ class ListBenefitsValidatorFactorySpec extends UnitSpec {
         result shouldBe Right(ListBenefitsRequestData(parsedNino, parsedTaxYear, parsedBenefitId))
       }
       "passed a valid request with no query parameters" in {
-          val result = validator(validNino, validTaxYear, None).validateAndWrapResult()
-          result shouldBe Right(ListBenefitsRequestData(parsedNino, parsedTaxYear, None))
+        val result = validator(validNino, validTaxYear, None).validateAndWrapResult()
+        result shouldBe Right(ListBenefitsRequestData(parsedNino, parsedTaxYear, None))
       }
     }
 
