@@ -28,7 +28,6 @@ import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import routing.Version1
 import v1.controllers.validators.MockCreateBenefitValidatorFactory
 import v1.models.request.createBenefit.{CreateBenefitRequestBody, CreateBenefitRequestData}
 import v1.models.response.createBenefit.{CreateBenefitHateoasData, CreateBenefitResponse}
@@ -76,9 +75,9 @@ class CreateBenefitControllerSpec
   val responseData: CreateBenefitResponse = CreateBenefitResponse(benefitId)
 
   private val testHateoasLinks = List(
-    Link(href = s"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId", method = GET, rel = "self"),
-    api.hateoas.Link(href = s"/individuals/state-benefits/$nino/$taxYear/$benefitId", method = PUT, rel = "amend-state-benefit"),
-    api.hateoas.Link(href = s"/individuals/state-benefits/$nino/$taxYear/$benefitId", method = DELETE, rel = "delete-state-benefit")
+    Link(s"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",GET, rel = "self"),
+    api.hateoas.Link(s"/individuals/state-benefits/$nino/$taxYear/$benefitId", PUT, rel = "amend-state-benefit"),
+    api.hateoas.Link(s"/individuals/state-benefits/$nino/$taxYear/$benefitId", DELETE, rel = "delete-state-benefit")
   )
 
   val responseJson: JsValue = Json.parse(
@@ -147,9 +146,9 @@ class CreateBenefitControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
+  private trait Test extends ControllerTest with AuditEventChecking {
 
-    val controller = new CreateBenefitController(
+    private val controller = new CreateBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateBenefitValidatorFactory,
@@ -172,7 +171,7 @@ class CreateBenefitControllerSpec
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(requestBodyJson),
           `X-CorrelationId` = correlationId,
-          versionNumber = Version1.name,
+          versionNumber = "1.0",
           auditResponse = auditResponse
         )
       )

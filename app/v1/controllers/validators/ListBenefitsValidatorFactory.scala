@@ -32,17 +32,17 @@ class ListBenefitsValidatorFactory {
 
   private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(minimumPermittedTaxYear.year))
 
-  def validator(nino: String, taxYear: String, benefitId: Option[String]): Validator[ListBenefitsRequestData] = new Validator[ListBenefitsRequestData] {
+  def validator(nino: String, taxYear: String, benefitId: Option[String]): Validator[ListBenefitsRequestData] =
+    new Validator[ListBenefitsRequestData] {
 
-    def validate: Validated[Seq[MtdError], ListBenefitsRequestData] = {
-      (
-        ResolveNino(nino),
-        resolveTaxYear(taxYear),
-        ResolveBenefitId(benefitId)
-      ).mapN(ListBenefitsRequestData)
+      def validate: Validated[Seq[MtdError], ListBenefitsRequestData] = {
+        (
+          ResolveNino(nino),
+          resolveTaxYear(taxYear),
+          ResolveBenefitId(benefitId)
+        ) mapN ListBenefitsRequestData
+      }
+
     }
 
-  }
-
 }
-

@@ -39,7 +39,7 @@ class DeleteBenefitAmountsValidatorFactory {
           ResolveNino(nino),
           resolveTaxYear(taxYear),
           ResolveBenefitId(benefitId)
-        ).mapN(DeleteBenefitAmountsRequestData)
+        ) mapN DeleteBenefitAmountsRequestData
       }
 
     }

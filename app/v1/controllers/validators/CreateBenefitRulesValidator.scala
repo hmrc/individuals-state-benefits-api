@@ -18,7 +18,7 @@ package v1.controllers.validators
 
 import api.controllers.validators.RulesValidator
 import api.controllers.validators.resolvers.{ResolveDateRange, ResolveIsoDate}
-import api.models.domain.BenefitType
+import api.models.domain.BenefitType._
 import api.models.errors.{BenefitTypeFormatError, MtdError, StartDateFormatError}
 import cats.data.Validated
 import cats.data.Validated.Invalid
@@ -31,6 +31,19 @@ object CreateBenefitRulesValidator extends RulesValidator[CreateBenefitRequestDa
   private val minYear = 1900
   private val maxYear = 2100
 
+  private lazy val minDate = LocalDate.ofYearDay(minYear, 1)
+  private lazy val maxDate = LocalDate.ofYearDay(maxYear, 1)
+
+  private val availableBenefitTypes = List(
+    statePension,
+    statePensionLumpSum,
+    employmentSupportAllowance,
+    jobSeekersAllowance,
+    bereavementAllowance,
+    otherStateBenefits,
+    incapacityBenefit
+  ).map(_.toString)
+
   def validateBusinessRules(parsed: CreateBenefitRequestData): Validated[Seq[MtdError], CreateBenefitRequestData] =
     combine(
       validateBenefitType(parsed.body.benefitType),
@@ -38,7 +51,7 @@ object CreateBenefitRulesValidator extends RulesValidator[CreateBenefitRequestDa
     ).onSuccess(parsed)
 
   private def validateBenefitType(benefitType: String): Validated[Seq[MtdError], Unit] =
-    if (BenefitType.benefitTypes.contains(benefitType)) valid else Invalid(List(BenefitTypeFormatError))
+    if (availableBenefitTypes.contains(benefitType)) valid else Invalid(List(BenefitTypeFormatError))
 
   private def validateDates(startDate: String, endDate: Option[String]): Validated[Seq[MtdError], Unit] =
     endDate match {
@@ -46,7 +59,7 @@ object CreateBenefitRulesValidator extends RulesValidator[CreateBenefitRequestDa
       case None =>
         ResolveIsoDate(startDate, Some(StartDateFormatError), None)
           .andThen(date =>
-            if (date.isBefore(LocalDate.ofYearDay(minYear, 1)))
+            if (date.isBefore(minDate) || !date.isBefore(maxDate))
               Invalid(List(StartDateFormatError))
             else
               valid)

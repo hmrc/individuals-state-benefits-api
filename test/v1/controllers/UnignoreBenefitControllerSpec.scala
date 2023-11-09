@@ -27,7 +27,6 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import routing.Version1
 import v1.controllers.validators.MockIgnoreBenefitValidatorFactory
 import v1.models.domain.BenefitId
 import v1.models.request.ignoreBenefit.IgnoreBenefitRequestData
@@ -38,12 +37,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UnignoreBenefitControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockUnignoreBenefitService
     with MockIgnoreBenefitValidatorFactory
     with MockAuditService
     with MockHateoasFactory {
+
+  private val taxYear     = "2019-20"
+  private val benefitId   = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val requestData = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   "UnignoreBenefitController" should {
     "return a successful response with status 200 (OK)" when {
@@ -86,14 +89,9 @@ class UnignoreBenefitControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
+  private trait Test extends ControllerTest with AuditEventChecking {
 
-    val taxYear: String = "2019-20"
-    val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-
-    val requestData: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
-
-    val controller = new UnignoreBenefitController(
+    private val controller = new UnignoreBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockIgnoreBenefitValidatorFactory,
@@ -106,7 +104,7 @@ class UnignoreBenefitControllerSpec
 
     protected def callController(): Future[Result] = controller.unignoreBenefit(nino, taxYear, benefitId)(fakeRequest)
 
-    override protected def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    protected def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "UnignoreStateBenefit",
         transactionName = "unignore-state-benefit",
@@ -116,14 +114,14 @@ class UnignoreBenefitControllerSpec
           params = Map("nino" -> nino, "taxYear" -> taxYear, "benefitId" -> benefitId),
           requestBody = None,
           `X-CorrelationId` = correlationId,
-          versionNumber = Version1.name,
+          versionNumber = "1.0",
           auditResponse = auditResponse
         )
       )
 
-    val testHateoasLinks: Seq[Link] = Seq(
-      Link(href = s"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId", method = GET, rel = "self"),
-      Link(href = s"/individuals/state-benefits/$nino/$taxYear/$benefitId/ignore", method = POST, rel = "ignore-state-benefit")
+    val testHateoasLinks: Seq[Link] = List(
+      Link(s"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId", GET, "self"),
+      Link(s"/individuals/state-benefits/$nino/$taxYear/$benefitId/ignore", POST, "ignore-state-benefit")
     )
 
     val hateoasResponse: JsValue = Json.parse(

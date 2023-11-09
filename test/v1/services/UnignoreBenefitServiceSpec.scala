@@ -16,7 +16,6 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
@@ -29,6 +28,12 @@ import scala.concurrent.Future
 
 class UnignoreBenefitServiceSpec extends ServiceSpec {
 
+  private val nino      = "AA111111A"
+  private val taxYear   = "2019-20"
+  private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
+
+  private val request = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+
   "UnignoreBenefitService" when {
     "unignoreBenefit" must {
       "return correct result for a success" in new Test {
@@ -38,7 +43,7 @@ class UnignoreBenefitServiceSpec extends ServiceSpec {
           .unignoreBenefit(request)
           .returns(Future.successful(outcome))
 
-        val result: Either[ErrorWrapper, ResponseWrapper[Unit]] = await(service.unignoreBenefit(request))
+        val result: ServiceOutcome[Unit] = await(service.unignoreBenefit(request))
         result shouldBe outcome
       }
 
@@ -57,33 +62,23 @@ class UnignoreBenefitServiceSpec extends ServiceSpec {
         val errors = List(
           ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
           ("INVALID_TAX_YEAR", TaxYearFormatError),
-          ("INVALID_CORRELATION_ID", StandardDownstreamError),
+          ("INVALID_CORRELATION_ID", InternalError),
           ("INVALID_BENEFIT_ID", BenefitIdFormatError),
           ("CUSTOMER_ADDED", RuleUnignoreForbiddenError),
           ("NO_DATA_FOUND", NotFoundError),
           ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
           ("BEFORE_TAX_YEAR_ENDED", RuleTaxYearNotEndedError),
-          ("SERVICE_ERROR", StandardDownstreamError),
-          ("SERVICE_UNAVAILABLE", StandardDownstreamError)
+          ("SERVICE_ERROR", InternalError),
+          ("SERVICE_UNAVAILABLE", InternalError)
         )
 
-        errors.foreach(args => (serviceError _).tupled(args))
+        errors.foreach((serviceError _).tupled)
       }
     }
   }
 
   private trait Test extends MockUnignoreBenefitConnector {
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
-    val nino: String      = "AA111111A"
-    val taxYear: String   = "2019-20"
-    val benefitId: String = "123e4567-e89b-12d3-a456-426614174000"
-
-    val request: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
-
-    val service: UnignoreBenefitService = new UnignoreBenefitService(
-      connector = mockUnignoreBenefitConnector
-    )
+    val service: UnignoreBenefitService = new UnignoreBenefitService(mockUnignoreBenefitConnector)
 
   }
 

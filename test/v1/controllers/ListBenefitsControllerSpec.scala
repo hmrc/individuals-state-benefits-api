@@ -44,6 +44,8 @@ class ListBenefitsControllerSpec
     with MockAuditService
     with HateoasLinks {
 
+  private val requestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), Some(BenefitId(benefitId)))
+
   "ListBenefitsController" should {
     "return OK with full HATEOAS" when {
       "happy path" in new Test {
@@ -94,7 +96,7 @@ class ListBenefitsControllerSpec
         MockHateoasFactory
           .wrapList(
             responseData.copy(customerAddedStateBenefits = Option.empty[Seq[CustomerStateBenefit]]),
-            ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = Seq(benefitId))
+            ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = List(benefitId))
           )
           .returns(hmrcOnlyHateoasResponse)
 
@@ -166,12 +168,9 @@ class ListBenefitsControllerSpec
     }
   }
 
-  trait Test extends ControllerTest {
+  private trait Test extends ControllerTest {
 
-    val requestData: ListBenefitsRequestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), Some(BenefitId(benefitId)))
-
-
-    val controller = new ListBenefitsController(
+    private val controller = new ListBenefitsController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockListBenefitsValidatorFactory,

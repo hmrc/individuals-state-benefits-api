@@ -16,7 +16,7 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.mocks.MockHttpClient
 import api.models.domain.{BenefitType, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
@@ -28,20 +28,12 @@ import scala.concurrent.Future
 
 class CreateBenefitConnectorSpec extends ConnectorSpec {
 
-  val nino: String    = "AA111111A"
-  val taxYear: String = "2021-22"
+  private val nino    = "AA111111A"
+  private val taxYear = "2021-22"
 
-  val createBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
-    benefitType = BenefitType.incapacityBenefit.toString,
-    startDate = "2020-08-03",
-    endDate = Some("2020-12-03")
-  )
+  private val createBenefitRequestBody = CreateBenefitRequestBody(BenefitType.incapacityBenefit.toString, "2020-08-03", Some("2020-12-03"))
 
-  val request: CreateBenefitRequestData = CreateBenefitRequestData(
-    nino = Nino(nino),
-    taxYear = TaxYear.fromMtd(taxYear),
-    body = createBenefitRequestBody
-  )
+  private val request = CreateBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), createBenefitRequestBody)
 
   private val response = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 
@@ -73,7 +65,8 @@ class CreateBenefitConnectorSpec extends ConnectorSpec {
           )
           .returns(Future.successful(outcome))
 
-        await(connector.createBenefit(request)) shouldBe outcome
+        val result: DownstreamOutcome[CreateBenefitResponse] = await(connector.createBenefit(request))
+        result shouldBe outcome
       }
     }
   }
