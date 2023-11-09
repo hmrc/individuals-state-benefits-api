@@ -54,6 +54,7 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidator
     validatorFactory.validator(nino, taxYear, body)
 
   "Validator" should {
+
     "return the parsed domain object" when {
       "passed a valid request" in {
         val result = validator(validNino, validTaxYear, requestBody).validateAndWrapResult()
