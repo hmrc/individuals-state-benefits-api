@@ -19,6 +19,7 @@ package api.connectors
 import api.mocks.MockHttpClient
 import mocks.MockAppConfig
 import org.scalamock.handlers.CallHandler
+import play.api.Configuration
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
@@ -115,6 +116,10 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "Gov-Test-Scenario" -> "DEFAULT"
   )
 
+  val desIfMigrationEnabledConfig: Configuration = Configuration("desIf_Migration.enabled" -> true)
+
+  val desIfMigrationDisabledConfig: Configuration = Configuration("desIf_Migration.enabled" -> false)
+
   protected trait ConnectorTest extends MockHttpClient with MockAppConfig {
     protected val baseUrl: String = "http://test-BaseUrl"
 
@@ -175,6 +180,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
     MockedAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
+    MockedAppConfig.featureSwitches returns desIfMigrationDisabledConfig
 
   }
 
@@ -186,7 +192,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsToken returns "ifs-token"
     MockedAppConfig.ifsEnvironment returns "ifs-environment"
     MockedAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
-
+    MockedAppConfig.featureSwitches returns desIfMigrationEnabledConfig
   }
 
   protected trait Api1651Test extends ConnectorTest {

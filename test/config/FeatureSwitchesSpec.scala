@@ -21,21 +21,29 @@ import support.UnitSpec
 
 class FeatureSwitchesSpec extends UnitSpec {
 
-  private val configuration = Configuration(
-    "feature-switch.enabled" -> true
-  )
-
-  private val featureSwitches = FeatureSwitches(configuration)
-
   "FeatureSwitches" should {
-    "return true" when {
-      "the feature switch is set to true" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("feature-switch.enabled") shouldBe Some(true)
+    "be true" when {
+      "absent from the config" in {
+        val configuration = Configuration.empty
+        val featureSwitches = FeatureSwitches(configuration)
+
+        featureSwitches.isDesIf_MigrationEnabled shouldBe true
+      }
+
+      "enabled" in {
+        val configuration = Configuration("desIf_Migration.enabled" -> true)
+        val featureSwitches = FeatureSwitches(configuration)
+
+        featureSwitches.isDesIf_MigrationEnabled shouldBe true
       }
     }
-    "return false" when {
-      "the feature switch is not present in the config" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("invalid") shouldBe None
+
+    "be false" when {
+      "disabled" in {
+        val configuration = Configuration("desIf_Migration.enabled" -> false)
+        val featureSwitches = FeatureSwitches(configuration)
+
+        featureSwitches.isDesIf_MigrationEnabled shouldBe false
       }
     }
   }

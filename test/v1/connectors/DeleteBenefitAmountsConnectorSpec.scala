@@ -31,8 +31,20 @@ class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
 
   "DeleteBenefitAmountsConnector" should {
     "return a 200 result on delete" when {
-      "the downstream call is successful and not tax year specific" in new DesTest with Test {
+      "the downstream call is successful, not tax year specific and the desIf_Migration feature-switch is turned off" in new DesTest with Test {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
+
+        willDelete(s"$baseUrl/income-tax/income/state-benefits/$nino/${request.taxYear.asMtd}/${request.benefitId}") returns Future.successful(
+          outcome)
+
+        val result: DownstreamOutcome[Unit] = await(connector.deleteBenefitAmounts(request))
+
+        result shouldBe outcome
+      }
+
+      "the downstream call is successful, not tax year specific and the desIf_Migration feature-switch is turned on" in new IfsTest with Test {
+        def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(s"$baseUrl/income-tax/income/state-benefits/$nino/${request.taxYear.asMtd}/${request.benefitId}") returns Future.successful(
