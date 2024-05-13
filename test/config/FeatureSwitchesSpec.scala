@@ -40,7 +40,7 @@ class FeatureSwitchesSpec extends UnitSpec {
 
     "be false" when {
       "disabled" in {
-        val configuration = Configuration("some-feature" -> false)
+        val configuration = Configuration("some-feature.enabled" -> false)
         val featureSwitches = FeatureSwitches(configuration)
 
         featureSwitches.isEnabled("some-feature") shouldBe false
