@@ -19,6 +19,7 @@ package v1.connectors
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
 import v1.models.domain.BenefitId
 import v1.models.request.deleteBenefitAmounts.DeleteBenefitAmountsRequestData
 
@@ -35,6 +36,8 @@ class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
+        MockedAppConfig.featureSwitches returns Configuration("desIf_Migration.enabled" -> false)
+
         willDelete(s"$baseUrl/income-tax/income/state-benefits/$nino/${request.taxYear.asMtd}/${request.benefitId}") returns Future.successful(
           outcome)
 
@@ -46,6 +49,8 @@ class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
       "the downstream call is successful, not tax year specific and the desIf_Migration feature-switch is turned on" in new IfsTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
+
+        MockedAppConfig.featureSwitches returns Configuration("desIf_Migration.enabled" -> true)
 
         willDelete(s"$baseUrl/income-tax/income/state-benefits/$nino/${request.taxYear.asMtd}/${request.benefitId}") returns Future.successful(
           outcome)
