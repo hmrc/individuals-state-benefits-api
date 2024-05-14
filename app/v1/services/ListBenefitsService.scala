@@ -51,7 +51,6 @@ class ListBenefitsService @Inject() (connector: ListBenefitsConnector) extends B
     )
 
     val extraTysErrors: Map[String, MtdError] = Map(
-      "INVALID_CORRELATION_ID" -> InternalError,
       "NOT_FOUND"              -> NotFoundError
     )
 
