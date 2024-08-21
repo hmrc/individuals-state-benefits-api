@@ -21,6 +21,7 @@ import play.api.Configuration
 case class FeatureSwitches(featureSwitchConfig: Configuration){
 
   val isDesIf_MigrationEnabled: Boolean                = isEnabled("desIf_Migration")
+  val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
 
   def isEnabled(feature: String): Boolean              = isConfigTrue(feature + ".enabled")
   def isReleasedInProduction(feature: String): Boolean = isConfigTrue(feature + ".released-in-production")
