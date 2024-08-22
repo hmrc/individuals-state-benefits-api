@@ -18,9 +18,9 @@ package config
 
 import play.api.Configuration
 
-case class FeatureSwitches(featureSwitchConfig: Configuration){
+case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
-  val isDesIf_MigrationEnabled: Boolean                = isEnabled("desIf_Migration")
+  val isDesIf_MigrationEnabled: Boolean             = isEnabled("desIf_Migration")
   val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
 
   def isEnabled(feature: String): Boolean              = isConfigTrue(feature + ".enabled")

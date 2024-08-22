@@ -22,7 +22,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 
-class IndividualsStateBenefitsAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
+class StateBenefitsAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
 
   val callingApiVersion = "1.0"
 
@@ -32,33 +32,32 @@ class IndividualsStateBenefitsAuthMainAgentsOnlyISpec extends AuthMainAgentsOnly
 
   val mtdUrl = s"/$nino/${taxYear.asMtd}"
 
-  val requestBodyJson: JsValue = Json.parse(
-    s"""
+  val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+
+  def sendMtdRequest(request: WSRequest): WSResponse = await(
+    request.post(
+      Json.parse(
+        s"""
        |{
        |  "benefitType": "incapacityBenefit",
        |  "startDate": "2019-01-01",
        |  "endDate": "2020-06-01"
        |}
       """.stripMargin
-  )
-
-  val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-
-  val responseJson: JsValue = Json.parse(
-    s"""
-       |{
-       |   "benefitId": "$benefitId"
-       |}
-        """.stripMargin
-  )
-
-  def sendMtdRequest(request: WSRequest): WSResponse = await(request.post(requestBodyJson))
+      )))
 
   val downstreamUri: String = s"/income-tax/income/state-benefits/$nino/${taxYear.asMtd}/custom"
 
   override val downstreamSuccessStatus: Int = OK
 
-  val maybeDownstreamResponseJson: Option[JsValue] = Some(responseJson)
+  val maybeDownstreamResponseJson: Option[JsValue] = Some(
+    Json.parse(
+      s"""
+       |{
+       |   "benefitId": "$benefitId"
+       |}
+        """.stripMargin
+    ))
 
   override val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
 
