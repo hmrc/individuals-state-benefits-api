@@ -18,7 +18,6 @@ package definition
 
 import config.AppConfig
 import routing.{Version, Version1}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 import utils.Logging
 
 import javax.inject.{Inject, Singleton}
