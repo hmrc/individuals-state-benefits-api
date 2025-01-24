@@ -66,35 +66,6 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
 
-        val mtdResponse: JsValue = Json.parse(
-          s"""
-             |{
-             |  "links": [
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
-             |      "method": "PUT",
-             |      "rel": "amend-state-benefit"
-             |    },
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-             |      "method": "GET",
-             |      "rel": "self"
-             |    },
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
-             |      "method": "DELETE",
-             |      "rel": "delete-state-benefit"
-             |    },
-             |    {
-             |      "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId/amounts",
-             |      "method": "PUT",
-             |      "rel": "amend-state-benefit-amounts"
-             |    }
-             |  ]
-             |}
-    """.stripMargin
-        )
-
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
@@ -104,7 +75,6 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().put(requestJson))
         response.status shouldBe OK
-        response.json shouldBe mtdResponse
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }

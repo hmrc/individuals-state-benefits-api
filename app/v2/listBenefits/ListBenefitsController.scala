@@ -16,14 +16,11 @@
 
 package v2.listBenefits
 
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import shared.config.SharedAppConfig
 import shared.controllers._
 import shared.services.{EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
-import v2.hateoas.HateoasFactory2
-import v2.listBenefits.model.response.ListBenefitsHateoasData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -33,7 +30,6 @@ class ListBenefitsController @Inject() (val authService: EnrolmentsAuthService,
                                         val lookupService: MtdIdLookupService,
                                         validatorFactory: ListBenefitsValidatorFactory,
                                         service: ListBenefitsService,
-                                        hateoasFactory: HateoasFactory2,
                                         cc: ControllerComponents,
                                         val idGenerator: IdGenerator)(implicit appConfig: SharedAppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -55,12 +51,7 @@ class ListBenefitsController @Inject() (val authService: EnrolmentsAuthService,
       val requestHandler = RequestHandler
         .withValidator(validator)
         .withService(service.listBenefits)
-        .withResultCreator { (_, response) =>
-          val hmrcBenefitIds = response.stateBenefits.getOrElse(Nil).map(_.benefitId)
-          val wrapped        = hateoasFactory.wrapList(response, ListBenefitsHateoasData(nino, taxYear, benefitId.isDefined, hmrcBenefitIds))
-
-          ResultWrapper(OK, Some(Json.toJson(wrapped)))
-        }
+        .withPlainJsonResult()
 
       requestHandler.handleRequest()
     }

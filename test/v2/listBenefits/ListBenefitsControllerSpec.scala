@@ -24,11 +24,8 @@ import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors._
 import shared.models.outcomes.ResponseWrapper
 import shared.services.MockAuditService
-import v2.HateoasLinks
 import v2.fixtures.ListBenefitsFixture._
-import v2.hateoas.MockHateoasFactory2
 import v2.listBenefits.model.request.ListBenefitsRequestData
-import v2.listBenefits.model.response.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsHateoasData}
 import v2.models.domain.BenefitId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,24 +36,18 @@ class ListBenefitsControllerSpec
     with ControllerTestRunner
     with MockListBenefitsService
     with MockListBenefitsValidatorFactory
-    with MockHateoasFactory2
-    with MockAuditService
-    with HateoasLinks {
+    with MockAuditService {
 
   private val requestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), Some(BenefitId(benefitId)))
 
   "ListBenefitsController" should {
-    "return OK with full HATEOAS" when {
+    "return OK" when {
       "happy path" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
-
-        MockHateoasFactory2
-          .wrapList(responseData, ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = List(benefitId)))
-          .returns(hateoasResponse)
 
         runOkTest(
           expectedStatus = OK,
@@ -65,17 +56,13 @@ class ListBenefitsControllerSpec
       }
     }
 
-    "return OK with no delete amount HATEOAS" when {
+    "return OK with no delete amount" when {
       "state benefits has no amount properties" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseDataWithNoAmounts))))
-
-        MockHateoasFactory2
-          .wrapList(responseDataWithNoAmounts, ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = List(benefitId)))
-          .returns(hateoasResponseWithOutAmounts)
 
         runOkTest(
           expectedStatus = OK,
@@ -84,20 +71,13 @@ class ListBenefitsControllerSpec
       }
     }
 
-    "return OK with only HMRC state benefit HATEOAS" when {
+    "return OK with only HMRC state benefit" when {
       "only HMRC state benefits returned" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(customerAddedStateBenefits = None)))))
-
-        MockHateoasFactory2
-          .wrapList(
-            responseData.copy(customerAddedStateBenefits = Option.empty[Seq[CustomerStateBenefit]]),
-            ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = List(benefitId))
-          )
-          .returns(hmrcOnlyHateoasResponse)
 
         runOkTest(
           expectedStatus = OK,
@@ -106,19 +86,13 @@ class ListBenefitsControllerSpec
       }
     }
 
-    "return OK with only CUSTOM state benefit HATEOAS" when {
+    "return OK with only CUSTOM state benefit" when {
       "only CUSTOM state benefits returned" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
-
-        MockHateoasFactory2
-          .wrapList(
-            responseData.copy(stateBenefits = Option.empty[Seq[HMRCStateBenefit]]),
-            ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = Nil))
-          .returns(customOnlyHateoasResponse)
 
         runOkTest(
           expectedStatus = OK,
@@ -127,19 +101,13 @@ class ListBenefitsControllerSpec
       }
     }
 
-    "return OK with single state benefit with HATEOAS" when {
+    "return OK with single state benefit" when {
       "benefitId is passed for single retrieval" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockListBenefitsService
           .listBenefits(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData.copy(stateBenefits = None)))))
-
-        MockHateoasFactory2
-          .wrapList(
-            responseData.copy(stateBenefits = Option.empty[Seq[HMRCStateBenefit]]),
-            ListBenefitsHateoasData(nino, taxYear, queryIsFiltered = true, hmrcBenefitIds = Nil))
-          .returns(singleCustomOnlyHateoasResponse)
 
         runOkTest(
           expectedStatus = OK,
@@ -174,7 +142,6 @@ class ListBenefitsControllerSpec
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockListBenefitsValidatorFactory,
       service = mockListBenefitsService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )

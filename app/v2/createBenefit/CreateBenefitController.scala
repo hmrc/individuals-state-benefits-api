@@ -20,12 +20,9 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import shared.config.SharedAppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.routing.Version
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
-import v2.createBenefit.model.response.CreateBenefitHateoasData
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -35,10 +32,9 @@ class CreateBenefitController @Inject() (val authService: EnrolmentsAuthService,
                                          validatorFactory: CreateBenefitValidatorFactory,
                                          service: CreateBenefitService,
                                          auditService: AuditService,
-                                         hateoasFactory: HateoasFactory,
                                          cc: ControllerComponents,
                                          idGenerator: IdGenerator)(implicit appConfig: SharedAppConfig, ec: ExecutionContext)
-    extends AuthorisedController(cc) {
+  extends AuthorisedController(cc) {
 
   val endpointName = "create-benefit"
 
@@ -66,7 +62,7 @@ class CreateBenefitController @Inject() (val authService: EnrolmentsAuthService,
           requestBody = Some(request.body),
           includeResponse = true
         ))
-        .withHateoasResultFrom(hateoasFactory)((_, response) => CreateBenefitHateoasData(nino, taxYear, response.benefitId))
+        .withPlainJsonResult()
 
       requestHandler.handleRequest()
     }
