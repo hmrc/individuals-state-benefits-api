@@ -29,41 +29,15 @@ import shared.support.IntegrationBaseSpec
 class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
   "Calling the 'amend benefit amounts' endpoint" should {
-    "return a 200 status code" when {
+    "return a 204 status code" when {
       "any valid request is made" in new NonTysTest {
 
         override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT)
         }
 
-        val hateoasResponse: JsValue = Json.parse(
-          s"""
-             |{
-             |   "links":[
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-             |         "rel":"self",
-             |         "method":"GET"
-             |      },
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/amounts",
-             |         "rel": "amend-state-benefit-amounts",
-             |         "method":"PUT"
-             |      },
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/amounts",
-             |         "rel": "delete-state-benefit-amounts",
-             |         "method":"DELETE"
-             |      }
-             |   ]
-             |}
-           """.stripMargin
-        )
-
         val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.status shouldBe NO_CONTENT
       }
 
       "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
@@ -72,34 +46,8 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT)
         }
 
-        val hateoasResponse: JsValue = Json.parse(
-          s"""
-             |{
-             |   "links":[
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-             |         "rel":"self",
-             |         "method":"GET"
-             |      },
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/amounts",
-             |         "rel": "amend-state-benefit-amounts",
-             |         "method":"PUT"
-             |      },
-             |      {
-             |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/amounts",
-             |         "rel": "delete-state-benefit-amounts",
-             |         "method":"DELETE"
-             |      }
-             |   ]
-             |}
-           """.stripMargin
-        )
-
         val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.status shouldBe NO_CONTENT
       }
     }
 

@@ -17,11 +17,9 @@
 package v2.unignoreBenefit
 
 import play.api.Configuration
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.hateoas.Method.{GET, POST}
-import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import shared.models.domain.TaxYear
 import shared.models.errors._
@@ -29,7 +27,6 @@ import shared.models.outcomes.ResponseWrapper
 import shared.services.MockAuditService
 import v2.models.domain.BenefitId
 import v2.unignoreBenefit.def1.model.request.Def1_UnignoreBenefitRequestData
-import v2.unignoreBenefit.model.response.UnignoreBenefitHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,15 +36,14 @@ class UnignoreBenefitControllerSpec
     with ControllerTestRunner
     with MockUnignoreBenefitService
     with MockUnignoreBenefitValidatorFactory
-    with MockAuditService
-    with MockHateoasFactory {
+    with MockAuditService {
 
   private val taxYear     = "2019-20"
   private val benefitId   = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val requestData = Def1_UnignoreBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   "UnignoreBenefitController" should {
-    "return a successful response with status 200 (OK)" when {
+    "return a successful response with status 204 (NO_CONTENT)" when {
       "happy path" in new Test {
         willUseValidator(returningSuccess(requestData))
 
@@ -55,15 +51,9 @@ class UnignoreBenefitControllerSpec
           .unignoreBenefit(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        MockHateoasFactory
-          .wrap((), UnignoreBenefitHateoasData(validNino, taxYear, benefitId))
-          .returns(HateoasWrapper((), testHateoasLinks))
-
         runOkTestWithAudit(
-          expectedStatus = OK,
-          maybeAuditRequestBody = None,
-          maybeExpectedResponseBody = Some(hateoasResponse),
-          maybeAuditResponseBody = Some(hateoasResponse)
+          expectedStatus = NO_CONTENT,
+          maybeAuditRequestBody = None
         )
       }
     }
@@ -95,7 +85,6 @@ class UnignoreBenefitControllerSpec
       validatorFactory = mockUnignoreBenefitValidatorFactory,
       service = mockUnignoreBenefitService,
       auditService = mockAuditService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )
@@ -122,31 +111,6 @@ class UnignoreBenefitControllerSpec
           auditResponse = auditResponse
         )
       )
-
-    val testHateoasLinks: Seq[Link] = List(
-      Link(s"/individuals/state-benefits/$validNino/$taxYear?benefitId=$benefitId", GET, "self"),
-      Link(s"/individuals/state-benefits/$validNino/$taxYear/$benefitId/ignore", POST, "ignore-state-benefit")
-    )
-
-    val hateoasResponse: JsValue = Json.parse(
-      s"""
-         |{
-         |   "links":[
-         |      {
-         |         "href":"/individuals/state-benefits/$validNino/$taxYear?benefitId=$benefitId",
-         |         "rel":"self",
-         |         "method":"GET"
-         |      },
-         |      {
-         |         "href":"/individuals/state-benefits/$validNino/$taxYear/$benefitId/ignore",
-         |         "rel":"ignore-state-benefit",
-         |         "method":"POST"
-         |      }
-         |   ]
-         |}
-    """.stripMargin
-    )
-
   }
 
 }

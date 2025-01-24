@@ -18,67 +18,11 @@ package v2.listBenefits.model.response
 
 import cats._
 import play.api.libs.json._
-import shared.config.SharedAppConfig
-import shared.hateoas.{HateoasData, Link}
 import utils.JsonUtils
-import v2.HateoasLinks
-import v2.hateoas.HateoasListLinksFactory2
 
 case class ListBenefitsResponse[H, C](stateBenefits: Option[Seq[H]], customerAddedStateBenefits: Option[Seq[C]])
 
-object ListBenefitsResponse extends HateoasLinks with JsonUtils {
-
-  implicit object ListBenefitsLinksFactory
-      extends HateoasListLinksFactory2[ListBenefitsResponse, HMRCStateBenefit, CustomerStateBenefit, ListBenefitsHateoasData] {
-
-    private class Links(appConfig: SharedAppConfig, data: ListBenefitsHateoasData, stateBenefit: StateBenefit) {
-
-      import data._
-
-      lazy val retrieveLink: Link      = listSingleBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val amendAmountsLink: Link  = amendBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val deleteAmountsLink: Link = deleteBenefitAmounts(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val deleteLink: Link        = deleteBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val amendLink: Link         = amendBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val ignoreLink: Link        = ignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-      lazy val unignoreLink: Link      = unignoreBenefit(appConfig, nino, taxYear, stateBenefit.benefitId)
-
-      lazy val commonLinks: Seq[Link] = Seq(retrieveLink, amendAmountsLink)
-    }
-
-    override def itemLinks1(appConfig: SharedAppConfig, data: ListBenefitsHateoasData, stateBenefit: HMRCStateBenefit): Seq[Link] = {
-      val links = new Links(appConfig, data, stateBenefit)
-
-      if (!data.queryIsFiltered) {
-        Seq(links.retrieveLink)
-      } else {
-        links.commonLinks :+
-          (if (stateBenefit.dateIgnored.isEmpty) links.ignoreLink else links.unignoreLink)
-      }
-    }
-
-    override def itemLinks2(appConfig: SharedAppConfig, data: ListBenefitsHateoasData, stateBenefit: CustomerStateBenefit): Seq[Link] = {
-      val links = new Links(appConfig, data, stateBenefit)
-
-      if (!data.queryIsFiltered) {
-        Seq(links.retrieveLink)
-      } else {
-        links.commonLinks ++
-          (if (stateBenefit.hasAmounts) Seq(links.deleteAmountsLink) else Nil) ++
-          (if (data.hmrcBenefitIds.contains(stateBenefit.benefitId)) Nil else Seq(links.deleteLink, links.amendLink))
-      }
-    }
-
-    override def links(appConfig: SharedAppConfig, data: ListBenefitsHateoasData): Seq[Link] = {
-      import data._
-
-      Seq(
-        createBenefit(appConfig, nino, taxYear),
-        listBenefits(appConfig, nino, taxYear)
-      )
-    }
-
-  }
+object ListBenefitsResponse extends JsonUtils {
 
   implicit object ResponseBifunctor extends Bifunctor[ListBenefitsResponse] {
 
@@ -114,5 +58,3 @@ object ListBenefitsResponse extends HateoasLinks with JsonUtils {
     } yield ListBenefitsResponse(stateBenefits, customerAddedStateBenefits)
 
 }
-
-case class ListBenefitsHateoasData(nino: String, taxYear: String, queryIsFiltered: Boolean, hmrcBenefitIds: Seq[String]) extends HateoasData

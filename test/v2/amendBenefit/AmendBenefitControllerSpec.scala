@@ -21,15 +21,12 @@ import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.hateoas.Method.{DELETE, GET, PUT}
-import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import shared.models.domain.TaxYear
 import shared.models.errors._
 import shared.models.outcomes.ResponseWrapper
 import shared.services.MockAuditService
 import v2.amendBenefit.def1.model.request.{Def1_AmendBenefitRequestBody, Def1_AmendBenefitRequestData}
-import v2.amendBenefit.model.response.AmendBenefitHateoasData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,8 +38,7 @@ class AmendBenefitControllerSpec
     with MockSharedAppConfig
     with MockAmendBenefitService
     with MockAmendBenefitValidatorFactory
-    with MockAuditService
-    with MockHateoasFactory {
+    with MockAuditService {
 
   private val taxYear   = "2020-21"
   private val benefitId = "4557ecb5-fd32-48cc-81f5-e6acd1099f3c"
@@ -60,44 +56,8 @@ class AmendBenefitControllerSpec
 
   private val requestData = Def1_AmendBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId), requestBody)
 
-  private val testHateoasLinks = List(
-    Link(s"/individuals/state-benefits/$validNino/$taxYear/$benefitId", PUT, "amend-state-benefit"),
-    Link(s"/individuals/state-benefits/$validNino/$taxYear?benefitId=$benefitId", GET, "self"),
-    Link(s"/individuals/state-benefits/$validNino/$taxYear/$benefitId", DELETE, "delete-state-benefit"),
-    Link(s"/individuals/state-benefits/$validNino/$taxYear/$benefitId/amounts", PUT, "amend-state-benefit-amounts")
-  )
-
-  private val responseJson = Json.parse(
-    s"""
-       |{
-       |  "links": [
-       |    {
-       |      "href": "/individuals/state-benefits/$validNino/$taxYear/$benefitId",
-       |      "method": "PUT",
-       |      "rel": "amend-state-benefit"
-       |    },
-       |    {
-       |      "href": "/individuals/state-benefits/$validNino/$taxYear?benefitId=$benefitId",
-       |      "method": "GET",
-       |      "rel": "self"
-       |    },
-       |    {
-       |      "href": "/individuals/state-benefits/$validNino/$taxYear/$benefitId",
-       |      "method": "DELETE",
-       |      "rel": "delete-state-benefit"
-       |    },
-       |    {
-       |      "href": "/individuals/state-benefits/$validNino/$taxYear/$benefitId/amounts",
-       |      "method": "PUT",
-       |      "rel": "amend-state-benefit-amounts"
-       |    }
-       |  ]
-       |}
-    """.stripMargin
-  )
-
   "AmendBenefitController" should {
-    "return a successful response with status 200 (OK)" when {
+    "return a successful response with status 204 (NO_CONTENT)" when {
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
 
@@ -105,15 +65,10 @@ class AmendBenefitControllerSpec
           .amendBenefit(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        MockHateoasFactory
-          .wrap((), AmendBenefitHateoasData(validNino, taxYear, benefitId))
-          .returns(HateoasWrapper((), testHateoasLinks))
 
         runOkTestWithAudit(
-          expectedStatus = OK,
-          maybeAuditRequestBody = Some(requestBodyJson),
-          maybeExpectedResponseBody = Some(responseJson),
-          maybeAuditResponseBody = Some(responseJson)
+          expectedStatus = NO_CONTENT,
+          maybeAuditRequestBody = Some(requestBodyJson)
         )
       }
     }
@@ -144,7 +99,6 @@ class AmendBenefitControllerSpec
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockAmendBenefitValidatorFactory,
       service = mockAmendBenefitService,
-      hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
       cc = cc,
       idGenerator = mockIdGenerator

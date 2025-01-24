@@ -19,7 +19,7 @@ package v2.endpoints
 import common.errors.{BenefitIdFormatError, RuleUnignoreForbiddenError}
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
@@ -29,7 +29,7 @@ import shared.support.IntegrationBaseSpec
 class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
 
   "Calling the 'unignore benefit' endpoint" should {
-    "return a 200 status code" when {
+    "return a 2004 status code" when {
       "any valid request is made" in new Test {
 
         override def setupStubs(): Unit = {
@@ -37,9 +37,7 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
-        response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.status shouldBe NO_CONTENT
       }
     }
 
@@ -116,25 +114,6 @@ class UnignoreBenefitControllerISpec extends IntegrationBaseSpec {
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
     val taxYear: String = "2019-20"
-
-    val hateoasResponse: JsValue = Json.parse(
-      s"""
-         |{
-         |   "links":[
-         |      {
-         |         "href":"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-         |         "rel":"self",
-         |         "method":"GET"
-         |      },
-         |      {
-         |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/ignore",
-         |         "rel":"ignore-state-benefit",
-         |         "method":"POST"
-         |      }
-         |   ]
-         |}
-       """.stripMargin
-    )
 
     lazy val mtdUri: String   = s"/$nino/$taxYear/$benefitId/unignore"
     val downstreamUri: String = s"/income-tax/19-20/state-benefits/$nino/ignore/$benefitId"

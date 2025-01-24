@@ -20,12 +20,9 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import shared.config.SharedAppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.routing.Version
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
-import v2.amendBenefit.model.response.AmendBenefitHateoasData
-import v2.amendBenefit.model.response.AmendBenefitResponse.AmendBenefitLinksFactory
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -36,7 +33,6 @@ class AmendBenefitController @Inject() (val authService: EnrolmentsAuthService,
                                         validatorFactory: AmendBenefitValidatorFactory,
                                         service: AmendBenefitService,
                                         auditService: AuditService,
-                                        hateoasFactory: HateoasFactory,
                                         cc: ControllerComponents,
                                         val idGenerator: IdGenerator)(implicit appConfig: SharedAppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -67,7 +63,6 @@ class AmendBenefitController @Inject() (val authService: EnrolmentsAuthService,
           requestBody = Some(request.body),
           includeResponse = true
         ))
-        .withHateoasResult(hateoasFactory)(AmendBenefitHateoasData(nino, taxYear, benefitId))
 
       requestHandler.handleRequest()
     }

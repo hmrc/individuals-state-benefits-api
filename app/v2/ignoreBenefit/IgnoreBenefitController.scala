@@ -19,12 +19,9 @@ package v2.ignoreBenefit
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import shared.config.SharedAppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.routing.Version
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
-import v2.ignoreBenefit.model.response.IgnoreBenefitHateoasData
-import v2.ignoreBenefit.model.response.IgnoreBenefitResponse._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -35,7 +32,6 @@ class IgnoreBenefitController @Inject() (val authService: EnrolmentsAuthService,
                                          validatorFactory: IgnoreBenefitValidatorFactory,
                                          service: IgnoreBenefitService,
                                          auditService: AuditService,
-                                         hateoasFactory: HateoasFactory,
                                          cc: ControllerComponents,
                                          idGenerator: IdGenerator)(implicit appConfig: SharedAppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -66,7 +62,6 @@ class IgnoreBenefitController @Inject() (val authService: EnrolmentsAuthService,
           requestBody = None,
           includeResponse = true
         ))
-        .withHateoasResult(hateoasFactory)(IgnoreBenefitHateoasData(nino, taxYear, benefitId))
 
       requestHandler.handleRequest()
     }

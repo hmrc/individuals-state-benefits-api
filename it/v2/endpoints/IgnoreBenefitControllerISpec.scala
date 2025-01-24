@@ -19,7 +19,7 @@ package v2.endpoints
 import common.errors.{BenefitIdFormatError, RuleIgnoreForbiddenError}
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
@@ -29,7 +29,7 @@ import shared.support.IntegrationBaseSpec
 class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
 
   "Calling the 'ignore benefit' endpoint" should {
-    "return a 200 status code" when {
+    "return a 204 status code" when {
       "any valid request is made" in new Test {
 
         override def setupStubs(): Unit = {
@@ -37,9 +37,7 @@ class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
-        response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.status shouldBe NO_CONTENT
       }
     }
 
@@ -119,25 +117,6 @@ class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
     def taxYear: String = "2019-20"
 
     def downstreamUri: String = s"/income-tax/19-20/income/state-benefits/$nino/ignore/$benefitId"
-
-    val hateoasResponse: JsValue = Json.parse(
-      s"""
-         |{
-         |   "links":[
-         |      {
-         |         "href":"/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-         |         "rel":"self",
-         |         "method":"GET"
-         |      },
-         |      {
-         |         "href":"/individuals/state-benefits/$nino/$taxYear/$benefitId/unignore",
-         |         "rel":"unignore-state-benefit",
-         |         "method":"POST"
-         |      }
-         |   ]
-         |}
-       """.stripMargin
-    )
 
     def mtdUri: String = s"/$nino/$taxYear/$benefitId/ignore"
 

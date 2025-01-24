@@ -175,7 +175,7 @@ class ListBenefitsControllerISpec extends IntegrationBaseSpec {
       }
     }
 
-    "return a 200 status code with ignore hateoas link" when {
+    "return a 200 status code" when {
       "a hmrc state benefit is not ignored yet" in new NonTysTest {
 
         override def setupStubs(): StubMapping = {

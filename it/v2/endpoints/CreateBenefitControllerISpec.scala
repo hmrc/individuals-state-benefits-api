@@ -42,7 +42,7 @@ class CreateBenefitControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().post(requestBodyJson))
         response.status shouldBe OK
-        response.body[JsValue] shouldBe responseWithHateoasLinksJson
+        response.body[JsValue] shouldBe responseJson
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
@@ -234,31 +234,6 @@ class CreateBenefitControllerISpec extends IntegrationBaseSpec {
          |   "benefitId": "$benefitId"
          |}
         """.stripMargin
-    )
-
-    val responseWithHateoasLinksJson: JsValue = Json.parse(
-      s"""
-         |{
-         |   "benefitId": "$benefitId",
-         |   "links": [
-         |         {
-         |         "href": "/individuals/state-benefits/$nino/$taxYear?benefitId=$benefitId",
-         |         "rel": "self",
-         |         "method": "GET"
-         |      },
-         |      {
-         |         "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
-         |         "rel": "amend-state-benefit",
-         |         "method": "PUT"
-         |      },
-         |      {
-         |         "href": "/individuals/state-benefits/$nino/$taxYear/$benefitId",
-         |         "rel": "delete-state-benefit",
-         |         "method": "DELETE"
-         |      }
-         |      ]
-         |}
-    """.stripMargin
     )
 
     def uri: String = s"/$nino/$taxYear"
