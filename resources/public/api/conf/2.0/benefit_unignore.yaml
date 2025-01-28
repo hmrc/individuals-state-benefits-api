@@ -27,20 +27,12 @@ security:
       - write:self-assessment
 
 responses:
-  "200":
-    description: Success
+  "204":
+    description: Success (No Content)
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
-    content:
-      application/json:
-        schema:
-          $ref: './schemas/unignore_response.json'
-        examples:
-          example-response:
-            description: Example Response
-            value:
-              $ref: './examples/unignoreBenefit/response.json'
+    content: {}
 
   "400":
     description: Bad request
