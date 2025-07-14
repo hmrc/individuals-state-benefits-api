@@ -26,14 +26,24 @@ import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
 
-class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
+class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
+
+  override def servicesConfig: Map[String, Any] =
+    Map("feature-switch.ifs_hip_migration_1944.enabled" -> true) ++ super.servicesConfig
+
+  val downstreamQueryParams: Map[String, String] = Map("taxYear" -> "25-26")
 
   "Calling the 'ignore benefit' endpoint" should {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
 
-        override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, CREATED)
+        override def setupStubs() = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DownstreamStub
+            .when(DownstreamStub.PUT, downstreamUri, downstreamQueryParams)
+            .thenReturn(NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
@@ -89,16 +99,14 @@ class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
         }
 
         val errors = List(
-          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_BENEFIT_ID", BAD_REQUEST, BenefitIdFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, InternalError),
-          (FORBIDDEN, "IGNORE_FORBIDDEN", BAD_REQUEST, RuleIgnoreForbiddenError),
-          (UNPROCESSABLE_ENTITY, "NOT_SUPPORTED_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
-          (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "1231", BAD_REQUEST, BenefitIdFormatError),
+          (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+          (UNPROCESSABLE_ENTITY, "1232", BAD_REQUEST, RuleIgnoreForbiddenError),
+          (NOT_IMPLEMENTED, "5000", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          (NOT_FOUND, "5010", NOT_FOUND, NotFoundError),
+          (UNPROCESSABLE_ENTITY, "1115", BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
         val extraTysErrors = List(
@@ -118,7 +126,7 @@ class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
 
     def taxYear: String = "2019-20"
 
-    def downstreamUri: String = s"/income-tax/19-20/income/state-benefits/$nino/ignore/$benefitId"
+    def downstreamUri: String = s"/itsd/income/ignore/state-benefits/$nino/$benefitId"
 
     val hateoasResponse: JsValue = Json.parse(
       s"""
@@ -158,10 +166,12 @@ class IgnoreBenefitControllerISpec extends IntegrationBaseSpec {
 
     def errorBody(code: String): String =
       s"""
-         |{
-         |   "code": "$code",
-         |   "reason": "downstream message"
-         |}
+         |[
+         |   {
+         |      "errorCode": "$code",
+         |      "reason": "downstream message"
+         |   }
+         |]
             """.stripMargin
 
   }
