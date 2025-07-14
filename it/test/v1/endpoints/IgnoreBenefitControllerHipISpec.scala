@@ -37,13 +37,13 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "any valid request is made" in new Test {
 
-        override def setupStubs() = {
+        override def setupStubs(): Unit = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
           DownstreamStub
             .when(DownstreamStub.PUT, downstreamUri, downstreamQueryParams)
-            .thenReturn(NO_CONTENT, JsObject.empty)
+            .thenReturn(CREATED, JsObject.empty)
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
@@ -124,7 +124,7 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
     val nino: String      = "AA123456A"
     val benefitId: String = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-    def taxYear: String = "2019-20"
+    def taxYear: String = "2025-26"
 
     def downstreamUri: String = s"/itsd/income/ignore/state-benefits/$nino/$benefitId"
 

@@ -43,7 +43,7 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
           MtdIdLookupStub.ninoFound(nino)
           DownstreamStub
             .when(DownstreamStub.PUT, downstreamUri, downstreamQueryParams)
-            .thenReturn(NO_CONTENT, JsObject.empty)
+            .thenReturn(CREATED, JsObject.empty)
         }
 
         val response: WSResponse = await(request().post(JsObject.empty))
