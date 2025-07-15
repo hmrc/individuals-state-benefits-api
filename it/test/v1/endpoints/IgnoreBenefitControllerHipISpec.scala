@@ -102,6 +102,7 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "1231", BAD_REQUEST, BenefitIdFormatError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "1232", BAD_REQUEST, RuleIgnoreForbiddenError),
           (NOT_IMPLEMENTED, "5000", BAD_REQUEST, RuleTaxYearNotSupportedError),
@@ -109,12 +110,7 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "1115", BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
-        val extraTysErrors = List(
-          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
-        )
-
-        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        errors.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
