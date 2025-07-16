@@ -142,12 +142,15 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
 
     def errorBody(code: String): String =
       s"""
-         |[
-         |   {
+         |{
+         |  "origin": "HIP",
+         |  "response": [
+         |    {
          |      "errorCode": "$code",
          |      "errorDescription": "downstream message"
-         |   }
-         |]
+         |    }
+         |  ]
+         |}
             """.stripMargin
 
   }
