@@ -145,7 +145,7 @@ class IgnoreBenefitControllerHipISpec extends IntegrationBaseSpec {
          |[
          |   {
          |      "errorCode": "$code",
-         |      "reason": "downstream message"
+         |      "errorDescription": "downstream message"
          |   }
          |]
             """.stripMargin
