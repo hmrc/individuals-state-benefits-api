@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import play.api.libs.json.JsObject
 import play.api.mvc.Result
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.models.outcomes.ResponseWrapper
 import shared.services.MockAuditService
 import v1.HateoasLinks
-import v1.fixtures.ListBenefitsFixture._
+import v1.fixtures.ListBenefitsFixture.*
 import v1.hateoas.MockHateoasFactory2
 import v1.listBenefits.model.request.ListBenefitsRequestData
 import v1.listBenefits.model.response.{CustomerStateBenefit, HMRCStateBenefit, ListBenefitsHateoasData}
@@ -169,7 +169,7 @@ class ListBenefitsControllerSpec
 
   private trait Test extends ControllerTest {
 
-    val controller = new ListBenefitsController(
+    val controller: ListBenefitsController = new ListBenefitsController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockListBenefitsValidatorFactory,

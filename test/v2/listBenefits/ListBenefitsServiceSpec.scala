@@ -33,7 +33,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
   private val taxYear   = "2019-20"
   private val benefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
-  private val requestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), benefitId.map(BenefitId))
+  private val requestData = ListBenefitsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), benefitId.map(BenefitId.apply))
 
   private val validResponse = ListBenefitsResponse(
     stateBenefits = Some(

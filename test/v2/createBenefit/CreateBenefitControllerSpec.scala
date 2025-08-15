@@ -117,7 +117,7 @@ class CreateBenefitControllerSpec
 
   private trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new CreateBenefitController(
+    val controller: CreateBenefitController = new CreateBenefitController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateBenefitValidatorFactory,
