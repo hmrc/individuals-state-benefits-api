@@ -107,7 +107,7 @@ class ListBenefitsServiceSpec extends ServiceSpec {
           ("NOT_FOUND", NotFoundError)
         )
 
-        (errors ++ extraTysErrors).foreach((serviceError _).tupled)
+        (errors ++ extraTysErrors).foreach(serviceError.tupled)
       }
     }
   }

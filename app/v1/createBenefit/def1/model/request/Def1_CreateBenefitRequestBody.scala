@@ -28,7 +28,7 @@ object Def1_CreateBenefitRequestBody {
     (JsPath \ "benefitType").read[String] and
       (JsPath \ "startDate").read[String] and
       (JsPath \ "endDate").readNullable[String]
-  )(Def1_CreateBenefitRequestBody.apply _)
+  )(Def1_CreateBenefitRequestBody.apply)
 
   implicit val writes: OWrites[Def1_CreateBenefitRequestBody] = Json.writes[Def1_CreateBenefitRequestBody]
 }

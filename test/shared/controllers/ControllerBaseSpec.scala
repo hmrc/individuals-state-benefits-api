@@ -75,6 +75,7 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockedIdGenerator.generateCorrelationId.returns(correlationId)
+    MockedSharedAppConfig.apiGatewayContext.returns("individuals/state-benefits").anyNumberOfTimes()
 
     MockedSharedAppConfig
       .deprecationFor(apiVersion)
