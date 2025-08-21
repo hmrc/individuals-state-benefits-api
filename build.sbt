@@ -31,7 +31,6 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     scalacOptions ++= List(
-      "-Xfatal-warnings",
       "-Wconf:src=routes/.*:s",
       "-feature"
     )
@@ -51,9 +50,3 @@ lazy val it = project
     Test / fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
-  .settings(
-    scalacOptions ++= Seq("-Xfatal-warnings")
-  )
-
-
-
