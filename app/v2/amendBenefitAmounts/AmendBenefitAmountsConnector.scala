@@ -40,7 +40,7 @@ class AmendBenefitAmountsConnector @Inject() (val http: HttpClientV2, val appCon
 
     lazy val downstreamUri1937 = {
       if (ConfigFeatureSwitches().isEnabled("ifs_hip_migration_1937")) {
-        HipUri[Unit](s"itsd/income-tax/v1/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId")
+        HipUri[Unit](s"itsa/income-tax/v1/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId")
       }
       else {
         IfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId")

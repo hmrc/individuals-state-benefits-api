@@ -95,7 +95,7 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
                                        outcome: DownstreamOutcome[Any]): CallHandler[Future[DownstreamOutcome[Any]]]#Derived = {
 
       val url: URL = if (isHipEnabled) {
-        url"$baseUrl/itsd/income-tax/v1/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId"
+        url"$baseUrl/itsa/income-tax/v1/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId"
       } else {
         url"$baseUrl/income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId"
       }
