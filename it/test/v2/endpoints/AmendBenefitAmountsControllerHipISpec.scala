@@ -27,21 +27,12 @@ import shared.models.errors.*
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
 
-class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
+class AmendBenefitAmountsControllerHipISpec extends IntegrationBaseSpec {
 
   "Calling the 'amend benefit amounts' endpoint" should {
     "return a 204 status code" when {
-      "any valid request is made" in new NonTysTest {
 
-        override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT)
-        }
-
-        val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe NO_CONTENT
-      }
-
-      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
+      "any valid request with a Tax Year Specific (TYS) tax year is made" in new HipTest {
 
         override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT)
@@ -118,7 +109,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
                                 expectedStatus: Int,
                                 expectedBody: ErrorWrapper,
                                 scenario: Option[String]): Unit = {
-          s"validation fails with ${expectedBody.error} error ${scenario.getOrElse("")}" in new NonTysTest {
+          s"validation fails with ${expectedBody.error} error ${scenario.getOrElse("")}" in new HipTest {
 
             override val nino: String             = requestNino
             override val taxYear: String          = requestTaxYear
@@ -169,7 +160,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new NonTysTest {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new HipTest {
 
             override def setupStubs(): Unit = {
               DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
@@ -196,7 +187,8 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
         val extraTysErrors = List(
           (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
+          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          (UNPROCESSABLE_ENTITY, "TAX_DEDUCTION_NOT_ALLOWED", UNPROCESSABLE_ENTITY, RuleTaxDeductionNotAllowedError)
         )
 
         (errors ++ extraTysErrors).foreach(serviceErrorTest.tupled)
@@ -250,16 +242,10 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
 
   }
 
-  private trait NonTysTest extends Test {
-    def taxYear: String = "2019-20"
-
-    def downstreamUri: String = s"/income-tax/income/state-benefits/$nino/2019-20/$benefitId"
-  }
-
-  private trait TysIfsTest extends Test {
+  private trait HipTest extends Test {
     def taxYear: String = "2023-24"
 
-    def downstreamUri: String = s"/income-tax/23-24/income/state-benefits/$nino/$benefitId"
+    def downstreamUri: String = s"/itsa/income-tax/v1/23-24/income/state-benefits/$nino/$benefitId"
   }
 
 }
