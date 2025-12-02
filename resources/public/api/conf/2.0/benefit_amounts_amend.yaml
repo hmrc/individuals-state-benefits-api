@@ -100,3 +100,16 @@ responses:
         examples:
           MATCHING_RESOURCE_NOT_FOUND:
             $ref: './common/errors.yaml#/components/examples/notFound'
+
+  "422":
+    description: Unprocessible Entity
+    headers:
+      X-CorrelationId:
+        $ref: './common/headers.yaml#/components/parameters/correlationId'
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/error_response.yaml'
+        examples:
+          RULE_TAX_DEDUCTION_NOT_ALLOWED:
+            $ref: './common/errors.yaml#/components/examples/ruleTaxDeductionNotAllowed'
