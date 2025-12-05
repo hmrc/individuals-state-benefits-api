@@ -235,11 +235,17 @@ class AmendBenefitAmountsControllerHipISpec extends IntegrationBaseSpec {
     def errorBody(code: String): String =
       s"""
          |{
-         |   "code": "$code",
-         |   "reason": "downstream message"
+         |  "origin": "HoD",
+         |  "response": {
+         |    "failures": [
+         |      {
+         |        "type": "$code",
+         |        "reason": "downstream message"
+         |      }
+         |    ]
+         |  }
          |}
             """.stripMargin
-
   }
 
   private trait HipTest extends Test {
