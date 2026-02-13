@@ -48,7 +48,7 @@ To view documentation locally, ensure the Individuals State Benefits API is runn
 Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use the appropriate port and version:
 
 ```
-http://localhost:7789/api/conf/1.0/application.yaml
+http://localhost:7789/api/conf/2.0/application.yaml
 ```
 
 ## Changelog
