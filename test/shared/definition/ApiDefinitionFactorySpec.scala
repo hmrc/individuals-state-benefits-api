@@ -17,6 +17,7 @@
 package shared.definition
 
 import cats.implicits.catsSyntaxValidatedId
+import play.api.libs.json.Json
 import shared.config.Deprecation.NotDeprecated
 import shared.config.{MockSharedAppConfig, SharedAppConfig}
 import shared.definition.APIStatus.{ALPHA, BETA}
@@ -67,6 +68,21 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         exceptionMessage shouldBe "deprecatedOn date is required for a deprecated version"
       }
     }
+
+    "APIVersion Json.format" should {
+
+      "round-trip successfully" in {
+        val model = APIVersion(
+          version = Version2,
+          status = APIStatus.BETA,
+          endpointsEnabled = true
+        )
+        val json = Json.toJson(model)
+
+        json.as[APIVersion] shouldBe model
+      }
+    }
+
   }
 
   trait Test extends MockHttpClient with MockSharedAppConfig {
@@ -81,7 +97,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
           "description",
           "context",
           List("category"),
-          List(APIVersion(Version1, APIStatus.BETA, endpointsEnabled = true)),
+          List(APIVersion(Version2, APIStatus.BETA, endpointsEnabled = true)),
           None)
       )
 
