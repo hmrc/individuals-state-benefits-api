@@ -1,5 +1,0 @@
-post:
-  $ref: "./benefit_unignore.yaml"
-  security:
-    - User-Restricted:
-        - write:self-assessment
