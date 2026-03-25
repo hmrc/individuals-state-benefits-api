@@ -56,20 +56,7 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
       }
     }
 
-    "return the expected response for a TYS request and feature switch is disabled (IFS enabled)" when {
-      "a valid request is made" in new IfsTest with Test {
-        def taxYear: TaxYear = tysTaxYear
-
-        val expectedOutcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
-
-        stubTysHttpResponse(isHipEnabled = false, outcome = expectedOutcome)
-
-        val result: DownstreamOutcome[Unit] = await(connector.amendBenefitAmounts(request))
-        result shouldBe expectedOutcome
-      }
-    }
-
-    "return the expected response for a TYS request and feature switch is enabled (HIP enabled)" when {
+    "return the expected response for a TYS request" when {
       "a valid request is made" in new HipTest with Test {
         def taxYear: TaxYear = tysTaxYear
 
