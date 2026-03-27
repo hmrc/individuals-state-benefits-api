@@ -17,7 +17,6 @@
 package v2.amendBenefitAmounts
 
 import org.scalamock.handlers.CallHandler
-import play.api.Configuration
 import shared.connectors.{ConnectorSpec, DownstreamOutcome}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
@@ -84,8 +83,6 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
       } else {
         url"$baseUrl/income-tax/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId"
       }
-
-      MockedSharedAppConfig.featureSwitchConfig returns Configuration("ifs_hip_migration_1937.enabled" -> isHipEnabled)
 
       willPut(url = url, body = body).returns(Future.successful(outcome))
     }

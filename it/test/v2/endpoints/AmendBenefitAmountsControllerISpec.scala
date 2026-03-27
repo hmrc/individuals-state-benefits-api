@@ -41,7 +41,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
         response.status shouldBe NO_CONTENT
       }
 
-      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
+      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysTest {
 
         override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT)
@@ -257,7 +257,7 @@ class AmendBenefitAmountsControllerISpec extends IntegrationBaseSpec {
     def downstreamUri: String = s"/income-tax/income/state-benefits/$nino/2019-20/$benefitId"
   }
 
-  private trait TysIfsTest extends Test {
+  private trait TysTest extends Test {
     def taxYear: String = "2023-24"
 
     def downstreamUri: String = s"/itsa/income-tax/v1/23-24/income/state-benefits/$nino/$benefitId"

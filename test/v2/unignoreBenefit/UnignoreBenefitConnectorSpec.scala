@@ -33,7 +33,7 @@ class UnignoreBenefitConnectorSpec extends ConnectorSpec {
 
   "UnignoreBenefitConnector" should {
     "return the expected response for a request" when {
-      "a valid request is made to HIP" in new HipTest with Test {
+      "a valid request is made" in new HipTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2025-26")
 
         private val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))

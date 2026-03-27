@@ -37,14 +37,14 @@ class AmendBenefitAmountsConnector @Inject() (val http: HttpClientV2, val appCon
 
     import request.*
 
-    lazy val downstreamUri1937 =
+    lazy val downstreamUriTYS =
       HipUri[Unit](s"itsa/income-tax/v1/${taxYear.asTysDownstream}/income/state-benefits/$nino/$benefitId")
 
-    lazy val downstreamUrl1651 = DownstreamUri(
+    lazy val downstreamUrlNonTYS = DownstreamUri(
       s"income-tax/income/state-benefits/$nino/${taxYear.asMtd}/$benefitId",
       DownstreamStrategy.standardStrategy(appConfig.ifsDownstreamConfig))
 
-    val downstreamUri = if (taxYear.useTaxYearSpecificApi) downstreamUri1937 else downstreamUrl1651
+    val downstreamUri = if (taxYear.useTaxYearSpecificApi) downstreamUriTYS else downstreamUrlNonTYS
 
     put(body, downstreamUri)
   }

@@ -33,7 +33,7 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
 
   "IgnoreBenefitConnector" should {
     "return the expected response" when {
-      "a valid request is made to HIP" in new HipTest with Test {
+      "a valid request is made" in new HipTest with Test {
         private val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPutEmpty(
