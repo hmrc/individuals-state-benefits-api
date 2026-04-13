@@ -11,11 +11,6 @@
       "type": "string",
       "format": "date",
       "example": "2020-01-01"
-    },
-    "ignoreBenefit": {
-      "type": "boolean",
-      "description": "A boolean indicating whether state benefits should be ignored. The value must be true or false.",
-      "example": true
     }
   }
 }

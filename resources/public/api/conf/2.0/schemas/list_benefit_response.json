@@ -7,7 +7,6 @@
     "stateBenefits": {
       "type": "array",
       "additionalProperties": false,
-      "minItems": 1,
       "items": {
         "$ref": "#/definitions/stateBenefit"
       }
@@ -15,7 +14,6 @@
     "customerAddedStateBenefits": {
       "type": "array",
       "additionalProperties": false,
-      "minItems": 1,
       "items": {
         "$ref": "#/definitions/customerAddedStateBenefit"
       }
@@ -129,7 +127,7 @@
     "submittedOn": {
       "type": "string",
       "format": "date-time",
-      "description": "An ISO-8601 compliant date-time representing when incapacity benefit was submitted.",
+      "description": "An ISO-8601 compliant date-time representing when the benefit was submitted.",
       "example": "2021-04-04T01:01:01Z"
     },
     "amount": {
