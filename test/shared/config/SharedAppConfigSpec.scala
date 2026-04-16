@@ -73,6 +73,23 @@ class SharedAppConfigSpec extends UnitSpec {
         expectedTysIfsEnvHeaders
       )
     }
+
+    "return the HIP config" in {
+      val expectedHipEnvHeaders = Some(
+        List(
+          "HIP-Accept",
+          "HIP-Gov-Test-Scenario",
+          "HIP-Location"
+        ))
+
+      simpleAppConfig.hipDownstreamConfig shouldBe BasicAuthDownstreamConfig(
+        "http://127.0.0.1:9772",
+        "Prod",
+        "HIP-ClientId",
+        "HIP-ClientSecret",
+        expectedHipEnvHeaders
+      )
+    }
   }
 
   "endpointsEnabled" when {
@@ -418,6 +435,15 @@ class SharedAppConfigSpec extends UnitSpec {
           |        env = Prod
           |        token = TYS-IFS-ABCD1234
           |        environmentHeaders = ["TYS-IFS-Accept", "TYS-IFS-Gov-Test-Scenario", "TYS-IFS-Content-Type"]
+          |      }
+          |
+          |      hip {
+          |        host = 127.0.0.1
+          |        port = 9772
+          |        env = Prod
+          |        clientId = "HIP-ClientId"
+          |        clientSecret = "HIP-ClientSecret"
+          |        environmentHeaders = ["HIP-Accept", "HIP-Gov-Test-Scenario", "HIP-Location"]
           |      }
           |    }
           |  }
