@@ -150,42 +150,6 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
     """.stripMargin
   )
 
-  val singleHipErrorsJson: JsValue = Json.parse(
-    """
-      |{
-      |   "origin": "HoD",
-      |   "response": {
-      |      "failures": [
-      |         {
-      |            "type": "CODE",
-      |            "reason": "MESSAGE"
-      |         }
-      |      ]
-      |   }
-      |}
-      |""".stripMargin
-  )
-
-  val multipleHipErrorsJson: JsValue = Json.parse(
-    """
-      |{
-      |   "origin": "HoD",
-      |   "response": {
-      |      "failures": [
-      |         {
-      |            "type": "CODE 1",
-      |            "reason": "MESSAGE"
-      |         },
-      |         {
-      |            "type": "CODE 2",
-      |            "reason": "MESSAGE"
-      |         }
-      |      ]
-      |   }
-      |}
-      |""".stripMargin
-  )
-
   private def handleErrorsCorrectly[A](httpReads: HttpReads[DownstreamOutcome[A]]): Unit =
     List(BAD_REQUEST, NOT_FOUND, FORBIDDEN, CONFLICT, GONE, UNPROCESSABLE_ENTITY).foreach(responseCode =>
       s"receiving a $responseCode response" should {
@@ -286,27 +250,106 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
     }
   }
 
+  val multipleTopLevelErrorCodesJson: JsValue = Json.parse(
+    """
+      |[
+      |    {
+      |        "errorCode": "1115",
+      |        "errorDescription": "Error 1 description"
+      |    },
+      |    {
+      |        "errorCode": "5010",
+      |        "errorDescription": "Error 2 description"
+      |    }
+      |]
+    """.stripMargin
+  )
+
+  val multipleErrorCodesInResponseJson: JsValue = Json.parse(
+    """
+      |{
+      |    "origin": "HIP",
+      |    "response": [
+      |        {
+      |            "errorCode": "1117",
+      |            "errorDescription": "The tax year provided is invalid"
+      |        },
+      |        {
+      |            "errorCode": "1215",
+      |            "errorDescription": "Invalid taxable entity id"
+      |        }
+      |    ]
+      |}
+    """.stripMargin
+  )
+
+  val multipleFailureErrorTypesJson: JsValue = Json.parse(
+    """
+      |{
+      |    "origin": "HIP",
+      |    "response": {
+      |        "failures": [
+      |            {
+      |                "type": "INVALID_TAXABLE_ENTITY_ID",
+      |                "reason": "Submission has not passed validation. Invalid parameter taxableEntityId."
+      |            },
+      |            {
+      |                "type": "INVALID_TAX_YEAR",
+      |                "reason": "Submission has not passed validation. Invalid parameter taxYear."
+      |            }
+      |        ]
+      |    }
+      |}
+    """.stripMargin
+  )
+
   private def handleHipErrorsCorrectly[A](httpReads: HttpReads[DownstreamOutcome[A]]): Unit = {
-    List(BAD_REQUEST, NOT_FOUND, UNPROCESSABLE_ENTITY, NOT_IMPLEMENTED).foreach { responseStatus =>
-      s"receiving a $responseStatus response from HIP" should {
+    List(NOT_FOUND, UNPROCESSABLE_ENTITY).foreach { responseStatus =>
+      s"receiving a $responseStatus response with multiple HIP errors containing top level error codes" should {
+        "return a Left ResponseWrapper containing the extracted error codes" in {
+          val httpResponse = HttpResponse(
+            responseStatus,
+            multipleTopLevelErrorCodesJson,
+            Map("CorrelationId" -> List(correlationId))
+          )
 
-        "be able to parse single HIP errors" in {
-          val httpResponse = HttpResponse(responseStatus, singleHipErrorsJson.toString(), Map("CorrelationId" -> List(correlationId)))
-
-          httpReads.read(method, url, httpResponse) shouldBe {
-            Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("CODE"))))
-          }
-        }
-
-        "be able to parse multiple HIP errors" in {
-          val httpResponse = HttpResponse(responseStatus, multipleHipErrorsJson.toString(), Map("CorrelationId" -> List(correlationId)))
-
-          httpReads.read(method, url, httpResponse) shouldBe {
-            Left(ResponseWrapper(correlationId, DownstreamErrors(List(DownstreamErrorCode("CODE 1"), DownstreamErrorCode("CODE 2")))))
-          }
+          httpReads.read(method, url, httpResponse) shouldBe Left(
+            ResponseWrapper(correlationId, DownstreamErrors(List(DownstreamErrorCode("1115"), DownstreamErrorCode("5010"))))
+          )
         }
       }
+    }
 
+    "receiving a response with multiple HIP errors containing error codes in response array" should {
+      "return a Left ResponseWrapper containing the extracted error codes" in {
+        val httpResponse = HttpResponse(
+          BAD_REQUEST,
+          multipleErrorCodesInResponseJson,
+          Map("CorrelationId" -> List(correlationId))
+        )
+
+        httpReads.read(method, url, httpResponse) shouldBe Left(
+          ResponseWrapper(correlationId, DownstreamErrors(List(DownstreamErrorCode("1117"), DownstreamErrorCode("1215"))))
+        )
+      }
+    }
+
+    List(BAD_REQUEST, NOT_FOUND, UNPROCESSABLE_ENTITY).foreach { responseStatus =>
+      s"receiving a $responseStatus response with multiple HIP errors containing types in failures array" should {
+        "return a Left ResponseWrapper containing the extracted error types" in {
+          val httpResponse = HttpResponse(
+            responseStatus,
+            multipleFailureErrorTypesJson,
+            Map("CorrelationId" -> List(correlationId))
+          )
+
+          httpReads.read(method, url, httpResponse) shouldBe Left(
+            ResponseWrapper(
+              correlationId,
+              DownstreamErrors(List(DownstreamErrorCode("INVALID_TAXABLE_ENTITY_ID"), DownstreamErrorCode("INVALID_TAX_YEAR"))))
+          )
+        }
+      }
     }
   }
 
