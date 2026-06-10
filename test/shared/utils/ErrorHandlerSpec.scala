@@ -18,7 +18,6 @@ package shared.utils
 
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
-import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, RequestHeader, Result}
 import play.api.test.FakeRequest
@@ -42,8 +41,8 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
     "return 404 with error body" when {
       "URI not found" in new Test {
 
-        val result: Future[Result] = handler.onClientError(requestHeader, Status.NOT_FOUND, "test")
-        status(result) shouldBe Status.NOT_FOUND
+        val result: Future[Result] = handler.onClientError(requestHeader, NOT_FOUND, "test")
+        status(result) shouldBe NOT_FOUND
 
         contentAsJson(result) shouldBe NotFoundError.asJson
       }
