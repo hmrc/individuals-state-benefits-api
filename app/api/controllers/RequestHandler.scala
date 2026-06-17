@@ -136,7 +136,7 @@ object RequestHandler {
 
         val result =
           for {
-            parsedRequest <- EitherT.fromEither[Future](validator.validateAndWrapResult())
+            parsedRequest   <- EitherT.fromEither[Future](validator.validateAndWrapResult())
             serviceResponse <- EitherT(service(parsedRequest))
           } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
             responseModifier match {
