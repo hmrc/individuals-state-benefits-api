@@ -36,8 +36,8 @@ class DocumentationController @Inject() (
     assets: RewriteableAssets,
     configuration: Configuration,
     cc: ControllerComponents
-) (implicit ec: ExecutionContext, materializer: Materializer)
-  extends BackendController(cc) {
+)(implicit ec: ExecutionContext, materializer: Materializer)
+    extends BackendController(cc) {
 
   def definition(): Action[AnyContent] = Action {
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
