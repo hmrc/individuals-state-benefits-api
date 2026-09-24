@@ -21,7 +21,6 @@ import api.controllers.validators.resolvers.*
 import api.models.domain.TaxYear
 import api.models.errors.{MtdError, StartDateFormatError}
 import cats.data.Validated
-import cats.data.Validated.{Invalid, Valid}
 import cats.implicits.catsSyntaxTuple4Semigroupal
 import common.errors.{RuleEndDateBeforeTaxYearStartError, RuleStartDateAfterTaxYearEndError}
 import config.StateBenefitsAppConfig
@@ -29,8 +28,8 @@ import play.api.libs.json.JsValue
 import v2.amendBenefit.def1.model.request.{Def1_AmendBenefitRequestBody, Def1_AmendBenefitRequestData}
 import v2.amendBenefit.model.request.AmendBenefitRequestData
 
-import java.time.LocalDate
 import javax.inject.Singleton
+import scala.math.Ordered.orderingToOrdered
 
 @Singleton
 class Def1_AmendBenefitValidator(nino: String, taxYear: String, benefitId: String, body: JsValue)(implicit
@@ -55,35 +54,27 @@ class Def1_AmendBenefitValidator(nino: String, taxYear: String, benefitId: Strin
   private def validateBusinessRules(parsed: Def1_AmendBenefitRequestData): Validated[Seq[MtdError], Def1_AmendBenefitRequestData] = {
     import parsed.body.*
 
-    val validatedDates = endDate match {
-      case Some(endDate) =>
-        ResolveDateRange()
-          .withYearsLimitedTo(minYear, maxYear)(startDate -> endDate)
-          .andThen { _ =>
-            val endLocalDate: LocalDate          = LocalDate.parse(endDate)
-            val taxYearStartLocalDate: LocalDate = TaxYear.fromMtd(taxYear).startDate
+    val taxYear: TaxYear = parsed.taxYear
 
-            if (endLocalDate.isBefore(taxYearStartLocalDate)) {
-              Invalid(List(RuleEndDateBeforeTaxYearStartError))
-            } else {
-              Valid(())
-            }
-          }
-      case None          => ResolveIsoDate.withMinMaxCheck(startDate, StartDateFormatError, StartDateFormatError)
+    val validatedDates: Validated[Seq[MtdError], Unit] = endDate match {
+      case Some(endDate) => validateDateRange(taxYear, startDate, endDate)
+      case None => validateStartDate(taxYear, startDate)
     }
 
-    validatedDates
-    .andThen { _ =>
-      val startLocalDate: LocalDate      = LocalDate.parse(startDate)
-      val taxYearEndLocalDate: LocalDate = TaxYear.fromMtd(taxYear).endDate
-
-      if (startLocalDate.isAfter(taxYearEndLocalDate)) {
-        Invalid(List(RuleStartDateAfterTaxYearEndError))
-      } else {
-        Valid(())
-      }
-    }
-    .map(_ => parsed)
+    validatedDates.map(_ => parsed)
   }
+
+  private def validateStartDate(taxYear: TaxYear, startDate: String): Validated[Seq[MtdError], Unit] =
+    ResolveIsoDate.withMinMaxCheck(startDate, StartDateFormatError, StartDateFormatError).andThen { date =>
+      Validated.cond(date <= taxYear.endDate, (), List(RuleStartDateAfterTaxYearEndError))
+    }
+
+  private def validateDateRange(taxYear: TaxYear, startDate: String, endDate: String): Validated[Seq[MtdError], Unit] =
+    ResolveDateRange().withYearsLimitedTo(minYear, maxYear)(startDate -> endDate).andThen { dateRange =>
+      combine(
+        Validated.cond(dateRange.startDate <= taxYear.endDate, (), List(RuleStartDateAfterTaxYearEndError)),
+        Validated.cond(dateRange.endDate >= taxYear.startDate, (), List(RuleEndDateBeforeTaxYearStartError))
+      )
+    }
 
 }
