@@ -131,15 +131,6 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
       val validJson: JsValue = Json.parse(
         """
           |{
-          |   "startDate": "2020-04-06",
-          |   "endDate": "2021-01-01"
-          |}
-    """.stripMargin
-      )
-
-      val validJson2: JsValue = Json.parse(
-        """
-          |{
           |   "startDate": "2021-04-06",
           |   "endDate": "2022-01-01"
           |}
@@ -210,8 +201,8 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", emptyRequestJson, BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidStartDateJson, BAD_REQUEST, StartDateFormatError),
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidEndDateJson, BAD_REQUEST, EndDateFormatError),
-          ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson2, BAD_REQUEST, RuleStartDateAfterTaxYearEndError),
-          ("AA123456A", "2021-22", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson, BAD_REQUEST, RuleEndDateBeforeTaxYearStartError),
+          ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson, BAD_REQUEST, RuleStartDateAfterTaxYearEndError),
+          ("AA123456A", "2022-23", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson, BAD_REQUEST, RuleEndDateBeforeTaxYearStartError),
           ("AA123456A", "2018-19", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", validJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2020-21", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", invalidEndBeforeStartJson, BAD_REQUEST, RuleEndBeforeStartDateError)
         )
