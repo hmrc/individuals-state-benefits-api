@@ -124,13 +124,13 @@ class Def1_AmendBenefitValidatorSpec extends UnitSpec with JsonErrorValidators w
           ))
       }
 
-      "passed an invalid start date" in new AppConfigTest {
+      "passed a malformed start date" in new AppConfigTest {
         val result: Either[ErrorWrapper, AmendBenefitRequestData] =
           validator(validNino, validTaxYear, validBenefitId, validBody(startDate = "?!*")).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, StartDateFormatError))
       }
 
-      "passed an invalid end date" in new AppConfigTest {
+      "passed a malformed end date" in new AppConfigTest {
         val result: Either[ErrorWrapper, AmendBenefitRequestData] =
           validator(validNino, validTaxYear, validBenefitId, validBody(endDate = "#@%")).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, EndDateFormatError))
