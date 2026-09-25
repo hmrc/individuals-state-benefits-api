@@ -54,7 +54,7 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidator
   private val validatorFactory = new CreateBenefitValidatorFactory
 
   private def validator(nino: String, taxYear: String, body: JsValue) =
-    validatorFactory.validator(nino, taxYear, body)
+    validatorFactory.validator(nino, taxYear, body, true)
 
   "Validator" should {
 
@@ -86,7 +86,17 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidator
       }
 
       "passed a tax year that Has not finished" in new AppConfigTest {
-        val result: Either[ErrorWrapper, CreateBenefitRequestData] = validator(validNino, "2026-27", requestBody).validateAndWrapResult()
+        private val requestBody2627 =
+          Json.parse(
+            s"""
+               |{
+               |  "benefitType": "otherStateBenefits",
+               |  "startDate": "2026-06-03",
+               |  "endDate": "2026-07-03"
+               |}
+              """.stripMargin
+          )
+        val result: Either[ErrorWrapper, CreateBenefitRequestData] = validator(validNino, "2026-27", requestBody2627).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
       }
 

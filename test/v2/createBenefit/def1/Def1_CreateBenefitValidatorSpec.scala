@@ -51,7 +51,7 @@ class Def1_CreateBenefitValidatorSpec extends UnitSpec with JsonErrorValidators 
 
   private val parsedCreateBenefitBody = Def1_CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
 
-  private def validator(nino: String, taxYear: String, body: JsValue) = new Def1_CreateBenefitValidator(nino, taxYear, body)
+  private def validator(nino: String, taxYear: String, body: JsValue) = new Def1_CreateBenefitValidator(nino, taxYear, body, false)
 
   "Validator" should {
 
