@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,13 @@ import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.support.IntegrationBaseSpec
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import common.errors.{BenefitIdFormatError, RuleOutsideAmendmentWindow, RuleUpdateForbiddenError}
+import common.errors.{
+  BenefitIdFormatError,
+  RuleEndDateBeforeTaxYearStartError,
+  RuleOutsideAmendmentWindow,
+  RuleStartDateAfterTaxYearEndError,
+  RuleUpdateForbiddenError
+}
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -125,8 +131,8 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
       val validJson: JsValue = Json.parse(
         """
           |{
-          |   "startDate": "2020-04-06",
-          |   "endDate": "2021-01-01"
+          |   "startDate": "2021-04-06",
+          |   "endDate": "2022-01-01"
           |}
     """.stripMargin
       )
@@ -195,6 +201,8 @@ class AmendBenefitControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", emptyRequestJson, BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidStartDateJson, BAD_REQUEST, StartDateFormatError),
           ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", invalidEndDateJson, BAD_REQUEST, EndDateFormatError),
+          ("AA123456A", "2019-20", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson, BAD_REQUEST, RuleStartDateAfterTaxYearEndError),
+          ("AA123456A", "2022-23", "78d9f015-a8b4-47a8-8bbc-c253a1e8057e", validJson, BAD_REQUEST, RuleEndDateBeforeTaxYearStartError),
           ("AA123456A", "2018-19", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", validJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2020-21", "4557ecb5-fd32-48cc-81f5-e6acd1099f3c", invalidEndBeforeStartJson, BAD_REQUEST, RuleEndBeforeStartDateError)
         )

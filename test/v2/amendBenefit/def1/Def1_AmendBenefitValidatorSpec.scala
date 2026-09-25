@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
-import common.errors.BenefitIdFormatError
+import common.errors.{BenefitIdFormatError, RuleEndDateBeforeTaxYearStartError, RuleStartDateAfterTaxYearEndError}
 import config.MockStateBenefitsAppConfig
 import play.api.libs.json.{JsObject, JsValue, Json}
 import v2.amendBenefit.def1.model.request.{Def1_AmendBenefitRequestBody, Def1_AmendBenefitRequestData}
@@ -35,8 +35,8 @@ class Def1_AmendBenefitValidatorSpec extends UnitSpec with JsonErrorValidators w
   private val validTaxYear   = "2023-24"
   private val validBenefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val startDate = "2020-04-06"
-  private val endDate   = "2021-01-01"
+  private val startDate    = "2023-04-06"
+  private val endDate      = "2024-01-01"
 
   private def validBody(startDate: String = startDate, endDate: String = endDate) = Json.parse(
     s"""
@@ -50,7 +50,7 @@ class Def1_AmendBenefitValidatorSpec extends UnitSpec with JsonErrorValidators w
   private val parsedNino      = Nino(validNino)
   private val parsedTaxYear   = TaxYear.fromMtd(validTaxYear)
   private val parsedBenefitId = BenefitId(validBenefitId)
-  private val parsedBody      = Def1_AmendBenefitRequestBody("2020-04-06", Some("2021-01-01"))
+  private val parsedBody      = Def1_AmendBenefitRequestBody(startDate, Some(endDate))
 
   private def validator(nino: String, taxYear: String, benefitId: String, body: JsValue) =
     new Def1_AmendBenefitValidator(nino, taxYear, benefitId, body)
@@ -124,6 +124,18 @@ class Def1_AmendBenefitValidatorSpec extends UnitSpec with JsonErrorValidators w
           ))
       }
 
+      "passed a malformed start date" in new AppConfigTest {
+        val result: Either[ErrorWrapper, AmendBenefitRequestData] =
+          validator(validNino, validTaxYear, validBenefitId, validBody(startDate = "?!*")).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, StartDateFormatError))
+      }
+
+      "passed a malformed end date" in new AppConfigTest {
+        val result: Either[ErrorWrapper, AmendBenefitRequestData] =
+          validator(validNino, validTaxYear, validBenefitId, validBody(endDate = "#@%")).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, EndDateFormatError))
+      }
+
       "passed a body with a start date that precedes the minimum" in new AppConfigTest {
         val result: Either[ErrorWrapper, AmendBenefitRequestData] =
           validator(validNino, validTaxYear, validBenefitId, validBody(startDate = "1809-02-01")).validateAndWrapResult()
@@ -140,6 +152,18 @@ class Def1_AmendBenefitValidatorSpec extends UnitSpec with JsonErrorValidators w
         val result: Either[ErrorWrapper, AmendBenefitRequestData] =
           validator(validNino, validTaxYear, validBenefitId, validBody(endDate = "2149-02-21")).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, EndDateFormatError))
+      }
+
+      "passed a start date that is after the tax year end" in new AppConfigTest {
+        val result: Either[ErrorWrapper, AmendBenefitRequestData] =
+          validator(validNino, validTaxYear, validBenefitId, validBody(startDate = "2025-01-01", endDate = "2025-01-02")).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, RuleStartDateAfterTaxYearEndError))
+      }
+
+      "passed an end date that is before the tax year starts" in new AppConfigTest {
+        val result: Either[ErrorWrapper, AmendBenefitRequestData] =
+          validator(validNino, validTaxYear, validBenefitId, validBody(startDate = "2022-01-01", endDate = "2022-01-02")).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, RuleEndDateBeforeTaxYearStartError))
       }
     }
 
