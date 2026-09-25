@@ -34,7 +34,7 @@ trait MockCreateBenefitValidatorFactory extends TestSuite with MockFactory {
   object MockedCreateBenefitValidatorFactory {
 
     def validator(): CallHandler[Validator[CreateBenefitRequestData]] =
-      (mockCreateBenefitValidatorFactory.validator(_: String, _: String, _: JsValue)).expects(*, *, *)
+      (mockCreateBenefitValidatorFactory.validator(_: String, _: String, _: JsValue, _: Boolean)).expects(*, *, *, *)
 
   }
 

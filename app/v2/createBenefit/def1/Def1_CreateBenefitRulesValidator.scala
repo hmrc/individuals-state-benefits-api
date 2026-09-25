@@ -18,12 +18,14 @@ package v2.createBenefit.def1
 
 import api.controllers.validators.RulesValidator
 import api.controllers.validators.resolvers.{ResolveDateRange, ResolveIsoDate}
+import api.models.domain.TaxYear
 import api.models.errors.{MtdError, StartDateFormatError}
 import cats.data.Validated
 import cats.data.Validated.Invalid
-import common.errors.BenefitTypeFormatError
+import common.errors.{BenefitTypeFormatError, RuleEndDateBeforeTaxYearStartError, RuleStartDateAfterTaxYearEndError}
 import v2.createBenefit.def1.model.request.Def1_CreateBenefitRequestData
 import v2.models.domain.BenefitType.*
+import scala.math.Ordered.orderingToOrdered
 
 object Def1_CreateBenefitRulesValidator extends RulesValidator[Def1_CreateBenefitRequestData] {
 
@@ -41,18 +43,32 @@ object Def1_CreateBenefitRulesValidator extends RulesValidator[Def1_CreateBenefi
   ).map(_.toString)
 
   def validateBusinessRules(parsed: Def1_CreateBenefitRequestData): Validated[Seq[MtdError], Def1_CreateBenefitRequestData] =
+    val taxYear: TaxYear = parsed.taxYear
     combine(
       validateBenefitType(parsed.body.benefitType),
-      validateDates(parsed.body.startDate, parsed.body.endDate)
+      validateDates(taxYear, parsed.body.startDate, parsed.body.endDate)
     ).onSuccess(parsed)
 
   private def validateBenefitType(benefitType: String): Validated[Seq[MtdError], Unit] =
     if (availableBenefitTypes.contains(benefitType)) valid else Invalid(List(BenefitTypeFormatError))
 
-  private def validateDates(startDate: String, endDate: Option[String]): Validated[Seq[MtdError], Unit] =
+  private def validateDates(taxYear: TaxYear, startDate: String, endDate: Option[String]): Validated[Seq[MtdError], Unit] =
     endDate match {
-      case Some(endDate) => ResolveDateRange().withYearsLimitedTo(minYear, maxYear)(startDate -> endDate).toUnit
-      case None          => ResolveIsoDate.withMinMaxCheck(startDate, StartDateFormatError, StartDateFormatError).toUnit
+      case Some(endDate) => validateDateRange(taxYear, startDate, endDate)
+      case None          => validateStartDate(taxYear, startDate)
+    }
+
+  private def validateStartDate(taxYear: TaxYear, startDate: String): Validated[Seq[MtdError], Unit] =
+    ResolveIsoDate.withMinMaxCheck(startDate, StartDateFormatError, StartDateFormatError).andThen { date =>
+      Validated.cond(date <= taxYear.endDate, (), List(RuleStartDateAfterTaxYearEndError))
+    }
+
+  private def validateDateRange(taxYear: TaxYear, startDate: String, endDate: String): Validated[Seq[MtdError], Unit] =
+    ResolveDateRange().withYearsLimitedTo(minYear, maxYear)(startDate -> endDate).andThen { dateRange =>
+      combine(
+        Validated.cond(dateRange.startDate <= taxYear.endDate, (), List(RuleStartDateAfterTaxYearEndError)),
+        Validated.cond(dateRange.endDate >= taxYear.startDate, (), List(RuleEndDateBeforeTaxYearStartError))
+      )
     }
 
 }

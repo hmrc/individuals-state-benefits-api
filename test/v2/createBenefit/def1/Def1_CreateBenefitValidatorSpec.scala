@@ -35,7 +35,7 @@ class Def1_CreateBenefitValidatorSpec extends UnitSpec with JsonErrorValidators 
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private val startDate = "2020-08-03"
+  private val startDate = "2020-01-03"
   private val endDate   = "2020-12-03"
 
   private val requestBody =
@@ -51,7 +51,7 @@ class Def1_CreateBenefitValidatorSpec extends UnitSpec with JsonErrorValidators 
 
   private val parsedCreateBenefitBody = Def1_CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
 
-  private def validator(nino: String, taxYear: String, body: JsValue) = new Def1_CreateBenefitValidator(nino, taxYear, body)
+  private def validator(nino: String, taxYear: String, body: JsValue) = new Def1_CreateBenefitValidator(nino, taxYear, body, false)
 
   "Validator" should {
 
