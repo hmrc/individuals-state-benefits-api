@@ -16,7 +16,7 @@
 
 package v2.createBenefit
 
-import api.config.AppConfig
+import api.config.{AppConfig, ConfigFeatureSwitches}
 import api.controllers.*
 import api.routing.Version
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
@@ -49,7 +49,12 @@ class CreateBenefitController @Inject() (val authService: EnrolmentsAuthService,
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val validator = validatorFactory.validator(nino, taxYear, request.body)
+      val validator = validatorFactory.validator(
+        nino,
+        taxYear,
+        request.body,
+        temporalValidationEnabled = ConfigFeatureSwitches().isTemporalValidationEnabled
+      )
 
       val requestHandler = RequestHandler
         .withValidator(validator)

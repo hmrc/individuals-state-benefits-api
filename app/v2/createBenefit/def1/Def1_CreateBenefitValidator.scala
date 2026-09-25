@@ -31,13 +31,14 @@ import v2.createBenefit.model.request.CreateBenefitRequestData
 import javax.inject.Singleton
 
 @Singleton
-class Def1_CreateBenefitValidator(nino: String, taxYear: String, body: JsValue)(implicit stateBenefitsAppConfig: StateBenefitsAppConfig)
+class Def1_CreateBenefitValidator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
+    stateBenefitsAppConfig: StateBenefitsAppConfig)
     extends Validator[CreateBenefitRequestData] {
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_CreateBenefitRequestBody]()
 
   private val resolveTaxYear: ResolveTaxYearMinimum =
-    ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear), allowIncompleteTaxYear = false)
+    ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear), allowIncompleteTaxYear = !temporalValidationEnabled)
 
   def validate: Validated[Seq[MtdError], Def1_CreateBenefitRequestData] =
     (

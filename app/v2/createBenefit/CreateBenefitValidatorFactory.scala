@@ -27,9 +27,9 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CreateBenefitValidatorFactory @Inject() (implicit stateBenefitsAppConfig: StateBenefitsAppConfig) {
 
-  def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateBenefitRequestData] =
+  def validator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean): Validator[CreateBenefitRequestData] =
     taxYear match {
-      case _ => new Def1_CreateBenefitValidator(nino: String, taxYear: String, body: JsValue)
+      case _ => new Def1_CreateBenefitValidator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled)
     }
 
 }
