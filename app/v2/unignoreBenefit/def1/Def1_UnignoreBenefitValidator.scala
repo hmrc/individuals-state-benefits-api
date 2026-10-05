@@ -17,7 +17,7 @@
 package v2.unignoreBenefit.def1
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveNino, ResolveTaxYearMinimum}
+import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveDetailedTaxYear, ResolveNino}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -34,8 +34,10 @@ class Def1_UnignoreBenefitValidator(nino: String, taxYear: String, benefitId: St
     stateBenefitsAppConfig: StateBenefitsAppConfig)
     extends Validator[UnignoreBenefitRequestData] {
 
-  private val resolveTaxYear: ResolveTaxYearMinimum =
-    ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear), allowIncompleteTaxYear = !temporalValidationEnabled)
+  private val resolveTaxYear = ResolveDetailedTaxYear(
+    minimumTaxYear = TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear),
+    allowIncompleteTaxYear = !temporalValidationEnabled
+  )
 
   def validate: Validated[Seq[MtdError], Def1_UnignoreBenefitRequestData] = {
     (
