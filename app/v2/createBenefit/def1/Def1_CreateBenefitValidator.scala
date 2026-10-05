@@ -17,7 +17,7 @@
 package v2.createBenefit.def1
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYearMinimum}
+import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino, ResolveNonEmptyJsonObject}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -37,8 +37,10 @@ class Def1_CreateBenefitValidator(nino: String, taxYear: String, body: JsValue, 
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_CreateBenefitRequestBody]()
 
-  private val resolveTaxYear: ResolveTaxYearMinimum =
-    ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear), allowIncompleteTaxYear = !temporalValidationEnabled)
+  private val resolveTaxYear = ResolveDetailedTaxYear(
+    minimumTaxYear = TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear),
+    allowIncompleteTaxYear = !temporalValidationEnabled
+  )
 
   def validate: Validated[Seq[MtdError], Def1_CreateBenefitRequestData] =
     (

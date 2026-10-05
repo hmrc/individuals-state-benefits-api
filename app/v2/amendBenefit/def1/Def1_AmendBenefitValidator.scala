@@ -41,7 +41,7 @@ class Def1_AmendBenefitValidator(nino: String, taxYear: String, benefitId: Strin
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_AmendBenefitRequestBody]()
 
-  private val resolveTaxYear: ResolveTaxYearMinimum = ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
+  private val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
 
   def validate: Validated[Seq[MtdError], Def1_AmendBenefitRequestData] =
     (
