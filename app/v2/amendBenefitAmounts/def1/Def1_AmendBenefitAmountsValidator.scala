@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,14 @@ import v2.amendBenefitAmounts.model.request.AmendBenefitAmountsRequestData
 import javax.inject.Singleton
 
 @Singleton
-class Def1_AmendBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String, body: JsValue)(implicit
+class Def1_AmendBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
     stateBenefitsAppConfig: StateBenefitsAppConfig)
     extends Validator[AmendBenefitAmountsRequestData] {
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_AmendBenefitAmountsRequestBody]()
 
-  private val resolveTaxYear: ResolveTaxYearMinimum = ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
+  private val resolveTaxYear: ResolveTaxYearMinimum =
+    ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear), allowIncompleteTaxYear = !temporalValidationEnabled)
 
   private val resolveAmountNumber = ResolveParsedNumber()
   private val resolveTaxPaid      = ResolveParsedNumber(min = -99999999999.99)
