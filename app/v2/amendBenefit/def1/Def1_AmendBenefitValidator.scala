@@ -18,6 +18,7 @@ package v2.amendBenefit.def1
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.*
+import api.controllers.validators.resolvers.ResolveTaxYear.ResolveDetailedTaxYear
 import api.models.domain.TaxYear
 import api.models.errors.{MtdError, StartDateFormatError}
 import cats.data.Validated
@@ -41,7 +42,7 @@ class Def1_AmendBenefitValidator(nino: String, taxYear: String, benefitId: Strin
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_AmendBenefitRequestBody]()
 
-  private val resolveTaxYear: ResolveTaxYearMinimum = ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
 
   def validate: Validated[Seq[MtdError], Def1_AmendBenefitRequestData] =
     (

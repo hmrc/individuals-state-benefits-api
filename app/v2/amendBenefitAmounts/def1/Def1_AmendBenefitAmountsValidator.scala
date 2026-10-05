@@ -17,7 +17,8 @@
 package v2.amendBenefitAmounts.def1
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber, ResolveTaxYearMinimum}
+import api.controllers.validators.resolvers.ResolveTaxYear.ResolveDetailedTaxYear
+import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -37,7 +38,7 @@ class Def1_AmendBenefitAmountsValidator(nino: String, taxYear: String, benefitId
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_AmendBenefitAmountsRequestBody]()
 
-  private val resolveTaxYear: ResolveTaxYearMinimum = ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
 
   private val resolveAmountNumber = ResolveParsedNumber()
   private val resolveTaxPaid      = ResolveParsedNumber(min = -99999999999.99)

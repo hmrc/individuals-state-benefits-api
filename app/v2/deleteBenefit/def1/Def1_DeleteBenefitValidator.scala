@@ -17,7 +17,8 @@
 package v2.deleteBenefit.def1
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveNino, ResolveTaxYearMinimum}
+import api.controllers.validators.resolvers.ResolveTaxYear.ResolveDetailedTaxYear
+import api.controllers.validators.resolvers.{ResolveBenefitId, ResolveNino}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -32,7 +33,7 @@ import javax.inject.Singleton
 class Def1_DeleteBenefitValidator(nino: String, taxYear: String, benefitId: String)(implicit stateBenefitsAppConfig: StateBenefitsAppConfig)
     extends Validator[DeleteBenefitRequestData] {
 
-  private val resolveTaxYear: ResolveTaxYearMinimum = ResolveTaxYearMinimum(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(stateBenefitsAppConfig.minimumPermittedTaxYear))
 
   def validate: Validated[Seq[MtdError], Def1_DeleteBenefitRequestData] = {
     (
