@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ trait MockAmendBenefitAmountsValidatorFactory extends TestSuite with MockFactory
   object MockedAmendBenefitAmountsValidatorFactory {
 
     def validator(): CallHandler[Validator[AmendBenefitAmountsRequestData]] =
-      (mockAmendBenefitAmountsValidatorFactory.validator(_: String, _: String, _: String, _: JsValue)).expects(*, *, *, *)
+      (mockAmendBenefitAmountsValidatorFactory.validator(_: String, _: String, _: String, _: JsValue, _: Boolean)).expects(*, *, *, *, *)
 
   }
 

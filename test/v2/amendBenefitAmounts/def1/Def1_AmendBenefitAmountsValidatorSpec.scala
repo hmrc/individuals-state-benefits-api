@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ class Def1_AmendBenefitAmountsValidatorSpec extends UnitSpec with JsonErrorValid
   private val parsedBody      = Def1_AmendBenefitAmountsRequestBody(2050.45, Some(1095.55))
 
   private def validator(nino: String, taxYear: String, benefitId: String, body: JsValue) =
-    new Def1_AmendBenefitAmountsValidator(nino, taxYear, benefitId, body)
+    new Def1_AmendBenefitAmountsValidator(nino, taxYear, benefitId, body, true)
 
   "validator" should {
     "return the parsed domain object" when {
