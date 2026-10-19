@@ -20,16 +20,13 @@ import api.config.Deprecation.NotDeprecated
 import api.config.MockAppConfig
 import api.definition.APIAccessType.PUBLIC
 import api.definition.APIStatus.{ALPHA, BETA}
-import api.mocks.MockHttpClient
 import api.routing.Version2
 import api.utils.UnitSpec
 import cats.implicits.catsSyntaxValidatedId
 
-import scala.language.reflectiveCalls
-
 class ApiDefinitionFactorySpec extends UnitSpec {
 
-  class Test extends MockHttpClient with MockAppConfig {
+  class Test extends MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
     MockedAppConfig.apiGatewayContext returns "individuals/state-benefits"
   }
@@ -102,7 +99,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "set the access level" when {
     "the controlled access flag is enabled" should {
       "to be CONTROLLED" in new Test {
-        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.endpointsEnabled(Version2) returns true
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
 
@@ -114,7 +111,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
     "the controlled access flag is disabled" should {
       "return PUBLIC" in new Test {
-        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.endpointsEnabled(Version2) returns true
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
 
