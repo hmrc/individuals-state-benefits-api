@@ -22,7 +22,6 @@ import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
 import play.api.libs.json.Json
-import v2.amendBenefitAmounts.def1.Def1_AmendBenefitAmountsValidator
 import v2.amendBenefitAmounts.model.request.AmendBenefitAmountsRequestData
 
 class AmendBenefitAmountsValidatorFactorySpec extends UnitSpec with JsonErrorValidators with MockStateBenefitsAppConfig {
@@ -46,12 +45,12 @@ class AmendBenefitAmountsValidatorFactorySpec extends UnitSpec with JsonErrorVal
     "return the Def1 validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[AmendBenefitAmountsRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId, validBody, true)
-        result shouldBe a[Def1_AmendBenefitAmountsValidator]
+        result shouldBe a[AmendBenefitAmountsValidator]
       }
 
       "given an invalid taxYear" in new AppConfigTest {
         val result: Validator[AmendBenefitAmountsRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId, validBody, true)
-        result shouldBe a[Def1_AmendBenefitAmountsValidator]
+        result shouldBe a[AmendBenefitAmountsValidator]
       }
     }
 

@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v2.deleteBenefitAmounts.def1.model.request.Def1_DeleteBenefitAmountsRequestData
+import v2.deleteBenefitAmounts.model.request.DeleteBenefitAmountsRequestData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class DeleteBenefitAmountsServiceSpec extends ServiceSpec {
 
   private val request =
-    Def1_DeleteBenefitAmountsRequestData(Nino("AA112233A"), TaxYear.fromMtd("2023-24"), BenefitId("b1e8057e-fbbc-47a8-a8b4-78d9f015c253"))
+    DeleteBenefitAmountsRequestData(Nino("AA112233A"), TaxYear.fromMtd("2023-24"), BenefitId("b1e8057e-fbbc-47a8-a8b4-78d9f015c253"))
 
   "DeleteOtherEmploymentIncomeServiceSpec" when {
     "the downstream request is successful" must {

@@ -18,7 +18,6 @@ package v2.ignoreBenefit
 
 import api.controllers.validators.Validator
 import config.StateBenefitsAppConfig
-import v2.ignoreBenefit.def1.Def1_IgnoreBenefitValidator
 import v2.ignoreBenefit.model.request.IgnoreBenefitRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -27,8 +26,6 @@ import javax.inject.{Inject, Singleton}
 class IgnoreBenefitValidatorFactory @Inject() (implicit stateBenefitsAppConfig: StateBenefitsAppConfig) {
 
   def validator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled: Boolean): Validator[IgnoreBenefitRequestData] =
-    taxYear match {
-      case _ => new Def1_IgnoreBenefitValidator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled)
-    }
+    new IgnoreBenefitValidator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled)
 
 }

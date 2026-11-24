@@ -19,7 +19,6 @@ package v2.listBenefits
 import api.controllers.validators.Validator
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.listBenefits.def1.Def1_ListBenefitsValidator
 import v2.listBenefits.model.request.ListBenefitsRequestData
 
 class ListBenefitsValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
@@ -35,12 +34,12 @@ class ListBenefitsValidatorFactorySpec extends UnitSpec with MockStateBenefitsAp
     "return the Def1 validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[ListBenefitsRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId)
-        result shouldBe a[Def1_ListBenefitsValidator]
+        result shouldBe a[ListBenefitsValidator]
       }
 
       "given an invalid taxYear" in new AppConfigTest {
         val result: Validator[ListBenefitsRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId)
-        result shouldBe a[Def1_ListBenefitsValidator]
+        result shouldBe a[ListBenefitsValidator]
       }
     }
 

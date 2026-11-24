@@ -20,7 +20,6 @@ import api.controllers.validators.Validator
 import api.models.errors.*
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.unignoreBenefit.def1.Def1_UnignoreBenefitValidator
 import v2.unignoreBenefit.model.request.UnignoreBenefitRequestData
 
 class UnignoreBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
@@ -37,12 +36,12 @@ class UnignoreBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefit
     "return the Def1 validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[UnignoreBenefitRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId, true)
-        result shouldBe a[Def1_UnignoreBenefitValidator]
+        result shouldBe a[UnignoreBenefitValidator]
       }
 
       "given an invalid taxYear" in new AppConfigTest {
         val result: Validator[UnignoreBenefitRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId, true)
-        result shouldBe a[Def1_UnignoreBenefitValidator]
+        result shouldBe a[UnignoreBenefitValidator]
       }
     }
 

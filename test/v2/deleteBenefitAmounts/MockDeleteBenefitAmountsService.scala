@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v2.deleteBenefitAmounts.def1.model.request.Def1_DeleteBenefitAmountsRequestData
+import v2.deleteBenefitAmounts.model.request.DeleteBenefitAmountsRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,9 +33,9 @@ trait MockDeleteBenefitAmountsService extends TestSuite with MockFactory {
 
   object MockDeleteBenefitAmountsService {
 
-    def deleteBenefitAmounts(requestData: Def1_DeleteBenefitAmountsRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = (
+    def deleteBenefitAmounts(requestData: DeleteBenefitAmountsRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = (
       mockDeleteBenefitAmountsService
-        .delete(_: Def1_DeleteBenefitAmountsRequestData)(
+        .delete(_: DeleteBenefitAmountsRequestData)(
           _: RequestContext,
           _: ExecutionContext
         )

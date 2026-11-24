@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import api.services.MockAuditService
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v2.createBenefit.def1.model.request.{Def1_CreateBenefitRequestBody, Def1_CreateBenefitRequestData}
+import v2.createBenefit.model.request.{CreateBenefitRequestBody, CreateBenefitRequestData}
 import v2.createBenefit.model.response.CreateBenefitResponse
 import v2.models.domain.BenefitType
 
@@ -56,13 +56,13 @@ class CreateBenefitControllerSpec
     """.stripMargin
   )
 
-  val createStateBenefitRequestBody: Def1_CreateBenefitRequestBody = Def1_CreateBenefitRequestBody(
+  val createStateBenefitRequestBody: CreateBenefitRequestBody = CreateBenefitRequestBody(
     startDate = "2019-01-01",
     endDate = Some("2020-06-01"),
     benefitType = BenefitType.incapacityBenefit.toString
   )
 
-  val requestData: Def1_CreateBenefitRequestData = Def1_CreateBenefitRequestData(
+  val requestData: CreateBenefitRequestData = CreateBenefitRequestData(
     nino = parsedNino,
     taxYear = TaxYear.fromMtd(taxYear),
     body = createStateBenefitRequestBody

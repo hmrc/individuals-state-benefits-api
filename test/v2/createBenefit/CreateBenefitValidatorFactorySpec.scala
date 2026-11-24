@@ -22,8 +22,7 @@ import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
 import play.api.libs.json.*
-import v2.createBenefit.def1.model.request.{Def1_CreateBenefitRequestBody, Def1_CreateBenefitRequestData}
-import v2.createBenefit.model.request.CreateBenefitRequestData
+import v2.createBenefit.model.request.{CreateBenefitRequestBody, CreateBenefitRequestData}
 
 class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidators with MockStateBenefitsAppConfig {
   private implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
@@ -48,7 +47,7 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidator
       """.stripMargin
     )
 
-  private val parsedCreateBenefitBody = Def1_CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
+  private val parsedCreateBenefitBody = CreateBenefitRequestBody("otherStateBenefits", startDate, Some(endDate))
 
   private val validatorFactory = new CreateBenefitValidatorFactory
 
@@ -60,7 +59,7 @@ class CreateBenefitValidatorFactorySpec extends UnitSpec with JsonErrorValidator
     "return the parsed domain object" when {
       "passed a valid request" in new AppConfigTest {
         val result: Either[ErrorWrapper, CreateBenefitRequestData] = validator(validNino, validTaxYear, requestBody).validateAndWrapResult()
-        result shouldBe Right(Def1_CreateBenefitRequestData(parsedNino, parsedTaxYear, parsedCreateBenefitBody))
+        result shouldBe Right(CreateBenefitRequestData(parsedNino, parsedTaxYear, parsedCreateBenefitBody))
       }
     }
 

@@ -20,7 +20,6 @@ import api.controllers.validators.Validator
 import api.models.errors.*
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.ignoreBenefit.def1.Def1_IgnoreBenefitValidator
 import v2.ignoreBenefit.model.request.IgnoreBenefitRequestData
 
 class IgnoreBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
@@ -37,12 +36,12 @@ class IgnoreBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsA
     "return the Def1 validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[IgnoreBenefitRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId, true)
-        result shouldBe a[Def1_IgnoreBenefitValidator]
+        result shouldBe a[IgnoreBenefitValidator]
       }
 
       "given an invalid taxYear" in new AppConfigTest {
         val result: Validator[IgnoreBenefitRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId, true)
-        result shouldBe a[Def1_IgnoreBenefitValidator]
+        result shouldBe a[IgnoreBenefitValidator]
       }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,4 @@ package v2.unignoreBenefit.model.request
 import api.models.domain.{Nino, TaxYear}
 import v2.models.domain.BenefitId
 
-trait UnignoreBenefitRequestData {
-  def nino: Nino
-  def taxYear: TaxYear
-  def benefitId: BenefitId
-}
+case class UnignoreBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)

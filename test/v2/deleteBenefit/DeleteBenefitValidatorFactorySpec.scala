@@ -19,7 +19,6 @@ package v2.deleteBenefit
 import api.controllers.validators.Validator
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.deleteBenefit.def1.Def1_DeleteBenefitValidator
 import v2.deleteBenefit.model.request.DeleteBenefitRequestData
 
 class DeleteBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
@@ -34,12 +33,12 @@ class DeleteBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsA
     "return the Def1 validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[DeleteBenefitRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId)
-        result shouldBe a[Def1_DeleteBenefitValidator]
+        result shouldBe a[DeleteBenefitValidator]
       }
 
       "given an invalid taxYear" in new AppConfigTest {
         val result: Validator[DeleteBenefitRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId)
-        result shouldBe a[Def1_DeleteBenefitValidator]
+        result shouldBe a[DeleteBenefitValidator]
       }
     }
 

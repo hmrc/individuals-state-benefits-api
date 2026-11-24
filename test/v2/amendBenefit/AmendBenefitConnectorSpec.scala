@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import api.mocks.MockHttpClient
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v2.amendBenefit.def1.model.request.{Def1_AmendBenefitRequestBody, Def1_AmendBenefitRequestData}
+import v2.amendBenefit.model.request.{AmendBenefitRequestBody, AmendBenefitRequestData}
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -33,9 +33,9 @@ class AmendBenefitConnectorSpec extends ConnectorSpec {
   private val taxYear   = "2021-22"
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
 
-  private val amendBenefitRequestBody = Def1_AmendBenefitRequestBody("2020-08-03", Some("2020-12-03"))
+  private val amendBenefitRequestBody = AmendBenefitRequestBody("2020-08-03", Some("2020-12-03"))
 
-  private val request = Def1_AmendBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), amendBenefitRequestBody)
+  private val request = AmendBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), amendBenefitRequestBody)
 
   trait Test extends MockHttpClient with MockAppConfig {
 

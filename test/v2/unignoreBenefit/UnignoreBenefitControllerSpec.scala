@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import v2.models.domain.BenefitId
-import v2.unignoreBenefit.def1.model.request.Def1_UnignoreBenefitRequestData
+import v2.unignoreBenefit.model.request.UnignoreBenefitRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ class UnignoreBenefitControllerSpec
 
   private val taxYear     = "2019-20"
   private val benefitId   = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  private val requestData = Def1_UnignoreBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+  private val requestData = UnignoreBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   "UnignoreBenefitController" should {
     "return a successful response with status 204 (NO_CONTENT)" when {

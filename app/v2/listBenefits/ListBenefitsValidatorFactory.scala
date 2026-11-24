@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package v2.listBenefits
 
 import api.controllers.validators.Validator
 import config.StateBenefitsAppConfig
-import v2.listBenefits.def1.Def1_ListBenefitsValidator
 import v2.listBenefits.model.request.ListBenefitsRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -27,6 +26,6 @@ import javax.inject.{Inject, Singleton}
 class ListBenefitsValidatorFactory @Inject() (implicit stateBenefitsAppConfig: StateBenefitsAppConfig) {
 
   def validator(nino: String, taxYear: String, benefitId: Option[String]): Validator[ListBenefitsRequestData] =
-    new Def1_ListBenefitsValidator(nino: String, taxYear: String, benefitId: Option[String])
+    new ListBenefitsValidator(nino: String, taxYear: String, benefitId: Option[String])
 
 }

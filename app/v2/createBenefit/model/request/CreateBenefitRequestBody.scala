@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,19 @@
 package v2.createBenefit.model.request
 
 import api.utils.JsonWritesUtil
-import play.api.libs.json.OWrites
-import v2.createBenefit.def1.model.request.Def1_CreateBenefitRequestBody
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
-trait CreateBenefitRequestBody
+case class CreateBenefitRequestBody(benefitType: String, startDate: String, endDate: Option[String])
 
 object CreateBenefitRequestBody extends JsonWritesUtil {
 
-  implicit val writes: OWrites[CreateBenefitRequestBody] = writesFrom { case def1: Def1_CreateBenefitRequestBody =>
-    implicitly[OWrites[Def1_CreateBenefitRequestBody]].writes(def1)
+  implicit val reads: Reads[CreateBenefitRequestBody] = (
+    (JsPath \ "benefitType").read[String] and
+      (JsPath \ "startDate").read[String] and
+      (JsPath \ "endDate").readNullable[String]
+  )(CreateBenefitRequestBody.apply)
 
-  }
+  implicit val writes: OWrites[CreateBenefitRequestBody] = Json.writes[CreateBenefitRequestBody]
 
 }

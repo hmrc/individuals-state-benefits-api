@@ -18,8 +18,6 @@ package v2.unignoreBenefit
 
 import api.controllers.validators.Validator
 import config.StateBenefitsAppConfig
-import v2.unignoreBenefit.UnignoreBenefitSchema.Def1
-import v2.unignoreBenefit.def1.Def1_UnignoreBenefitValidator
 import v2.unignoreBenefit.model.request.UnignoreBenefitRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -29,11 +27,7 @@ class UnignoreBenefitValidatorFactory @Inject() (implicit stateBenefitsAppConfig
 
   def validator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled: Boolean): Validator[UnignoreBenefitRequestData] = {
 
-    val schema = UnignoreBenefitSchema.schemaFor(Some(taxYear))
-
-    schema match {
-      case Def1 => new Def1_UnignoreBenefitValidator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled)
-    }
+    new UnignoreBenefitValidator(nino: String, taxYear: String, benefitId: String, temporalValidationEnabled)
   }
 
 }

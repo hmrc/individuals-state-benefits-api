@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-import v2.deleteBenefit.def1.model.request.Def1_DeleteBenefitRequestData
+import v2.deleteBenefit.model.request.DeleteBenefitRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,9 @@ trait MockDeleteBenefitConnector extends TestSuite with MockFactory {
 
   object MockDeleteBenefitConnector {
 
-    def deleteBenefit(request: Def1_DeleteBenefitRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def deleteBenefit(request: DeleteBenefitRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockDeleteBenefitConnector
-        .deleteBenefit(_: Def1_DeleteBenefitRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .deleteBenefit(_: DeleteBenefitRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(request, *, *, *)
     }
 

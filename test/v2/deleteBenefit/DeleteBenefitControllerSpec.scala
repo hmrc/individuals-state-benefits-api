@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import api.services.MockAuditService
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v2.deleteBenefit.def1.model.request.Def1_DeleteBenefitRequestData
+import v2.deleteBenefit.model.request.DeleteBenefitRequestData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,7 +41,7 @@ class DeleteBenefitControllerSpec
   private val taxYear   = "2019-20"
   private val benefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val requestData = Def1_DeleteBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+  private val requestData = DeleteBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   "DeleteBenefitController" should {
     "return a successful response with status 204 (No Content)" when {
