@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v2.ignoreBenefit.def1.model.request.Def1_IgnoreBenefitRequestData
+import v2.ignoreBenefit.model.request.IgnoreBenefitRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,9 +32,9 @@ trait MockIgnoreBenefitService extends TestSuite with MockFactory {
 
   object MockIgnoreBenefitService {
 
-    def ignoreBenefit(request: Def1_IgnoreBenefitRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def ignoreBenefit(request: IgnoreBenefitRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockIgnoreBenefitService
-        .ignoreBenefit(_: Def1_IgnoreBenefitRequestData)(_: RequestContext, _: ExecutionContext))
+        .ignoreBenefit(_: IgnoreBenefitRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(request, *, *)
     }
 

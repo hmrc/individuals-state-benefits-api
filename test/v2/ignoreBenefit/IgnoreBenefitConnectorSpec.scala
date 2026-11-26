@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v2.ignoreBenefit.def1.model.request.Def1_IgnoreBenefitRequestData
+import v2.ignoreBenefit.model.request.IgnoreBenefitRequestData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -49,7 +49,7 @@ class IgnoreBenefitConnectorSpec extends ConnectorSpec {
 
   trait Test {
     self: ConnectorTest =>
-    val request: Def1_IgnoreBenefitRequestData = Def1_IgnoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
+    val request: IgnoreBenefitRequestData = IgnoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
 
     val connector: IgnoreBenefitConnector = new IgnoreBenefitConnector(http = mockHttpClient, appConfig = mockAppConfig)
 

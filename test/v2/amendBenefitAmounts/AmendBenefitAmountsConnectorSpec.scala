@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import uk.gov.hmrc.http.StringContextOps
-import v2.amendBenefitAmounts.def1.model.request.{Def1_AmendBenefitAmountsRequestBody, Def1_AmendBenefitAmountsRequestData}
-import v2.amendBenefitAmounts.model.request.AmendBenefitAmountsRequestData
+import v2.amendBenefitAmounts.model.request.{AmendBenefitAmountsRequestBody, AmendBenefitAmountsRequestData}
 import v2.models.domain.BenefitId
 
 import java.net.URL
@@ -33,7 +32,7 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
   private val nino      = "AA123456A"
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
 
-  private val body = Def1_AmendBenefitAmountsRequestBody(999.99, Some(123.13))
+  private val body = AmendBenefitAmountsRequestBody(999.99, Some(123.13))
 
   private val preTysTaxYear = TaxYear.fromMtd("2020-21")
   private val tysTaxYear    = TaxYear.fromMtd("2023-24")
@@ -72,7 +71,7 @@ class AmendBenefitAmountsConnectorSpec extends ConnectorSpec {
   trait Test { self: ConnectorTest =>
     def taxYear: TaxYear
 
-    val request: AmendBenefitAmountsRequestData = Def1_AmendBenefitAmountsRequestData(Nino(nino), taxYear, BenefitId(benefitId), body)
+    val request: AmendBenefitAmountsRequestData = AmendBenefitAmountsRequestData(Nino(nino), taxYear, BenefitId(benefitId), body)
 
     val connector: AmendBenefitAmountsConnector = new AmendBenefitAmountsConnector(mockHttpClient, mockAppConfig)
 

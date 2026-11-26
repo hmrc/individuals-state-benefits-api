@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,4 @@ package v2.createBenefit.model.request
 
 import api.models.domain.{Nino, TaxYear}
 
-trait CreateBenefitRequestData {
-  val nino: Nino
-  val taxYear: TaxYear
-  val body: CreateBenefitRequestBody
-}
+case class CreateBenefitRequestData(nino: Nino, taxYear: TaxYear, body: CreateBenefitRequestBody)

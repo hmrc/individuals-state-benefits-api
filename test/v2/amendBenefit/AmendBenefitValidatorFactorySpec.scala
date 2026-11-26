@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,12 @@ import api.controllers.validators.Validator
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
 import play.api.libs.json.Json
-import v2.amendBenefit.def1.Def1_AmendBenefitValidator
 import v2.amendBenefit.model.request.AmendBenefitRequestData
 
 class AmendBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
 
   private val validNino      = "AA123456A"
   private val validTaxYear   = "2022-23"
-  private val invalidTaxYear = "2023"
   private val startDate      = "2020-04-06"
   private val endDate        = "2021-01-01"
   private val validBenefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
@@ -44,16 +42,10 @@ class AmendBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsAp
   private val validatorFactory = new AmendBenefitValidatorFactory
 
   "validator" should {
-    "return the Def1 validator" when {
+    "return the validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[AmendBenefitRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId, validBody())
-        result shouldBe a[Def1_AmendBenefitValidator]
-
-      }
-
-      "given an invalid taxYear" in new AppConfigTest {
-        val result: Validator[AmendBenefitRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId, validBody())
-        result shouldBe a[Def1_AmendBenefitValidator]
+        result shouldBe a[AmendBenefitValidator]
 
       }
     }

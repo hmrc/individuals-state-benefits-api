@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package v2.deleteBenefitAmounts
 
 import api.controllers.validators.Validator
 import config.StateBenefitsAppConfig
-import v2.deleteBenefitAmounts.def1.Def1_DeleteBenefitAmountsValidator
 import v2.deleteBenefitAmounts.model.request.DeleteBenefitAmountsRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -27,8 +26,6 @@ import javax.inject.{Inject, Singleton}
 class DeleteBenefitAmountsValidatorFactory @Inject() (implicit stateBenefitsAppConfig: StateBenefitsAppConfig) {
 
   def validator(nino: String, taxYear: String, benefitId: String): Validator[DeleteBenefitAmountsRequestData] =
-    taxYear match {
-      case _ => new Def1_DeleteBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String)
-    }
+    new DeleteBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String)
 
 }

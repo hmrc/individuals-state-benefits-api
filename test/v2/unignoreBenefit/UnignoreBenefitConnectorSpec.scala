@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.models.domain.BenefitId
-import v2.unignoreBenefit.def1.model.request.Def1_UnignoreBenefitRequestData
 import v2.unignoreBenefit.model.request.UnignoreBenefitRequestData
 
 import scala.concurrent.Future
@@ -54,7 +53,7 @@ class UnignoreBenefitConnectorSpec extends ConnectorSpec {
 
     def taxYear: TaxYear
 
-    val request: UnignoreBenefitRequestData = Def1_UnignoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
+    val request: UnignoreBenefitRequestData = UnignoreBenefitRequestData(Nino(nino), taxYear, BenefitId(benefitId))
 
     val connector: UnignoreBenefitConnector = new UnignoreBenefitConnector(http = mockHttpClient, appConfig = mockAppConfig)
 

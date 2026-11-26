@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,12 @@
 
 package v2.amendBenefit.model.request
 
-import api.utils.JsonWritesUtil
-import play.api.libs.json.OWrites
-import v2.amendBenefit.def1.model.request.Def1_AmendBenefitRequestBody
+import play.api.libs.json.{Json, OFormat, OWrites}
 
-trait AmendBenefitRequestBody
+case class AmendBenefitRequestBody(startDate: String, endDate: Option[String])
 
-object AmendBenefitRequestBody extends JsonWritesUtil {
+object AmendBenefitRequestBody {
 
-  implicit val writes: OWrites[AmendBenefitRequestBody] = writesFrom { case def1: Def1_AmendBenefitRequestBody =>
-    implicitly[OWrites[Def1_AmendBenefitRequestBody]].writes(def1)
-
-  }
+  implicit val format: OFormat[AmendBenefitRequestBody] = Json.format[AmendBenefitRequestBody]
 
 }

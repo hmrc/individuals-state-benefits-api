@@ -19,7 +19,6 @@ package v2.amendBenefitAmounts
 import api.controllers.validators.Validator
 import config.StateBenefitsAppConfig
 import play.api.libs.json.JsValue
-import v2.amendBenefitAmounts.def1.Def1_AmendBenefitAmountsValidator
 import v2.amendBenefitAmounts.model.request.AmendBenefitAmountsRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -32,8 +31,6 @@ class AmendBenefitAmountsValidatorFactory @Inject() (implicit stateBenefitsAppCo
                 benefitId: String,
                 body: JsValue,
                 temporalValidationEnabled: Boolean): Validator[AmendBenefitAmountsRequestData] =
-    taxYear match {
-      case _ => new Def1_AmendBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String, body: JsValue, temporalValidationEnabled)
-    }
+    new AmendBenefitAmountsValidator(nino: String, taxYear: String, benefitId: String, body: JsValue, temporalValidationEnabled)
 
 }

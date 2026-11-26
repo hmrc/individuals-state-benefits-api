@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v2.deleteBenefitAmounts.def1.model.request.Def1_DeleteBenefitAmountsRequestData
+import v2.deleteBenefitAmounts.model.request.DeleteBenefitAmountsRequestData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -64,7 +64,7 @@ class DeleteBenefitAmountsConnectorSpec extends ConnectorSpec {
 
     protected val connector: DeleteBenefitAmountsConnector = new DeleteBenefitAmountsConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
-    protected val request: Def1_DeleteBenefitAmountsRequestData = Def1_DeleteBenefitAmountsRequestData(Nino(nino), taxYear, BenefitId(benefitId))
+    protected val request: DeleteBenefitAmountsRequestData = DeleteBenefitAmountsRequestData(Nino(nino), taxYear, BenefitId(benefitId))
 
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,21 @@ package v2.listBenefits
 import api.controllers.validators.Validator
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.listBenefits.def1.Def1_ListBenefitsValidator
 import v2.listBenefits.model.request.ListBenefitsRequestData
 
 class ListBenefitsValidatorFactorySpec extends UnitSpec with MockStateBenefitsAppConfig {
 
   private val validNino      = "AA123456B"
   private val validTaxYear   = "2020-21"
-  private val invalidTaxYear = "2020-21"
   private val validBenefitId = Some("4557ecb5-fd32-48cc-81f5-e6acd1099f3c")
 
   private val validatorFactory = new ListBenefitsValidatorFactory
 
   "validator" should {
-    "return the Def1 validator" when {
+    "return the validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[ListBenefitsRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId)
-        result shouldBe a[Def1_ListBenefitsValidator]
-      }
-
-      "given an invalid taxYear" in new AppConfigTest {
-        val result: Validator[ListBenefitsRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId)
-        result shouldBe a[Def1_ListBenefitsValidator]
+        result shouldBe a[ListBenefitsValidator]
       }
     }
 

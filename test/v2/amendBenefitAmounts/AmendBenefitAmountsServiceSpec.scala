@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v2.amendBenefitAmounts.def1.model.request.{Def1_AmendBenefitAmountsRequestBody, Def1_AmendBenefitAmountsRequestData}
+import v2.amendBenefitAmounts.model.request.{AmendBenefitAmountsRequestBody, AmendBenefitAmountsRequestData}
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -31,9 +31,9 @@ class AmendBenefitAmountsServiceSpec extends ServiceSpec {
   private val taxYear   = "2021-22"
   private val benefitId = "123e4567-e89b-12d3-a456-426614174000"
 
-  private val body = Def1_AmendBenefitAmountsRequestBody(999.99, Some(123.13))
+  private val body = AmendBenefitAmountsRequestBody(999.99, Some(123.13))
 
-  private val requestData = Def1_AmendBenefitAmountsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), body)
+  private val requestData = AmendBenefitAmountsRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId), body)
 
   "AmendBenefitAmountsService" when {
     "amendBenefitAmounts" must {

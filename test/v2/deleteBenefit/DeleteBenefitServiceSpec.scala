@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v2.deleteBenefit.def1.model.request.Def1_DeleteBenefitRequestData
+import v2.deleteBenefit.model.request.DeleteBenefitRequestData
 import v2.models.domain.BenefitId
 
 import scala.concurrent.Future
@@ -31,7 +31,7 @@ class DeleteBenefitServiceSpec extends ServiceSpec {
   private val taxYear   = "2019-20"
   private val benefitId = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val request = Def1_DeleteBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
+  private val request = DeleteBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), BenefitId(benefitId))
 
   "DeleteBenefitService" when {
     "a valid request is supplied" must {

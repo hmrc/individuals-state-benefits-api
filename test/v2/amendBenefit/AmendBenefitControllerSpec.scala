@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import api.services.MockAuditService
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v2.amendBenefit.def1.model.request.{Def1_AmendBenefitRequestBody, Def1_AmendBenefitRequestData}
+import v2.amendBenefit.model.request.{AmendBenefitRequestBody, AmendBenefitRequestData}
 import v2.models.domain.BenefitId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,9 +52,9 @@ class AmendBenefitControllerSpec
     """.stripMargin
   )
 
-  private val requestBody = Def1_AmendBenefitRequestBody("2020-04-06", Some("2021-01-01"))
+  private val requestBody = AmendBenefitRequestBody("2020-04-06", Some("2021-01-01"))
 
-  private val requestData = Def1_AmendBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId), requestBody)
+  private val requestData = AmendBenefitRequestData(parsedNino, TaxYear.fromMtd(taxYear), BenefitId(benefitId), requestBody)
 
   "AmendBenefitController" should {
     "return a successful response with status 204 (NO_CONTENT)" when {

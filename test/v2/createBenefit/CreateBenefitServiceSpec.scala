@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v2.createBenefit.def1.model.request.{Def1_CreateBenefitRequestBody, Def1_CreateBenefitRequestData}
+import v2.createBenefit.model.request.{CreateBenefitRequestBody, CreateBenefitRequestData}
 import v2.createBenefit.model.response.CreateBenefitResponse
 import v2.models.domain.BenefitType
 
@@ -32,9 +32,9 @@ class CreateBenefitServiceSpec extends ServiceSpec {
   private val taxYear = "2021-22"
 
   private val createBenefitRequestBody =
-    Def1_CreateBenefitRequestBody(BenefitType.incapacityBenefit.toString, "2020-08-03", Some("2020-12-03"))
+    CreateBenefitRequestBody(BenefitType.incapacityBenefit.toString, "2020-08-03", Some("2020-12-03"))
 
-  private val request = Def1_CreateBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), createBenefitRequestBody)
+  private val request = CreateBenefitRequestData(Nino(nino), TaxYear.fromMtd(taxYear), createBenefitRequestBody)
 
   private val response = CreateBenefitResponse("b1e8057e-fbbc-47a8-a8b4-78d9f015c253")
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,4 @@ package v2.deleteBenefit.model.request
 import api.models.domain.{Nino, TaxYear}
 import v2.models.domain.BenefitId
 
-trait DeleteBenefitRequestData {
-  def nino: Nino
-  def taxYear: TaxYear
-  def benefitId: BenefitId
-}
+case class DeleteBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,4 @@ package v2.amendBenefit.model.request
 import api.models.domain.{Nino, TaxYear}
 import v2.models.domain.BenefitId
 
-trait AmendBenefitRequestData {
-  val nino: Nino
-  val taxYear: TaxYear
-  val benefitId: BenefitId
-  val body: AmendBenefitRequestBody
-}
+case class AmendBenefitRequestData(nino: Nino, taxYear: TaxYear, benefitId: BenefitId, body: AmendBenefitRequestBody)
