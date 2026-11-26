@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package v2.amendBenefitAmounts
+package v2.amendBenefit.model.request
 
 import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import play.api.libs.json.*
-import v2.amendBenefitAmounts.model.request.AmendBenefitAmountsRequestBody
 
-class AmendBenefitAmountsRequestBodySpec extends UnitSpec with JsonErrorValidators {
+class AmendBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
   val inputJson: JsValue = Json.parse(
     """
       |{
-      |   "amount": 999.99,
-      |   "taxPaid": 123.13
+      |   "startDate": "2019-04-06",
+      |   "endDate": "2020-01-01"
       |}
         """.stripMargin
   )
@@ -35,21 +34,21 @@ class AmendBenefitAmountsRequestBodySpec extends UnitSpec with JsonErrorValidato
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        inputJson.as[AmendBenefitAmountsRequestBody] shouldBe AmendBenefitAmountsRequestBody(amount = 999.99, taxPaid = Some(123.13))
+        inputJson.as[AmendBenefitRequestBody] shouldBe AmendBenefitRequestBody("2019-04-06", Some("2020-01-01"))
       }
 
-      testMandatoryFields[AmendBenefitAmountsRequestBody](inputJson)("/amount")
+      testMandatoryFields[AmendBenefitRequestBody](inputJson)("/startDate")
 
-      testPropertyType[AmendBenefitAmountsRequestBody](inputJson)(
-        path = "/amount",
-        replacement = "TEST".toJson,
-        expectedError = JsonError.NUMBER_FORMAT_EXCEPTION
+      testPropertyType[AmendBenefitRequestBody](inputJson)(
+        path = "/startDate",
+        replacement = 12344.toJson,
+        expectedError = JsonError.STRING_FORMAT_EXCEPTION
       )
 
-      testPropertyType[AmendBenefitAmountsRequestBody](inputJson)(
-        path = "/taxPaid",
-        replacement = "NotPaid".toJson,
-        expectedError = JsonError.NUMBER_FORMAT_EXCEPTION
+      testPropertyType[AmendBenefitRequestBody](inputJson)(
+        path = "/endDate",
+        replacement = 12344.toJson,
+        expectedError = JsonError.STRING_FORMAT_EXCEPTION
       )
     }
   }
@@ -57,7 +56,7 @@ class AmendBenefitAmountsRequestBodySpec extends UnitSpec with JsonErrorValidato
   "writes" should {
     "return a json" when {
       "a valid object is supplied" in {
-        Json.toJson(AmendBenefitAmountsRequestBody(amount = 999.99, taxPaid = Some(123.13))) shouldBe inputJson
+        Json.toJson(AmendBenefitRequestBody("2019-04-06", Some("2020-01-01"))) shouldBe inputJson
       }
     }
   }

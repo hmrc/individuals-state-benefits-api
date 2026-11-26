@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,13 @@ class DeleteBenefitValidatorFactorySpec extends UnitSpec with MockStateBenefitsA
 
   private val validNino        = "AA123456A"
   private val validTaxYear     = "2023-24"
-  private val invalidTaxYear   = "2023-2"
   private val validBenefitId   = "b1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val validatorFactory = new DeleteBenefitValidatorFactory
 
   "validator" should {
-    "return the Def1 validator" when {
+    "return the validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[DeleteBenefitRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId)
-        result shouldBe a[DeleteBenefitValidator]
-      }
-
-      "given an invalid taxYear" in new AppConfigTest {
-        val result: Validator[DeleteBenefitRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId)
         result shouldBe a[DeleteBenefitValidator]
       }
     }

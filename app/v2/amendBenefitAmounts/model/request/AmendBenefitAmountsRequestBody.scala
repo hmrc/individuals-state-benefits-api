@@ -16,12 +16,11 @@
 
 package v2.amendBenefitAmounts.model.request
 
-import api.utils.JsonWritesUtil
 import play.api.libs.json.{Json, OFormat, OWrites}
 
 case class AmendBenefitAmountsRequestBody(amount: BigDecimal, taxPaid: Option[BigDecimal])
 
-object AmendBenefitAmountsRequestBody extends JsonWritesUtil {
+object AmendBenefitAmountsRequestBody {
 
   implicit val format: OFormat[AmendBenefitAmountsRequestBody] = Json.format[AmendBenefitAmountsRequestBody]
 

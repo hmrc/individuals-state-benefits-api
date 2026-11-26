@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package v2.ignoreBenefit.def1
+package v2.ignoreBenefit
 
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.utils.UnitSpec
 import config.MockStateBenefitsAppConfig
-import v2.ignoreBenefit.IgnoreBenefitValidator
 import v2.ignoreBenefit.model.request.IgnoreBenefitRequestData
 import v2.models.domain.BenefitId
 

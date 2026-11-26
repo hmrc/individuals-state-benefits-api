@@ -16,12 +16,11 @@
 
 package v2.amendBenefit.model.request
 
-import api.utils.JsonWritesUtil
 import play.api.libs.json.{Json, OFormat, OWrites}
 
 case class AmendBenefitRequestBody(startDate: String, endDate: Option[String])
 
-object AmendBenefitRequestBody extends JsonWritesUtil {
+object AmendBenefitRequestBody {
 
   implicit val format: OFormat[AmendBenefitRequestBody] = Json.format[AmendBenefitRequestBody]
 

@@ -16,20 +16,12 @@
 
 package v2.createBenefit.model.request
 
-import api.utils.JsonWritesUtil
-import play.api.libs.functional.syntax.*
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.*
 
 case class CreateBenefitRequestBody(benefitType: String, startDate: String, endDate: Option[String])
 
-object CreateBenefitRequestBody extends JsonWritesUtil {
+object CreateBenefitRequestBody {
 
-  implicit val reads: Reads[CreateBenefitRequestBody] = (
-    (JsPath \ "benefitType").read[String] and
-      (JsPath \ "startDate").read[String] and
-      (JsPath \ "endDate").readNullable[String]
-  )(CreateBenefitRequestBody.apply)
-
-  implicit val writes: OWrites[CreateBenefitRequestBody] = Json.writes[CreateBenefitRequestBody]
+  implicit val format: OFormat[CreateBenefitRequestBody] = Json.format[CreateBenefitRequestBody]
 
 }

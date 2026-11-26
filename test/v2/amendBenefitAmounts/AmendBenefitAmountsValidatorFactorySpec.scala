@@ -37,19 +37,12 @@ class AmendBenefitAmountsValidatorFactorySpec extends UnitSpec with JsonErrorVal
       |  "taxPaid": 1095.55
       |}""".stripMargin)
 
-  private val invalidTaxYear = "2023"
-
   private val validatorFactory = new AmendBenefitAmountsValidatorFactory
 
   "validator" should {
-    "return the Def1 validator" when {
+    "return the validator" when {
       "given a valid request" in new AppConfigTest {
         val result: Validator[AmendBenefitAmountsRequestData] = validatorFactory.validator(validNino, validTaxYear, validBenefitId, validBody, true)
-        result shouldBe a[AmendBenefitAmountsValidator]
-      }
-
-      "given an invalid taxYear" in new AppConfigTest {
-        val result: Validator[AmendBenefitAmountsRequestData] = validatorFactory.validator(validNino, invalidTaxYear, validBenefitId, validBody, true)
         result shouldBe a[AmendBenefitAmountsValidator]
       }
     }

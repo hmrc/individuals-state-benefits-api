@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v2.createBenefit
+package v2.createBenefit.model.request
 
 import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import play.api.libs.json.Json
-import v2.createBenefit.model.request.CreateBenefitRequestBody
 
 class CreateBenefitRequestBodySpec extends UnitSpec with JsonErrorValidators {
 
